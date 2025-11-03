@@ -1,0 +1,59 @@
+[gd_scene load_steps=4 format=3 uid="uid://dw3sbtkgcrlkf"]
+
+[ext_resource type="Script" uid="uid://bn7tqx38f0b46" path="res://scripts/crash.gd" id="1_ypw0c"]
+
+[sub_resource type="LabelSettings" id="LabelSettings_m38vt"]
+font_size = 24
+
+[sub_resource type="LabelSettings" id="LabelSettings_ypw0c"]
+font_size = 24
+
+[node name="Crash" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_ypw0c")
+
+[node name="ScrollContainer" type="ScrollContainer" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="VBoxContainer" type="VBoxContainer" parent="ScrollContainer"]
+layout_mode = 2
+size_flags_horizontal = 6
+size_flags_vertical = 6
+
+[node name="Title" type="Label" parent="ScrollContainer/VBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 6
+text = "Initialization failure occurred"
+label_settings = SubResource("LabelSettings_m38vt")
+
+[node name="HSeparator" type="HSeparator" parent="ScrollContainer/VBoxContainer"]
+layout_mode = 2
+size_flags_vertical = 6
+
+[node name="Reason" type="Label" parent="ScrollContainer/VBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 6
+text = "Reason unknown"
+
+[node name="HSeparator2" type="HSeparator" parent="ScrollContainer/VBoxContainer"]
+layout_mode = 2
+size_flags_vertical = 6
+
+[node name="Conclusion" type="Label" parent="ScrollContainer/VBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 6
+text = "Please check the logs"
+label_settings = SubResource("LabelSettings_ypw0c")

@@ -1,13 +1,15 @@
-extends Node
+extends BaseManager
 
 var _subscribers: Dictionary[String, Array] = {}
 var _once_wrappers: Dictionary[Callable, Callable] = {}
 var _waiters: Dictionary[String, Array] = {}
 
-func initialize() -> void:
+func initialize() -> bool:
+	super()
 	_subscribers.clear()
 	_once_wrappers.clear()
 	_waiters.clear()
+	return true
 
 
 func subscribe(event_name: String, callable: Callable) -> void:

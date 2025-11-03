@@ -1,27 +1,129 @@
-extends Node
+extends BaseManager
 
-signal log_emitted(message: String, level: int)
+enum LogLevel { DEBUG, INFO, WARN, ERROR, FATAL }
 
-enum LogLevel { INFO, WARNING, ERROR }
+var _current_level: LogLevel = LogLevel.DEBUG
+var _log_to_file: bool = false
+var _file_path: String = Constants.LOG_FILE_PATH
+var _file: FileAccess = null
 
-var debug_enabled: bool = true
-
-
-func initialize() -> void:
-	pass
-
-
-func log(message: String, level: int = LogLevel.INFO) -> void:
-	pass
-
-
-func toggle_debug(enabled: bool) -> void:
-	pass
+func initialize() -> bool:
+	super()
+	_clear_log_file()
+	_open_log_file()
+	_log_internal(LogLevel.INFO, "DebugManager", "Initialized and ready.")
+	return true
 
 
-func show_overlay() -> void:
-	pass
+func set_log_level(level: LogLevel) -> void:
+	_current_level = level
+	_log_internal(LogLevel.INFO, "DebugManager", "Log level set to %s" % [_get_level_name(level)])
 
 
-func hide_overlay() -> void:
-	pass
+func set_log_to_file(enabled: bool, path: String = Constants.LOG_FILE_PATH) -> void:
+	_log_to_file = enabled
+	_file_path = path
+	if enabled:
+		_open_log_file()
+	else:
+		_close_log_file()
+	_log_internal(LogLevel.INFO, "DebugManager", "File logging %s (%s)" % ["enabled" if enabled else "disabled", _file_path])
+
+
+func _clear_log_file() -> void:
+	if FileAccess.file_exists(_file_path):
+		var f = FileAccess.open(_file_path, FileAccess.WRITE)
+		f.store_string("")
+		f.close()
+		_log_internal(LogLevel.INFO, "DebugManager", "Cleared log file: %s" % _file_path)
+
+
+func log_debug(source: String, message: String) -> void:
+	_log_internal(LogLevel.DEBUG, source, message)
+
+
+func log_info(source: String, message: String) -> void:
+	_log_internal(LogLevel.INFO, source, message)
+
+
+func log_warn(source: String, message: String) -> void:
+	_log_internal(LogLevel.WARN, source, message)
+
+
+func log_error(source: String, message: String) -> void:
+	_log_internal(LogLevel.ERROR, source, message)
+
+
+func log_fatal(source: String, message: String) -> void:
+	_log_internal(LogLevel.FATAL, source, message)
+
+
+func _log_internal(level: LogLevel, source: String, message: String) -> void:
+	if level < _current_level:
+		return
+
+	var timestamp: float = Time.get_unix_time_from_system()
+	var timestr: String = Time.get_datetime_string_from_unix_time(int(timestamp), true)
+	var level_str := _get_level_name(level)
+
+	var formatted := "[%s] [%s] (%s) %s" % [timestr, level_str, source, message]
+
+	match level:
+		LogLevel.DEBUG:
+			print_rich("[color=green]%s[/color]" % formatted)
+		LogLevel.INFO:
+			print_rich("[color=cyan]%s[/color]" % formatted)
+		LogLevel.WARN:
+			print_rich("[color=yellow]%s[/color]" % formatted)
+		LogLevel.ERROR:
+			print_rich("[color=orange]%s[/color]" % formatted)
+		LogLevel.FATAL:
+			print_rich("[color=red]%s[/color]" % formatted)
+
+	if _log_to_file and _file:
+		_file.store_line(formatted)
+		_file.flush()
+
+	if EventBus:
+		var payload = {
+			"timestamp": timestamp,
+			"level": level_str,
+			"source": source,
+			"message": message,
+		}
+		EventBus.emit("debug_log", payload)
+	
+	if level == LogLevel.FATAL:
+		CrashReport.crash(source, message)
+
+
+func _open_log_file() -> void:
+	if not _log_to_file:
+		return
+	_close_log_file()
+	_file = FileAccess.open(_file_path, FileAccess.WRITE)
+	if _file:
+		_file.store_line("----- Debug Log Started: %s -----" % Time.get_datetime_string_from_system())
+	else:
+		push_warning("[%s] Failed to open log file: %s" % name, _file_path)
+		CrashReport.crash(name, "Failed to open log file: %s" % _file_path)
+
+
+func _close_log_file() -> void:
+	if _file:
+		_file.close()
+		_file = null
+
+
+func _get_level_name(level: LogLevel) -> String:
+	match level:
+		LogLevel.DEBUG: return "DEBUG"
+		LogLevel.INFO: return "INFO"
+		LogLevel.WARN: return "WARN"
+		LogLevel.ERROR: return "ERROR"
+		LogLevel.FATAL: return "FATAL"
+		_: return "UNKNOWN"
+
+
+func _exit_tree() -> void:
+	_close_log_file()

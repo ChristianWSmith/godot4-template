@@ -1,21 +1,14 @@
-extends Node
+extends BaseManager
 
-signal systems_initialized
+func initialize() -> bool:
+	super()
+	if not EventBus.initialize():
+		return false
+		
+	if not DebugManager.initialize():
+		return false
+		
+	if not SteamManager.initialize():
+		return false
 
-var _initialized: bool = false
-
-
-func _ready() -> void:
-	pass
-
-
-func register_system(system_name: String, system_ref: Node) -> void:
-	pass
-
-
-func initialize_systems() -> void:
-	pass
-
-
-func are_systems_initialized() -> bool:
-	return _initialized
+	return true

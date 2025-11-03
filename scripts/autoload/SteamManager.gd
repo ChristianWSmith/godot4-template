@@ -1,22 +1,33 @@
-extends Node
+extends BaseManager
 
-
-func initialize() -> void:
+func initialize() -> bool:
+	super()
 	var response: Dictionary = Steam.steamInitEx( Constants.STEAM_APP_ID, false )
 	var status: int = response.get("status", -1)
+	var message: String
+	var active: bool = false
 	match status:
-		-1:
-			push_error("[%s] Unkonwn error" % name)
 		0:
-			push_error("[%s] Steamworks active" % name)
+			message = "Steamworks active"
+			active = true
 		1:
-			push_error("[%s] Failed (generic)" % name)
+			message = "Failed (generic)"
 		2:
-			push_error("[%s] Cannot connect to Steam, client probably isn't running" % name)
+			message = "Cannot connect to Steam, client probably isn't running"
 		3:
-			push_error("[%s] Steam client appears to be out of date" % name)
+			message = "Steam client appears to be out of date"
 		_: 
-			pass
+			message = "Unkonwn error"
+	
+	if active:
+		DebugManager.log_info(name, message)
+		return true
+	elif Constants.STEAM_REQUIRED:
+		DebugManager.log_fatal(name, message)
+		return false
+	else:
+		DebugManager.log_warn(name, message)
+		return true
 
 func _process(_delta: float) -> void:
 	Steam.run_callbacks()
