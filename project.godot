@@ -10,11 +10,57 @@ config_version=5
 
 [application]
 
-config/name="New Game Project"
-run/main_scene="res://scenes/game.tscn"
-config/features=PackedStringArray("4.4", "Forward Plus")
-config/icon="res://icon.svg"
+config/name="Godot 4.5.1 Template"
+config/name_localized={
+"en_US": "English (US)"
+}
+config/version="0.1.0"
+run/main_scene="res://scenes/entrypoint.tscn"
+config/features=PackedStringArray("4.5", "Forward Plus")
+boot_splash/image="uid://devtlii0et7ux"
+config/icon="uid://hiiecducsyte"
+config/macos_native_icon="res://assets/bin/application/icon.icns"
+config/windows_native_icon="res://assets/bin/application/icon.ico"
+
+[audio]
+
+buses/default_bus_layout="uid://cg80pw67uw7y1"
+
+[autoload]
+
+Constants="*res://scripts/autoload/Constants.gd"
+InitManager="*res://scripts/autoload/InitManager.gd"
+SettingsManager="*res://scripts/autoload/SettingsManager.gd"
+SaveManager="*res://scripts/autoload/SaveManager.gd"
+GameState="*res://scripts/autoload/GameState.gd"
+SceneManager="*res://scripts/autoload/SceneManager.gd"
+AudioManager="*res://scripts/autoload/AudioManager.gd"
+MusicManager="*res://scripts/autoload/MusicManager.gd"
+InputManager="*res://scripts/autoload/InputManager.gd"
+EventBus="*res://scripts/autoload/EventBus.gd"
+DebugManager="*res://scripts/autoload/DebugManager.gd"
+
+[debug]
+
+shader_language/warnings/treat_warnings_as_errors=true
+
+[display]
+
+mouse_cursor/custom_image="uid://bro1avyp6aceb"
+mouse_cursor/custom_image_hotspot=Vector2(4, 4)
+mouse_cursor/tooltip_position_offset=Vector2(20, 4)
+
+[gui]
+
+theme/custom="uid://ctqknopqbjr8m"
+theme/custom_font="uid://yka44xy4yu7y"
 
 [rendering]
 
 textures/vram_compression/import_etc2_astc=true
+
+[steam]
+
+initialization/app_id=480
+initialization/initialize_on_startup=true
+initialization/embed_callbacks=true
