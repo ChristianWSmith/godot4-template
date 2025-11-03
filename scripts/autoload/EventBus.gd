@@ -48,16 +48,13 @@ func once(event_name: String, callable: Callable) -> void:
 
 
 func _once_wrapper(data: Variant, event_name: String, callable: Callable) -> void:
-	# callable is the original
 	if callable != null and (callable.get_object() == null or is_instance_valid(callable.get_object())):
 		callable.call(data)
 
-	# Remove wrapper
 	unsubscribe(event_name, Callable(self, "_once_wrapper").bind(event_name, callable))
 
 
 func emit(event_name: String, data: Variant = null) -> void:
-	# Call subscribers
 	if _subscribers.has(event_name):
 		var to_call: Array = _subscribers[event_name].duplicate()
 		for callable in to_call:
@@ -67,7 +64,6 @@ func emit(event_name: String, data: Variant = null) -> void:
 			else:
 				_subscribers[event_name].erase(callable)
 
-	# Resume any waiters
 	if _waiters.has(event_name):
 		var wait_list = _waiters[event_name].duplicate()
 		for resume_func in wait_list:
