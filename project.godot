@@ -39,6 +39,7 @@ MusicManager="*res://scripts/autoload/MusicManager.gd"
 InputManager="*res://scripts/autoload/InputManager.gd"
 EventBus="*res://scripts/autoload/EventBus.gd"
 DebugManager="*res://scripts/autoload/DebugManager.gd"
+SteamManager="*res://scripts/autoload/SteamManager.gd"
 
 [debug]
 
@@ -58,9 +59,3 @@ theme/custom_font="uid://yka44xy4yu7y"
 [rendering]
 
 textures/vram_compression/import_etc2_astc=true
-
-[steam]
-
-initialization/app_id=480
-initialization/initialize_on_startup=true
-initialization/embed_callbacks=true
