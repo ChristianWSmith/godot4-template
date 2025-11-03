@@ -2,6 +2,7 @@ extends BaseManager
 
 func initialize() -> bool:
 	super()
+	DebugManager.log_info(name, "Initializing Steam...")
 	var response: Dictionary = Steam.steamInitEx( Constants.STEAM_APP_ID, false )
 	var status: int = response.get("status", -1)
 	var message: String
@@ -31,3 +32,16 @@ func initialize() -> bool:
 
 func _process(_delta: float) -> void:
 	Steam.run_callbacks()
+
+func is_active() -> bool:
+	return Steam.isSteamRunning() and Steam.loggedOn()
+
+func cloud_write(file_path: String, data: PackedByteArray) -> bool:
+	if not is_active():
+		return false
+	return Steam.fileWrite(file_path, data)
+
+func cloud_read(file_path: String) -> PackedByteArray:
+	if not is_active() or not Steam.fileExists(file_path):
+		return PackedByteArray()
+	return Steam.fileRead(file_path, Steam.getFileSize(file_path)).get("buf", PackedByteArray())

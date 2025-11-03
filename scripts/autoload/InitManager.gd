@@ -10,5 +10,8 @@ func initialize() -> bool:
 		
 	if not SteamManager.initialize():
 		return false
+		
+	if not SettingsManager.initialize():
+		return false
 
 	return true
