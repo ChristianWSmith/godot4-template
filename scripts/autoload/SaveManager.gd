@@ -1,6 +1,7 @@
 extends BaseManager
 
 var _slots: Dictionary[String, Dictionary] = {}
+var current_slot: String = ""
 
 func initialize() -> bool:
 	super()
@@ -19,44 +20,61 @@ func initialize() -> bool:
 	return true
 
 
+func get_data(data_path: String) -> Variant:
+	if current_slot == "" or not _slots.has(current_slot) or not _slots[current_slot].has("data"):
+		DebugManager.log_warn(name, "Requested data from non-existent save slot: %s" % current_slot)
+		return null
+	var slot: Dictionary = _slots[current_slot]["data"]
+	var result: Variant = slot
+	for key in data_path.split("/"):
+		if result is Dictionary and result.has(key):
+			result = result[key]
+		else:
+			DebugManager.log_error(name, "Save slot did not contain data at path: '%s'" % data_path)
+			return null
+	return result
+
+
+func set_data(data_path: String, value: Variant) -> bool:
+	if current_slot == "" or not _slots.has(current_slot) or not _slots[current_slot].has("data"):
+		DebugManager.log_warn(name, "Requested write to non-existent save slot: %s" % current_slot)
+		return false
+	var keys: Array[String]
+	for key in data_path.split("/"):
+		keys.append(key)
+	if keys.size() == 0:
+		DebugManager.log_warn(name, "Invalid data path")
+		return false
+	keys.reverse()
+	var data: Dictionary = {keys.pop_front(): value}
+	for key in keys:
+		data = {key: data}
+	_slots[current_slot]["data"].merge(data, true)
+	DebugManager.log_debug(name, "Wrote data to save slot: %s" % data_path)
+	return true
+
+
+func set_current_slot(slot_name: String) -> bool:
+	if slot_name == "" or not _slots.has(slot_name):
+		DebugManager.log_warn(name, "Requested non-existent save slot: %s" % slot_name)
+		return false
+	current_slot = slot_name
+	return true
+
+
 func list_slots() -> Array[String]:
 	return _slots.keys()
 
 
-func get_slot_data(slot_name: String) -> Dictionary:
-	if not _slots.has(slot_name):
-		DebugManager.log_warn(name, "Requested non-existent save slot: %s" % slot_name)
-		return {}
+func new_slot(slot_name: String) -> bool:
+	if slot_name == "" or _slots.has(slot_name):
+		DebugManager.log_warn(name, "Requested duplicate or invalid save slot: %s" % slot_name)
+		return false
+	return _save(slot_name)
+		
 
-	if not _slots[slot_name].has("data"):
-		var local_file_path: String = "%s/%s.save" % [Constants.LOCAL_SAVE_PATH, slot_name]
-		if FileAccess.file_exists(local_file_path):
-			var local_file: FileAccess = FileAccess.open(local_file_path, FileAccess.READ)
-			if local_file:
-				var bytes: PackedByteArray = local_file.get_buffer(local_file.get_length())
-				local_file.close()
-				var parsed: Variant = JSON.parse_string(bytes.get_string_from_utf8())
-				if typeof(parsed) == TYPE_DICTIONARY:
-					var migrated: Dictionary = _migrate_slot(parsed)
-					_slots[slot_name] = migrated
-					return migrated.get("data", {})
-	DebugManager.log_debug(name, "Loaded slot data for %s" % slot_name)
-	return _slots[slot_name].get("data", {})
-
-
-func save_slot(slot_name: String, data: Dictionary, persist_immediately: bool = true) -> bool:
-	if not _slots.has(slot_name):
-		_slots[slot_name] = {}
-
-	_slots[slot_name]["data"] = data
-	if not _slots[slot_name].has("meta"):
-		_slots[slot_name]["meta"] = {}
-
-	_slots[slot_name] = _stamp_slot(_slots[slot_name])
-
-	if persist_immediately:
-		return _persist_slot(slot_name)
-	return true
+func save(persist_immediately: bool = true) -> bool:
+	return _save(current_slot, persist_immediately)
 
 
 func delete_slot(slot_name: String) -> bool:
@@ -67,12 +85,32 @@ func delete_slot(slot_name: String) -> bool:
 	if FileAccess.file_exists(local_file):
 		if DirAccess.remove_absolute(local_file) != OK:
 			DebugManager.log_warn(name, "Failed to delete local slot file: %s" % local_file)
+		else:
+			DebugManager.log_info(name, "Deleted local slot file: %s" % local_file)
+	else:
+		DebugManager.log_info(name, "Local slot file does not exist, cannot delete: %s" % local_file)
+		
 
 	if SteamManager.is_cloud_available():
 		if not SteamManager.cloud_delete("%s.save" % slot_name):
 			DebugManager.log_warn(name, "Failed to delete Steam Cloud slot: %s" % slot_name)
+		else:
+			DebugManager.log_info(name, "Deleted Steam Cloud slot: %s" % slot_name)
+	else:
+		DebugManager.log_info(name, "Steam Cloud not active, cannot delete: %s" % local_file)
 
 	_save_local_manifest()
+	return true
+
+
+func _save(slot_name: String, persist_immediately: bool = true) -> bool:
+	if not _slots.has(slot_name):
+		_slots[slot_name] = Constants.DEFAULT_SAVE.duplicate(true)
+
+	_slots[slot_name] = _stamp_slot(_slots[slot_name])
+
+	if persist_immediately:
+		return _persist_slot(slot_name)
 	return true
 
 
@@ -82,14 +120,14 @@ func _persist_slot(slot_name: String) -> bool:
 		return false
 
 	var slot: Dictionary = _slots[slot_name]
-	var json_dict := {
+	var json_dict: Dictionary = {
 		"meta": slot.get("meta", {"version": Constants.SAVE_VERSION, "timestamp": Time.get_unix_time_from_system()}),
 		"data": slot.get("data", {})
 	}
 	var bytes: PackedByteArray = JSON.stringify(json_dict).to_utf8_buffer()
 
-	var local_file := "%s/%s.save" % [Constants.LOCAL_SAVE_PATH, slot_name]
-	var file := FileAccess.open(local_file, FileAccess.WRITE)
+	var local_file: String = "%s/%s.save" % [Constants.LOCAL_SAVE_PATH, slot_name]
+	var file: FileAccess = FileAccess.open(local_file, FileAccess.WRITE)
 	if file == null:
 		DebugManager.log_error(name, "Failed to write local save file: %s" % local_file)
 		return false
