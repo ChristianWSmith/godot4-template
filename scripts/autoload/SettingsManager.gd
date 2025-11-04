@@ -100,12 +100,17 @@ func _load_settings() -> bool:
 
 func _migrate_settings(settings: Dictionary) -> Dictionary:
 	var result: Dictionary = settings.duplicate(true)
+	var did_migration: bool = false
 	
 	while result.get("meta", {}).get("version", -1) != Constants.SETTINGS_VERSION:
 		match result.get("meta", {}).get("version", -1):
 			_: 
+				did_migration = true
 				DebugManager.log_warn(name, "Unknown settings version encountered during migration, loading defaults.")
 				result = _generate_defaults()
+	
+	if did_migration:
+		result = _stamp_settings(result)
 	
 	return result
 

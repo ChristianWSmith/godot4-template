@@ -30,21 +30,57 @@ func initialize() -> bool:
 		DebugManager.log_warn(name, message)
 		return true
 
+
 func _process(_delta: float) -> void:
 	Steam.run_callbacks()
+
 
 func is_cloud_available() -> bool:
 	return is_active() and Steam.isCloudEnabledForAccount() and Steam.isCloudEnabledForApp()
 
+
 func is_active() -> bool:
 	return Steam.isSteamRunning() and Steam.loggedOn()
 
+
 func cloud_write(file_path: String, data: PackedByteArray) -> bool:
-	if not is_active():
+	if not is_cloud_available():
+		DebugManager.log_warn(name, "Steam cloud not available, won't write file: %s" % file_path)
 		return false
 	return Steam.fileWrite(file_path, data)
 
+
 func cloud_read(file_path: String) -> PackedByteArray:
-	if not is_active() or not Steam.fileExists(file_path):
+	if not is_cloud_available() or not Steam.fileExists(file_path):
+		DebugManager.log_warn(name, "Steam cloud not available, won't read file: %s" % file_path)
 		return PackedByteArray()
 	return Steam.fileRead(file_path, Steam.getFileSize(file_path)).get("buf", PackedByteArray())
+
+
+func cloud_delete(filename: String) -> bool:
+	if not is_cloud_available():
+		DebugManager.log_warn(name, "Steam Cloud not available. Cannot delete %s" % filename)
+		return false
+	
+	if Steam.fileDelete(filename):
+		DebugManager.log_info(name, "Deleted Steam Cloud file: %s" % filename)
+		return true
+	else:
+		DebugManager.log_warn(name, "Failed to delete Steam Cloud file: %s" % filename)
+		return false
+
+
+func cloud_list_files() -> Array[String]:
+	var files: Array[String] = []
+	if not is_cloud_available():
+		DebugManager.log_warn(name, "Steam Cloud not available. Cannot list files.")
+		return files
+
+	var count: int = Steam.getFileCount()
+	for i in range(count):
+		var file_info = Steam.getFileNameAndSize(i)
+		if file_info.has("name"):
+			files.append(file_info["name"])
+
+	DebugManager.log_debug(name, "Steam Cloud files: [%s]" % ", ".join(files))
+	return files

@@ -15,7 +15,10 @@ func initialize() -> bool:
 	if not VideoManager.initialize():
 		return false
 		
+	if not SaveManager.initialize():
+		return false
+		
 	if not SettingsManager.initialize():
 		return false
-
+	
 	return true
