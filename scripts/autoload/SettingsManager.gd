@@ -69,7 +69,7 @@ func _load_settings() -> bool:
 	var local_settings_timestamp: float = local_settings.get("meta", {}).get("timestamp", -1.0)
 	
 	if steam_settings_timestamp > local_settings_timestamp:
-		_settings = steam_settings
+		_settings = _migrate_settings(steam_settings)
 		if _save_local_settings():
 			DebugManager.log_info(name, "Updated local settings from Steam.")
 			return true
@@ -77,7 +77,7 @@ func _load_settings() -> bool:
 			DebugManager.log_error(name, "Failed to update local settings from Steam.")
 			return false
 	elif steam_settings_timestamp < local_settings_timestamp:
-		_settings = local_settings
+		_settings = _migrate_settings(local_settings)
 		if _save_steam_settings():
 			DebugManager.log_info(name, "Updated Steam settings from local.")
 			return true
@@ -89,9 +89,21 @@ func _load_settings() -> bool:
 				DebugManager.log_warn(name, "Failed to update Steam settings from local, but Steam is not required.")
 				return true
 	else:
-		_settings = local_settings
-		DebugManager.log_info(name, "Settings loaded successfully.")
+		_settings = _migrate_settings(local_settings)
+		DebugManager.log_info(name, "Settings loaded successfully, Steam and local in sync.")
 		return true
+
+
+func _migrate_settings(settings: Dictionary) -> Dictionary:
+	var result: Dictionary = settings.duplicate(true)
+	
+	while result.get("meta", {}).get("version", -1) != Constants.SETTINGS_VERSION:
+		match result.get("meta", {}).get("version", -1):
+			_: 
+				DebugManager.log_warn(name, "Unknown settings version encountered during migration, loading defaults.")
+				result = _generate_defaults()
+	
+	return result
 
 
 func _load_steam_settings() -> Dictionary:
@@ -170,7 +182,8 @@ func _save_steam_settings() -> bool:
 func _stamp_settings(settings: Dictionary) -> Dictionary:
 	var result: Dictionary = settings.duplicate(true)
 	if not result.has("meta"):
-		result["meta"] = {"version": Constants.SETTINGS_VERSION}
+		result["meta"] = {}
+	result["meta"]["version"] = Constants.SETTINGS_VERSION
 	result["meta"]["timestamp"] = Time.get_unix_time_from_system()
 	return result
 
@@ -182,10 +195,10 @@ func _generate_defaults() -> Dictionary:
 
 func _parse_config(config: ConfigFile) -> Dictionary:
 	var config_settings: Dictionary = {}
-	for section in Constants.DEFAULT_SETTINGS.keys():
+	for section in config.get_sections():
 		config_settings[section] = {}
-		for key in Constants.DEFAULT_SETTINGS[section].keys():
-			config_settings[section][key] = config.get_value(section, key, Constants.DEFAULT_SETTINGS[section][key])
+		for key in config.get_section_keys(section):
+			config_settings[section][key] = config.get_value(section, key, Constants.DEFAULT_SETTINGS.get(section, {}).get(key, null))
 	return config_settings
 
 
