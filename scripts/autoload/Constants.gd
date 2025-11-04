@@ -1,12 +1,21 @@
 extends Node
 
+# Debug
+const LOG_FILE_PATH: String = "user://debug.log"
+
+# Steam
 const STEAM_APP_ID: int = 480
 const STEAM_REQUIRED: bool = false
-const LOG_FILE_PATH: String = "user://debug.log"
-const SETTINGS_PATH: String = "user://settings.cfg"
-const CLOUD_SETTINGS_FILE: String = "settings.cfg"
 
+# Settings
+const SETTINGS_VERSION: int = 0
+const LOCAL_SETTINGS_PATH: String = "user://settings.cfg"
+const CLOUD_SETTINGS_FILE: String = "settings.cfg"
 const DEFAULT_SETTINGS: Dictionary = {
+	"meta": {
+		"version": SETTINGS_VERSION,
+		"timestamp": -1.0
+	},
 	"video": {
 		"fullscreen": false,
 		"borderless": false,

@@ -11,13 +11,13 @@ func initialize() -> bool:
 	super()
 	_clear_log_file()
 	_open_log_file()
-	_log_internal(LogLevel.INFO, "DebugManager", "Initialized and ready.")
+	_log_internal(LogLevel.INFO, name, "Initialized and ready.")
 	return true
 
 
 func set_log_level(level: LogLevel) -> void:
 	_current_level = level
-	_log_internal(LogLevel.INFO, "DebugManager", "Log level set to %s" % [_get_level_name(level)])
+	_log_internal(LogLevel.INFO, name, "Log level set to %s" % [_get_level_name(level)])
 
 
 func set_log_to_file(enabled: bool, path: String = Constants.LOG_FILE_PATH) -> void:
@@ -27,7 +27,7 @@ func set_log_to_file(enabled: bool, path: String = Constants.LOG_FILE_PATH) -> v
 		_open_log_file()
 	else:
 		_close_log_file()
-	_log_internal(LogLevel.INFO, "DebugManager", "File logging %s (%s)" % ["enabled" if enabled else "disabled", _file_path])
+	_log_internal(LogLevel.INFO, name, "File logging %s (%s)" % ["enabled" if enabled else "disabled", _file_path])
 
 
 func _clear_log_file() -> void:
@@ -35,7 +35,7 @@ func _clear_log_file() -> void:
 		var f = FileAccess.open(_file_path, FileAccess.WRITE)
 		f.store_string("")
 		f.close()
-		_log_internal(LogLevel.INFO, "DebugManager", "Cleared log file: %s" % _file_path)
+		_log_internal(LogLevel.INFO, name, "Cleared log file: %s" % _file_path)
 
 
 func log_debug(source: String, message: String) -> void:

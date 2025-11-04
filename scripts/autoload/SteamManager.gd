@@ -33,6 +33,9 @@ func initialize() -> bool:
 func _process(_delta: float) -> void:
 	Steam.run_callbacks()
 
+func is_cloud_available() -> bool:
+	return is_active() and Steam.isCloudEnabledForAccount() and Steam.isCloudEnabledForApp()
+
 func is_active() -> bool:
 	return Steam.isSteamRunning() and Steam.loggedOn()
 

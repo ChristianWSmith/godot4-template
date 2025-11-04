@@ -1,6 +1,7 @@
-[gd_scene load_steps=4 format=3 uid="uid://dw3sbtkgcrlkf"]
+[gd_scene load_steps=5 format=3 uid="uid://dw3sbtkgcrlkf"]
 
 [ext_resource type="Script" uid="uid://bn7tqx38f0b46" path="res://scripts/crash.gd" id="1_ypw0c"]
+[ext_resource type="Texture2D" uid="uid://k3sbi7al068r" path="res://assets/bin/ui/crash_bg.png" id="2_y7ohw"]
 
 [sub_resource type="LabelSettings" id="LabelSettings_m38vt"]
 font_size = 24
@@ -16,6 +17,16 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("1_ypw0c")
+
+[node name="TextureRect" type="TextureRect" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = ExtResource("2_y7ohw")
+expand_mode = 3
 
 [node name="ScrollContainer" type="ScrollContainer" parent="."]
 layout_mode = 1
