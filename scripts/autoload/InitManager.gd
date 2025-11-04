@@ -12,9 +12,10 @@ func initialize() -> bool:
 	if not SteamManager.initialize():
 		return false
 		
+	if not VideoManager.initialize():
+		return false
+		
 	if not SettingsManager.initialize():
 		return false
-	
-	SettingsManager.apply_display_settings()
 
 	return true

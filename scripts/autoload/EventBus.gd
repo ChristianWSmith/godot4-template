@@ -62,7 +62,10 @@ func emit(event_name: String, data: Variant = null) -> void:
 		for callable in to_call:
 			var obj = callable.get_object()
 			if obj == null or is_instance_valid(obj):
-				callable.call(data)
+				if data != null:
+					callable.call(data)
+				else:
+					callable.call()
 			else:
 				_subscribers[event_name].erase(callable)
 

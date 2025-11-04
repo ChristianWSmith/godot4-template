@@ -19,7 +19,11 @@ func emit_changed() -> void:
 
 
 func emit_section_changed(section: String) -> void:
-	EventBus.emit(Constants.SETTINGS_CHANGED_EVENT_PREFIX + "/" + section)
+	EventBus.emit(get_section_event(section))
+
+
+func get_section_event(section: String) -> String:
+	return Constants.SETTINGS_CHANGED_EVENT_PREFIX + "/" + section
 
 
 func get_value(section: String, key: String) -> Variant:
@@ -200,24 +204,3 @@ func _parse_config(config: ConfigFile) -> Dictionary:
 		for key in config.get_section_keys(section):
 			config_settings[section][key] = config.get_value(section, key, Constants.DEFAULT_SETTINGS.get(section, {}).get(key, null))
 	return config_settings
-
-
-func apply_display_settings() -> void:
-	var fullscreen: bool = get_value("video", "fullscreen")
-	var borderless: bool = get_value("video", "borderless")
-	var vsync: bool = get_value("video", "vsync")
-	var resolution: Vector2i = get_value("video", "resolution")
-	var max_fps: int = get_value("video", "max_fps")
-	
-	Engine.max_fps = max_fps
-	DisplayServer.window_set_mode(
-		DisplayServer.WINDOW_MODE_FULLSCREEN if fullscreen else DisplayServer.WINDOW_MODE_WINDOWED
-	)	
-	DisplayServer.window_set_flag(DisplayServer.WINDOW_FLAG_BORDERLESS, borderless)
-	DisplayServer.window_set_size(resolution)
-	DisplayServer.window_set_vsync_mode(
-		DisplayServer.VSYNC_ENABLED if vsync else DisplayServer.VSYNC_DISABLED
-	)
-
-	DebugManager.log_info(name, "Display settings applied (mode=%s, res=%s)" %
-		[DisplayServer.window_get_mode(), resolution])
