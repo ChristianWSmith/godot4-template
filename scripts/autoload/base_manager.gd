@@ -1,6 +1,6 @@
 extends Node
 class_name BaseManager
 
-func initialize() -> bool:
+func initialize() -> Error:
 	print("[%s] Initializing..." % name)
-	return true
+	return OK

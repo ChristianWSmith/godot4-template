@@ -1,24 +1,31 @@
 extends BaseManager
 
-func initialize() -> bool:
+func initialize() -> Error:
 	super()
+	var result: Error
 	
-	if not EventBus.initialize():
-		return false
-		
-	if not DebugManager.initialize():
-		return false
-		
-	if not SteamManager.initialize():
-		return false
-		
-	if not VideoManager.initialize():
-		return false
-		
-	if not SaveManager.initialize():
-		return false
-		
-	if not SettingsManager.initialize():
-		return false
+	result = EventBus.initialize()
+	if result != OK:
+		return result
 	
-	return true
+	result = DebugManager.initialize()
+	if result != OK:
+		return result
+	
+	result = SteamManager.initialize()
+	if result != OK:
+		return result
+	
+	result = VideoManager.initialize()
+	if result != OK:
+		return result
+	
+	result = SaveManager.initialize()
+	if result != OK:
+		return result
+	
+	result = SettingsManager.initialize()
+	if result != OK:
+		return result
+	
+	return OK

@@ -1,6 +1,6 @@
 extends BaseManager
 
-func initialize() -> bool:
+func initialize() -> Error:
 	super()
 	DebugManager.log_info(name, "Initializing Steam...")
 	var response: Dictionary = Steam.steamInitEx( Constants.STEAM_APP_ID, false )
@@ -22,13 +22,13 @@ func initialize() -> bool:
 	
 	if active:
 		DebugManager.log_info(name, message)
-		return true
+		return OK
 	elif Constants.STEAM_REQUIRED:
 		DebugManager.log_fatal(name, message)
-		return false
+		return FAILED
 	else:
 		DebugManager.log_warn(name, message)
-		return true
+		return OK
 
 
 func _process(_delta: float) -> void:
@@ -43,11 +43,11 @@ func is_active() -> bool:
 	return Steam.isSteamRunning() and Steam.loggedOn()
 
 
-func cloud_write(file_path: String, data: PackedByteArray) -> bool:
+func cloud_write(file_path: String, data: PackedByteArray) -> Error:
 	if not is_cloud_available():
 		DebugManager.log_warn(name, "Steam cloud not available, won't write file: %s" % file_path)
-		return false
-	return Steam.fileWrite(file_path, data)
+		return FAILED
+	return OK if Steam.fileWrite(file_path, data) else FAILED
 
 
 func cloud_read(file_path: String) -> PackedByteArray:
@@ -57,17 +57,17 @@ func cloud_read(file_path: String) -> PackedByteArray:
 	return Steam.fileRead(file_path, Steam.getFileSize(file_path)).get("buf", PackedByteArray())
 
 
-func cloud_delete(filename: String) -> bool:
+func cloud_delete(filename: String) -> Error:
 	if not is_cloud_available():
 		DebugManager.log_warn(name, "Steam Cloud not available. Cannot delete %s" % filename)
-		return false
+		return FAILED
 	
 	if Steam.fileDelete(filename):
 		DebugManager.log_info(name, "Deleted Steam Cloud file: %s" % filename)
-		return true
+		return OK
 	else:
 		DebugManager.log_warn(name, "Failed to delete Steam Cloud file: %s" % filename)
-		return false
+		return FAILED
 
 
 func cloud_list_files() -> Array[String]:

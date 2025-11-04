@@ -1,10 +1,10 @@
 extends BaseManager
 
-func initialize() -> bool:
+func initialize() -> Error:
 	super()
 	DebugManager.log_info(name, "Initializing...")
 	EventBus.subscribe(SettingsManager.get_section_event("video"), apply)
-	return true
+	return OK
 
 
 func apply() -> void:

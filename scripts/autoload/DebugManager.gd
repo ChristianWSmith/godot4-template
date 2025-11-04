@@ -7,12 +7,12 @@ var _log_to_file: bool = false
 var _file_path: String = Constants.LOG_FILE_PATH
 var _file: FileAccess = null
 
-func initialize() -> bool:
+func initialize() -> Error:
 	super()
 	_clear_log_file()
 	_open_log_file()
 	_log_internal(LogLevel.INFO, name, "Initialized and ready.")
-	return true
+	return OK
 
 
 func set_log_level(level: LogLevel) -> void:

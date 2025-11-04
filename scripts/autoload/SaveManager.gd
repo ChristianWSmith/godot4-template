@@ -3,7 +3,7 @@ extends BaseManager
 var _slots: Dictionary[String, Dictionary] = {}
 var current_slot: String = ""
 
-func initialize() -> bool:
+func initialize() -> Error:
 	super()
 	DebugManager.log_info(name, "Initializing...")
 
@@ -19,7 +19,7 @@ func initialize() -> bool:
 		_sync_steam_cloud()
 
 	DebugManager.log_info(name, "Initialized with slots: [%s]" % ", ".join(_slots.keys()))
-	return true
+	return OK
 
 
 func get_data(data_path: String) -> Variant:
@@ -37,10 +37,10 @@ func get_data(data_path: String) -> Variant:
 	return result
 
 
-func set_data(data_path: String, value: Variant) -> bool:
+func set_data(data_path: String, value: Variant) -> Error:
 	if current_slot == "" or not _slots.has(current_slot):
 		DebugManager.log_warn(name, "Requested write to non-existent save slot: %s" % current_slot)
-		return false
+		return FAILED
 
 	if not _slots[current_slot].has("data") or typeof(_slots[current_slot]["data"]) != TYPE_DICTIONARY:
 		_slots[current_slot]["data"] = {}
@@ -48,7 +48,7 @@ func set_data(data_path: String, value: Variant) -> bool:
 	var keys: Array = data_path.split("/")
 	if keys.is_empty():
 		DebugManager.log_warn(name, "Invalid data path")
-		return false
+		return FAILED
 
 	keys.reverse()
 	var data := {keys.pop_front(): value}
@@ -57,39 +57,39 @@ func set_data(data_path: String, value: Variant) -> bool:
 
 	_slots[current_slot]["data"].merge(data, true)
 	DebugManager.log_debug(name, "Wrote data to save slot: %s" % data_path)
-	return true
+	return OK
 
 
-func set_current_slot(slot_name: String) -> bool:
+func set_current_slot(slot_name: String) -> Error:
 	if slot_name == "" or not _slots.has(slot_name):
 		DebugManager.log_warn(name, "Requested non-existent save slot: %s" % slot_name)
-		return false
+		return FAILED
 	current_slot = slot_name
-	return true
+	return OK
 
 
 func list_slots() -> Array[String]:
 	return _slots.keys()
 
 
-func new_slot(slot_name: String) -> bool:
+func new_slot(slot_name: String) -> Error:
 	if slot_name == "" or _slots.has(slot_name):
 		DebugManager.log_warn(name, "Requested duplicate or invalid save slot: %s" % slot_name)
-		return false
+		return FAILED
 
 	if _save(slot_name):
-		return true
-	return false
+		return OK
+	return FAILED
 
 
-func save(persist_immediately: bool = true) -> bool:
+func save(persist_immediately: bool = true) -> Error:
 	if current_slot == "":
 		DebugManager.log_warn(name, "No active save slot to persist.")
-		return false
+		return FAILED
 	return _save(current_slot, persist_immediately)
 
 
-func delete_slot(slot_name: String) -> bool:
+func delete_slot(slot_name: String) -> Error:
 	if _slots.has(slot_name):
 		_slots.erase(slot_name)
 
@@ -110,10 +110,10 @@ func delete_slot(slot_name: String) -> bool:
 	else:
 		DebugManager.log_info(name, "Steam Cloud not active, cannot delete: %s" % slot_name)
 
-	return true
+	return OK
 
 
-func _save(slot_name: String, persist_immediately: bool = true) -> bool:
+func _save(slot_name: String, persist_immediately: bool = true) -> Error:
 	if not _slots.has(slot_name):
 		_slots[slot_name] = Constants.DEFAULT_SAVE.duplicate(true)
 
@@ -121,13 +121,13 @@ func _save(slot_name: String, persist_immediately: bool = true) -> bool:
 
 	if persist_immediately:
 		return _persist_slot(slot_name)
-	return true
+	return OK
 
 
-func _persist_slot(slot_name: String) -> bool:
+func _persist_slot(slot_name: String) -> Error:
 	if not _slots.has(slot_name):
 		DebugManager.log_error(name, "Attempted to persist non-existent slot: %s" % slot_name)
-		return false
+		return FAILED
 
 	var slot: Dictionary = _slots[slot_name]
 	var json_dict: Dictionary = {
@@ -140,7 +140,7 @@ func _persist_slot(slot_name: String) -> bool:
 	var file: FileAccess = FileAccess.open(local_file, FileAccess.WRITE)
 	if file == null:
 		DebugManager.log_error(name, "Failed to write local save file: %s" % local_file)
-		return false
+		return FAILED
 
 	file.store_buffer(bytes)
 	file.close()
@@ -152,7 +152,7 @@ func _persist_slot(slot_name: String) -> bool:
 		else:
 			DebugManager.log_warn(name, "Failed to save slot to Steam Cloud: %s" % slot_name)
 
-	return true
+	return OK
 
 
 func _load_local_slots() -> void:
