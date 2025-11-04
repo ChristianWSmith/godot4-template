@@ -5,6 +5,7 @@ func _ready() -> void:
 
 	if InitManager.initialize():
 		DebugManager.log_info(name, "Systems initialized successfully.")
-		SceneManager.change_scene("res://scenes/main_menu.tscn", true)
+		get_tree().change_scene_to_file.call_deferred("res://scenes/main_menu.tscn")
+		# SceneManager.change_scene("res://scenes/main_menu.tscn", true)
 	else:
 		print("[%s] Initialization failed." % name)

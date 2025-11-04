@@ -2,6 +2,7 @@ extends BaseManager
 
 func initialize() -> bool:
 	super()
+	
 	if not EventBus.initialize():
 		return false
 		
@@ -13,5 +14,7 @@ func initialize() -> bool:
 		
 	if not SettingsManager.initialize():
 		return false
+	
+	SettingsManager.apply_display_settings()
 
 	return true

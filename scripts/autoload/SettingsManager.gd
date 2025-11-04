@@ -12,7 +12,7 @@ func get_value(section: String, key: String) -> Variant:
 	if _settings.has(section) and _settings[section].has(key):
 		return _settings[section][key]
 	DebugManager.log_warn(name, "Missing key: '%s/%s'" % [section, key])
-	return null
+	return Constants.DEFAULT_SETTINGS[section][key]
 
 
 func set_value(section: String, key: String, value: Variant, persist_immediately: bool = true) -> void:
@@ -62,7 +62,7 @@ func _load_settings() -> bool:
 		else:
 			DebugManager.log_debug(name, "Steam settings file was empty.")
 	else:
-		DebugManager.log_info(name, "Steam not active.")
+		DebugManager.log_info(name, "Steam not active, will not load.")
 
 	var err: Error = config.load(Constants.SETTINGS_PATH)
 	if err != OK:
@@ -101,7 +101,7 @@ func _save_settings() -> void:
 		else:
 			DebugManager.log_warn(name, "Failed to open local settings file for upload.")
 	else:
-		DebugManager.log_info(name, "Steam not active.")
+		DebugManager.log_info(name, "Steam not active, skipping sync.")
 
 
 func _parse_config(config: ConfigFile) -> void:
@@ -110,3 +110,24 @@ func _parse_config(config: ConfigFile) -> void:
 		_settings[section] = {}
 		for key in Constants.DEFAULT_SETTINGS[section].keys():
 			_settings[section][key] = config.get_value(section, key, Constants.DEFAULT_SETTINGS[section][key])
+
+
+func apply_display_settings() -> void:
+	var fullscreen: bool = get_value("video", "fullscreen")
+	var borderless: bool = get_value("video", "borderless")
+	var vsync: bool = get_value("video", "vsync")
+	var resolution: Vector2i = get_value("video", "resolution")
+	var max_fps: int = get_value("video", "max_fps")
+	
+	Engine.max_fps = max_fps
+	DisplayServer.window_set_mode(
+		DisplayServer.WINDOW_MODE_FULLSCREEN if fullscreen else DisplayServer.WINDOW_MODE_WINDOWED
+	)	
+	DisplayServer.window_set_flag(DisplayServer.WINDOW_FLAG_BORDERLESS, borderless)
+	DisplayServer.window_set_size(resolution)
+	DisplayServer.window_set_vsync_mode(
+		DisplayServer.VSYNC_ENABLED if vsync else DisplayServer.VSYNC_DISABLED
+	)
+
+	DebugManager.log_info(name, "Display settings applied (mode=%s, res=%s)" %
+		[DisplayServer.window_get_mode(), resolution])
