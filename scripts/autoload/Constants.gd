@@ -9,6 +9,7 @@ const STEAM_REQUIRED: bool = false
 
 # Settings
 const SETTINGS_VERSION: int = 0
+const SETTINGS_CHANGED_EVENT_PREFIX: String = "settings_changed"
 const LOCAL_SETTINGS_PATH: String = "user://settings.cfg"
 const CLOUD_SETTINGS_FILE: String = "settings.cfg"
 const DEFAULT_SETTINGS: Dictionary = {

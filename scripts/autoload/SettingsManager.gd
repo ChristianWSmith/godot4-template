@@ -7,11 +7,19 @@ func initialize() -> bool:
 	DebugManager.log_info(name, "Initializing settings...")
 	if _load_settings():
 		DebugManager.log_info(name, "Successfully initialized settings.")
-		for section in _settings.keys():
-			EventBus.emit("settings_changed/" + section)
+		emit_changed()
 		return true
 	DebugManager.log_error(name, "Failed to initialize settings.")
 	return false
+
+
+func emit_changed() -> void:
+	for section in _settings.keys():
+		emit_section_changed(section)
+
+
+func emit_section_changed(section: String) -> void:
+	EventBus.emit(Constants.SETTINGS_CHANGED_EVENT_PREFIX + "/" + section)
 
 
 func get_value(section: String, key: String) -> Variant:
@@ -33,20 +41,24 @@ func set_value(section: String, key: String, value: Variant, persist_immediately
 	_settings[section][key] = value
 
 	DebugManager.log_debug(name, "Set %s/%s = %s" % [section, key, str(value)])
-	EventBus.emit("settings_changed/" + section)
+	emit_section_changed(section)
 
 	if persist_immediately:
-		_save_settings()
+		save()
 
 
 func save() -> bool:
-	return _save_settings()
+	var result: bool = true
+	_settings = _stamp_settings(_settings)
+	result = result and _save_local_settings()
+	result = result and _save_steam_settings()
+	return result
 
 
 func reset_to_default() -> void:
 	DebugManager.log_info(name, "Resetting settings to default.")
 	_settings = _generate_defaults()
-	_save_settings()
+	save()
 
 
 func _load_settings() -> bool:
@@ -121,14 +133,6 @@ func _load_local_settings() -> Dictionary:
 		DebugManager.log_warn(name, "No local settings file found. Loading defaults.")
 		local_settings = _generate_defaults()
 	return local_settings
-
-
-func _save_settings() -> bool:
-	var result: bool = true
-	_settings = _stamp_settings(_settings)
-	result = result and _save_local_settings()
-	result = result and _save_steam_settings()
-	return result
 
 
 func _save_local_settings() -> bool:
