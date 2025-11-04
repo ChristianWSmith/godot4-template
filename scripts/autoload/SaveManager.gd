@@ -5,7 +5,7 @@ var current_slot: String = ""
 
 func initialize() -> bool:
 	super()
-	DebugManager.log_info(name, "Initializing SaveManager...")
+	DebugManager.log_info(name, "Initializing...")
 
 	var dir: DirAccess = DirAccess.open(Constants.LOCAL_SAVE_BASE_PATH)
 	if dir == null:
@@ -18,7 +18,7 @@ func initialize() -> bool:
 	if SteamManager.is_cloud_available():
 		_sync_steam_cloud()
 
-	DebugManager.log_info(name, "SaveManager initialized with slots: [%s]" % ", ".join(_slots.keys()))
+	DebugManager.log_info(name, "Initialized with slots: [%s]" % ", ".join(_slots.keys()))
 	return true
 
 

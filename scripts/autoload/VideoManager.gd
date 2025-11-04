@@ -2,6 +2,7 @@ extends BaseManager
 
 func initialize() -> bool:
 	super()
+	DebugManager.log_info(name, "Initializing...")
 	EventBus.subscribe(SettingsManager.get_section_event("video"), apply)
 	return true
 

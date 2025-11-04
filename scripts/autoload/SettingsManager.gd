@@ -4,7 +4,7 @@ var _settings: Dictionary = {}
 
 func initialize() -> bool:
 	super()
-	DebugManager.log_info(name, "Initializing settings...")
+	DebugManager.log_info(name, "Initializing...")
 	if _load_settings():
 		DebugManager.log_info(name, "Successfully initialized settings.")
 		emit_changed()
