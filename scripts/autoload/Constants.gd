@@ -28,6 +28,7 @@ const SETTINGS_VERSION: int = 0
 const SETTINGS_CHANGED_EVENT_PREFIX: String = "settings_changed"
 const LOCAL_SETTINGS_PATH: String = "user://settings.cfg"
 const CLOUD_SETTINGS_FILE: String = "settings.cfg"
+const DEFAULT_INPUT_BINDINGS: Dictionary = {}
 const DEFAULT_SETTINGS: Dictionary = {
 	"meta": {
 		"version": SETTINGS_VERSION,
@@ -42,6 +43,8 @@ const DEFAULT_SETTINGS: Dictionary = {
 	},
 	"graphics": {},
 	"audio": {},
-	"controls": {},
+	"input": {
+		"bindings": DEFAULT_INPUT_BINDINGS,
+	},
 	"gameplay": {}
 }

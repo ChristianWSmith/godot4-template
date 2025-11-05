@@ -28,6 +28,10 @@ func initialize() -> Error:
 	if result != OK:
 		return result
 	
+	result = InputManager.initialize()
+	if result != OK:
+		return result
+	
 	result = SettingsManager.initialize()
 	if result != OK:
 		return result
