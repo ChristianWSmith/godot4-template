@@ -51,6 +51,24 @@ func set_value(section: String, key: String, value: Variant, persist_immediately
 		save()
 
 
+func set_values(section: String, keys: Array[String], values: Array[Variant], persist_immediately: bool = true) -> void:
+	if keys.size() != values.size():
+		print(keys.size(), keys)
+		print(values.size(), values)
+		DebugManager.log_error(name, "Attempted to set multiple values, but keys.size() != values.size()")
+		return
+	if not _settings.has(section):
+		_settings[section] = {}
+	
+	for i in range(keys.size()):
+		_settings[section][keys[i]] = values[i]
+
+	DebugManager.log_debug(name, "Set values for section %s - %s = %s" % [section, keys, values])
+	emit_section_changed(section)
+
+	if persist_immediately:
+		save()
+
 func save() -> Error:
 	var result: Error
 	_settings = _stamp_settings(_settings)
@@ -70,6 +88,10 @@ func reset_to_default() -> void:
 	DebugManager.log_info(name, "Resetting settings to default.")
 	_settings = _generate_defaults()
 	save()
+
+
+func get_section(section: String) -> Dictionary:
+	return _settings.get(section, {})
 
 
 func _load_settings() -> Error:
