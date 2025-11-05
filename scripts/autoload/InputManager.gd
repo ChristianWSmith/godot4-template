@@ -1,15 +1,53 @@
 extends BaseManager
 
+# Example:
+# {
+#  "jump": [
+#      { "alt": false, "ctrl": false, "keycode": 0, "meta": false, "physical_keycode": 32, "shift": false, "type": "Key" },
+#      { "button_index": 0, "device": -1, "type": "JoypadButton" }
+#    ],
+#  "up": [
+#      { "alt": false, "ctrl": false, "keycode": 0, "meta": false, "physical_keycode": 87, "shift": false, "type": "Key" },
+#      { "axis": 1, "axis_value": -1.0, "device": -1, "type": "JoypadMotion" }
+#    ]
+# }
 var _bindings: Dictionary = {}
 
 func initialize() -> Error:
 	super()
 	DebugManager.log_info(name, "Initializing InputManager...")
-	EventBus.subscribe(SettingsManager.get_section_event("input"), _apply_bindings)
+	EventBus.subscribe(SettingsManager.get_section_event("input"), _on_settings_updated)
 	return OK
 
 
-func save_bindings_to_settings(bindings: Dictionary = _bindings) -> void:
+func apply_and_save(bindings: Dictionary) -> void:
+	_apply_bindings(bindings)
+	_save(bindings)
+
+
+func dump_bindings() -> Dictionary:
+	return _bindings.duplicate(true)
+
+
+func _on_settings_updated() -> void:
+	_apply_bindings(SettingsManager.get_value("input", "bindings"))
+
+
+func _apply_bindings(bindings: Dictionary) -> void:
+	_bindings = bindings
+
+	if not _bindings or _bindings.is_empty():
+		DebugManager.log_info(name, "No custom bindings found, using project defaults.")
+		_save(_get_project_default_bindings())
+		return
+
+	for action_name in _bindings.keys():
+		_register_action(action_name, _bindings[action_name])
+
+	DebugManager.log_info(name, "Applied bindings for actions: %s" % ", ".join(_bindings.keys()))
+
+
+func _save(bindings: Dictionary) -> void:
 	var serialized := {}
 	for action_name in bindings.keys():
 		if action_name in Constants.INPUT_BUILT_IN_ACTIONS:
@@ -20,29 +58,6 @@ func save_bindings_to_settings(bindings: Dictionary = _bindings) -> void:
 		serialized[action_name] = events
 	if serialized.size() != 0:
 		SettingsManager.set_value("input", "bindings", serialized)
-
-
-func reload_bindings() -> void:
-	DebugManager.log_info(name, "Reloading input bindings.")
-	_apply_bindings()
-
-
-func dump_bindings() -> Dictionary:
-	return _bindings.duplicate(true)
-
-
-func _apply_bindings() -> void:
-	_bindings = SettingsManager.get_value("input", "bindings")
-
-	if not _bindings or _bindings.is_empty():
-		DebugManager.log_info(name, "No custom bindings found, using project defaults.")
-		save_bindings_to_settings(_get_project_default_bindings())
-		return
-
-	for action_name in _bindings.keys():
-		_register_action(action_name, _bindings[action_name])
-
-	DebugManager.log_info(name, "Applied bindings for actions: %s" % ", ".join(_bindings.keys()))
 
 
 func _register_action(action_name: String, event_defs: Array) -> void:
