@@ -103,7 +103,7 @@ func _load_settings() -> Error:
 	
 	if steam_settings_timestamp > local_settings_timestamp:
 		_settings = _migrate_settings(steam_settings)
-		if _save_local_settings():
+		if _save_local_settings() == OK:
 			DebugManager.log_info(name, "Updated local settings from Steam.")
 			return OK
 		else:
@@ -111,7 +111,7 @@ func _load_settings() -> Error:
 			return FAILED
 	elif steam_settings_timestamp < local_settings_timestamp:
 		_settings = _migrate_settings(local_settings)
-		if _save_steam_settings():
+		if _save_steam_settings() == OK:
 			DebugManager.log_info(name, "Updated Steam settings from local.")
 			return OK
 		else:
@@ -181,7 +181,8 @@ func _load_local_settings() -> Dictionary:
 		local_settings = _parse_config(local_config)
 	else:
 		DebugManager.log_warn(name, "No local settings file found. Loading defaults.")
-		local_settings = _generate_defaults()
+		_settings = _generate_defaults()
+		save()
 	return local_settings
 
 

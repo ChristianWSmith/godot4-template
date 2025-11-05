@@ -18,7 +18,17 @@ func save_bindings_to_settings(bindings: Dictionary = _bindings) -> void:
 		for ev in InputMap.action_get_events(action_name):
 			events.append(_serialize_input_event(ev))
 		serialized[action_name] = events
-	SettingsManager.set_value("input", "bindings", serialized)
+	if serialized.size() != 0:
+		SettingsManager.set_value("input", "bindings", serialized)
+
+
+func reload_bindings() -> void:
+	DebugManager.log_info(name, "Reloading input bindings.")
+	_apply_bindings()
+
+
+func dump_bindings() -> Dictionary:
+	return _bindings.duplicate(true)
 
 
 func _apply_bindings() -> void:
@@ -27,6 +37,7 @@ func _apply_bindings() -> void:
 	if not _bindings or _bindings.is_empty():
 		DebugManager.log_info(name, "No custom bindings found, using project defaults.")
 		save_bindings_to_settings(_get_project_default_bindings())
+		return
 
 	for action_name in _bindings.keys():
 		_register_action(action_name, _bindings[action_name])
@@ -150,12 +161,3 @@ func _get_project_default_bindings() -> Dictionary:
 					serialized.append(_serialize_input_event(ev))
 			defaults[action_name] = serialized
 	return defaults
-
-
-func reload_bindings() -> void:
-	DebugManager.log_info(name, "Reloading input bindings.")
-	_apply_bindings()
-
-
-func dump_bindings() -> Dictionary:
-	return _bindings.duplicate(true)
