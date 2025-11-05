@@ -24,6 +24,10 @@ func initialize() -> Error:
 	if result != OK:
 		return result
 	
+	result = GameState.initialize()
+	if result != OK:
+		return result
+	
 	result = SettingsManager.initialize()
 	if result != OK:
 		return result

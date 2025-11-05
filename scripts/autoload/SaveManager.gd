@@ -1,7 +1,6 @@
 extends BaseManager
 
 var _slots: Dictionary[String, Dictionary] = {}
-var current_slot: String = ""
 
 func initialize() -> Error:
 	super()
@@ -22,71 +21,31 @@ func initialize() -> Error:
 	return OK
 
 
-func get_data(data_path: String) -> Variant:
-	if current_slot == "" or not _slots.has(current_slot) or not _slots[current_slot].has("data"):
-		DebugManager.log_warn(name, "Requested data from non-existent save slot: %s" % current_slot)
-		return null
-
-	var result: Variant = _slots[current_slot]["data"]
-	for key in data_path.split("/"):
-		if result is Dictionary and result.has(key):
-			result = result[key]
-		else:
-			DebugManager.log_error(name, "Save slot did not contain data at path: '%s'" % data_path)
-			return null
-	return result
-
-
-func set_data(data_path: String, value: Variant) -> Error:
-	if current_slot == "" or not _slots.has(current_slot):
-		DebugManager.log_warn(name, "Requested write to non-existent save slot: %s" % current_slot)
-		return FAILED
-
-	if not _slots[current_slot].has("data") or typeof(_slots[current_slot]["data"]) != TYPE_DICTIONARY:
-		_slots[current_slot]["data"] = {}
-
-	var keys: Array = data_path.split("/")
-	if keys.is_empty():
-		DebugManager.log_warn(name, "Invalid data path")
-		return FAILED
-
-	keys.reverse()
-	var data := {keys.pop_front(): value}
-	for key in keys:
-		data = {key: data}
-
-	_slots[current_slot]["data"].merge(data, true)
-	DebugManager.log_debug(name, "Wrote data to save slot: %s" % data_path)
-	return OK
-
-
-func set_current_slot(slot_name: String) -> Error:
-	if slot_name == "" or not _slots.has(slot_name):
-		DebugManager.log_warn(name, "Requested non-existent save slot: %s" % slot_name)
-		return FAILED
-	current_slot = slot_name
-	return OK
-
-
 func list_slots() -> Array[String]:
 	return _slots.keys()
 
 
 func new_slot(slot_name: String) -> Error:
-	if slot_name == "" or _slots.has(slot_name):
-		DebugManager.log_warn(name, "Requested duplicate or invalid save slot: %s" % slot_name)
-		return FAILED
-
-	if _save(slot_name):
-		return OK
-	return FAILED
+	return save_data(slot_name)
 
 
-func save(persist_immediately: bool = true) -> Error:
-	if current_slot == "":
-		DebugManager.log_warn(name, "No active save slot to persist.")
-		return FAILED
-	return _save(current_slot, persist_immediately)
+func save_data(slot_name: String, data: Dictionary = {}) -> Error:
+	if not _slots.has(slot_name):
+		_slots[slot_name] = Constants.DEFAULT_SAVE.duplicate(true)
+	
+	if not data.is_empty():
+		_slots[slot_name]["data"] = data
+	
+	_slots[slot_name] = _stamp_slot(_slots[slot_name])
+
+	return _persist_slot(slot_name)
+
+
+func get_data(slot_name: String) -> Dictionary:
+	if not _slots.has(slot_name) or not _slots[slot_name].has("data"):
+		DebugManager.log_error(name, "Slot does not exist or is empty: %s" % slot_name)
+		return {}
+	return _slots[slot_name]["data"]
 
 
 func delete_slot(slot_name: String) -> Error:
@@ -110,17 +69,6 @@ func delete_slot(slot_name: String) -> Error:
 	else:
 		DebugManager.log_info(name, "Steam Cloud not active, cannot delete: %s" % slot_name)
 
-	return OK
-
-
-func _save(slot_name: String, persist_immediately: bool = true) -> Error:
-	if not _slots.has(slot_name):
-		_slots[slot_name] = Constants.DEFAULT_SAVE.duplicate(true)
-
-	_slots[slot_name] = _stamp_slot(_slots[slot_name])
-
-	if persist_immediately:
-		return _persist_slot(slot_name)
 	return OK
 
 
