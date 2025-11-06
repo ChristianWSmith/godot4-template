@@ -102,7 +102,7 @@ func _load_settings() -> Error:
 	var local_settings_timestamp: float = local_settings.get("meta", {}).get("timestamp", -1.0)
 	
 	if steam_settings_timestamp > local_settings_timestamp:
-		_settings = _migrate_settings(steam_settings)
+		_settings = steam_settings
 		if _save_local_settings() == OK:
 			DebugManager.log_info(name, "Updated local settings from Steam.")
 			return OK
@@ -110,7 +110,7 @@ func _load_settings() -> Error:
 			DebugManager.log_error(name, "Failed to update local settings from Steam.")
 			return FAILED
 	elif steam_settings_timestamp < local_settings_timestamp:
-		_settings = _migrate_settings(local_settings)
+		_settings = local_settings
 		if _save_steam_settings() == OK:
 			DebugManager.log_info(name, "Updated Steam settings from local.")
 			return OK
@@ -122,7 +122,7 @@ func _load_settings() -> Error:
 				DebugManager.log_warn(name, "Failed to update Steam settings from local, but Steam is not required.")
 				return OK
 	else:
-		_settings = _migrate_settings(local_settings)
+		_settings = local_settings
 		DebugManager.log_info(name, "Settings loaded successfully, Steam and local in sync.")
 		return OK
 
@@ -140,6 +140,8 @@ func _migrate_settings(settings: Dictionary) -> Dictionary:
 	
 	if did_migration:
 		result = _stamp_settings(result)
+	
+	result.merge(Constants.DEFAULT_SETTINGS.duplicate(true), false)
 	
 	return result
 
@@ -170,7 +172,7 @@ func _load_steam_settings() -> Dictionary:
 			DebugManager.log_debug(name, "Steam settings file was empty.")
 	else:
 		DebugManager.log_info(name, "Steam cloud not available, will not load.")
-	return steam_settings
+	return _migrate_settings(steam_settings)
 
 
 func _load_local_settings() -> Dictionary:
@@ -179,6 +181,11 @@ func _load_local_settings() -> Dictionary:
 	if local_config.load(Constants.LOCAL_SETTINGS_PATH) == OK:
 		DebugManager.log_debug(name, "Local settings file found, loading.")
 		local_settings = _parse_config(local_config)
+		var migrated_local_settings: Dictionary = _migrate_settings(local_settings)
+		if not local_settings.recursive_equal(migrated_local_settings, -1):
+			_settings = migrated_local_settings
+			local_settings = migrated_local_settings
+			save()
 	else:
 		DebugManager.log_warn(name, "No local settings file found. Loading defaults.")
 		_settings = _generate_defaults()
