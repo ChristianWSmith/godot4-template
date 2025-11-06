@@ -227,12 +227,8 @@ func _save_steam_settings() -> Error:
 			DebugManager.log_warn(name, "Failed to open local settings file for upload.")
 	else:
 		DebugManager.log_warn(name, "Steam cloud not available, skipping sync.")
-	if Constants.STEAM_REQUIRED:
-		DebugManager.log_error(name, "Failed to upload settings to Steam, and Steam is required.")
-		return FAILED
-	else:
-		DebugManager.log_warn(name, "Failed to upload settings to Steam, but Steam is not required.")
-		return OK
+	DebugManager.log_warn(name, "Failed to upload settings to Steam, will retry.")
+	return OK
 
 
 func _stamp_settings(settings: Dictionary) -> Dictionary:

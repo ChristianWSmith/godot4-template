@@ -1,5 +1,9 @@
 extends BaseManager
 
+var _files_to_write: Dictionary[String, PackedByteArray] = {}
+var _files_to_delete: Dictionary[String, bool] = {}
+var _reconciliation_timer: float = 0.0
+
 func initialize() -> Error:
 	super()
 	DebugManager.log_info(name, "Initializing Steam...")
@@ -31,26 +35,37 @@ func initialize() -> Error:
 		return OK
 
 
-func _process(_delta: float) -> void:
+func _process(delta: float) -> void:
 	Steam.run_callbacks()
+	if _reconciliation_needed():
+		_reconciliation_timer += delta
+		if _reconciliation_timer >= Constants.STEAM_RECONCILIATION_INTERVAL:
+			_reconciliation_timer -= Constants.STEAM_RECONCILIATION_INTERVAL
+			_attempt_reconciliation()
 
 
 func is_cloud_available() -> bool:
 	return Steam.isSteamRunning() and Steam.loggedOn() and Steam.isCloudEnabledForAccount() and Steam.isCloudEnabledForApp()
 
 
-func cloud_write(file_path: String, data: PackedByteArray) -> Error:
+func cloud_write(filename: String, data: PackedByteArray) -> Error:
 	if not is_cloud_available():
-		DebugManager.log_warn(name, "Steam cloud not available, won't write file: %s" % file_path)
+		DebugManager.log_warn(name, "Steam cloud not available, won't write file: %s" % filename)
 		return FAILED
-	return OK if Steam.fileWrite(file_path, data) else FAILED
+	if Steam.fileWrite(filename, data):
+		DebugManager.log_info(name, "Wrote Steam Cloud file: %s" % filename)
+		return OK
+	else:
+		DebugManager.log_warn(name, "Failed to write Steam Cloud file: %s" % filename)
+		_queue_write(filename, data)
+		return FAILED
 
 
-func cloud_read(file_path: String) -> PackedByteArray:
-	if not is_cloud_available() or not Steam.fileExists(file_path):
-		DebugManager.log_warn(name, "Steam cloud not available, won't read file: %s" % file_path)
+func cloud_read(filename: String) -> PackedByteArray:
+	if not is_cloud_available() or not Steam.fileExists(filename):
+		DebugManager.log_warn(name, "Steam cloud not available, won't read file: %s" % filename)
 		return PackedByteArray()
-	return Steam.fileRead(file_path, Steam.getFileSize(file_path)).get("buf", PackedByteArray())
+	return Steam.fileRead(filename, Steam.getFileSize(filename)).get("buf", PackedByteArray())
 
 
 func cloud_delete(filename: String) -> Error:
@@ -62,6 +77,7 @@ func cloud_delete(filename: String) -> Error:
 		return OK
 	else:
 		DebugManager.log_warn(name, "Failed to delete Steam Cloud file: %s" % filename)
+		_queue_delete(filename)
 		return FAILED
 
 
@@ -79,3 +95,37 @@ func cloud_list_files() -> Array[String]:
 
 	DebugManager.log_debug(name, "Steam Cloud files: [%s]" % ", ".join(files))
 	return files
+
+
+func _queue_write(filename: String, data: PackedByteArray) -> void:
+	if filename in _files_to_delete:
+		_files_to_delete.erase(filename)
+	_files_to_write[filename] = data
+
+
+func _queue_delete(filename: String) -> void:
+	if filename not in _files_to_write:
+		_files_to_write.erase(filename)
+	if filename in _files_to_delete:
+		_files_to_delete[filename] = true
+
+
+func _reconciliation_needed() -> bool:
+	return not _files_to_delete.is_empty() or not _files_to_write.is_empty()
+
+
+func _attempt_reconciliation() -> void:
+	if not _files_to_delete.is_empty():
+		var successfully_deleted: Array[String] = []
+		for filename in _files_to_delete:
+			if cloud_delete(filename) == OK:
+				successfully_deleted.append(filename)
+		for filename in successfully_deleted:
+			_files_to_delete.erase(filename)
+	if not _files_to_write.is_empty():
+		var successfully_written: Array[String] = []
+		for filename in _files_to_write:
+			if cloud_write(filename, _files_to_write[filename]) == OK:
+				successfully_written.append(filename)
+		for filename in successfully_written:
+			_files_to_write.erase(filename)

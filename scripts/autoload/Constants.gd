@@ -6,6 +6,7 @@ const LOG_FILE_PATH: String = "user://debug.log"
 # Steam
 const STEAM_APP_ID: int = 480
 const STEAM_REQUIRED: bool = false
+const STEAM_RECONCILIATION_INTERVAL: float = 5.0
 
 # Save
 const SAVE_VERSION: int = 0
