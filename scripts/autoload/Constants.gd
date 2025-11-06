@@ -4,6 +4,9 @@ extends Node
 const INT_MAX: int = int(INF) - 1
 const INT_MIN: int = int(INF)
 
+# Scene
+const SCENE_FADE_TIME: float = 0.5
+
 # Debug
 const LOG_FILE_PATH: String = "user://debug.log"
 
