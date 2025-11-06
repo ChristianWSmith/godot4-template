@@ -1,8 +1,9 @@
 extends BaseManager
 
+var _reconciliation_timer: Timer = Timer.new()
+var _reconciliation_mutex: Mutex = Mutex.new()
 var _files_to_write: Dictionary[String, PackedByteArray] = {}
 var _files_to_delete: Dictionary[String, bool] = {}
-var _reconciliation_timer: float = 0.0
 
 func initialize() -> Error:
 	super()
@@ -24,6 +25,10 @@ func initialize() -> Error:
 		_: 
 			message = "Unkonwn error"
 	
+	_reconciliation_timer.timeout.connect(_attempt_reconciliation)
+	add_child(_reconciliation_timer)
+	_reconciliation_timer.start(Constants.STEAM_RECONCILIATION_INTERVAL)
+	
 	if active:
 		DebugManager.log_info(name, message)
 		return OK
@@ -35,13 +40,8 @@ func initialize() -> Error:
 		return OK
 
 
-func _process(delta: float) -> void:
+func _process(_delta: float) -> void:
 	Steam.run_callbacks()
-	if _reconciliation_needed():
-		_reconciliation_timer += delta
-		if _reconciliation_timer >= Constants.STEAM_RECONCILIATION_INTERVAL:
-			_reconciliation_timer -= Constants.STEAM_RECONCILIATION_INTERVAL
-			_attempt_reconciliation()
 
 
 func is_cloud_available() -> bool:
@@ -98,23 +98,24 @@ func cloud_list_files() -> Array[String]:
 
 
 func _queue_write(filename: String, data: PackedByteArray) -> void:
+	_reconciliation_mutex.lock()
 	if filename in _files_to_delete:
 		_files_to_delete.erase(filename)
 	_files_to_write[filename] = data
+	_reconciliation_mutex.unlock()
 
 
 func _queue_delete(filename: String) -> void:
+	_reconciliation_mutex.lock()
 	if filename not in _files_to_write:
 		_files_to_write.erase(filename)
 	if filename in _files_to_delete:
 		_files_to_delete[filename] = true
-
-
-func _reconciliation_needed() -> bool:
-	return not _files_to_delete.is_empty() or not _files_to_write.is_empty()
+	_reconciliation_mutex.unlock()
 
 
 func _attempt_reconciliation() -> void:
+	_reconciliation_mutex.lock()
 	if not _files_to_delete.is_empty():
 		var successfully_deleted: Array[String] = []
 		for filename in _files_to_delete:
@@ -129,3 +130,5 @@ func _attempt_reconciliation() -> void:
 				successfully_written.append(filename)
 		for filename in successfully_written:
 			_files_to_write.erase(filename)
+	_reconciliation_mutex.unlock()
+	_reconciliation_timer.start(Constants.STEAM_RECONCILIATION_INTERVAL)
