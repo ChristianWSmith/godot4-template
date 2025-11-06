@@ -5,38 +5,13 @@ var _next_scene_path: String = ""
 var _is_loading: bool = false
 var _fade_rect: ColorRect = ColorRect.new()
 var _throbber: AnimatedSprite2D = AnimatedSprite2D.new()
+var _throbber_tween: Tween = create_tween()
 
 func initialize() -> Error:
 	super()
 	DebugManager.log_info(name, "Initializing...")
-	
-	_throbber.sprite_frames = preload("res://assets/src/ui/throbber.tres")
-	var throbber_size: Vector2 = _throbber.sprite_frames.get_frame_texture(
-		_throbber.animation, _throbber.frame).get_size()
-	_throbber.scale = Vector2(32.0 / throbber_size.x, 32.0 / throbber_size.y)
-	_throbber.position = Vector2(-32, 32)
-	_throbber.modulate.a = 0.0
-	var throbber_container := Control.new()
-	throbber_container.set_anchors_preset(Control.PRESET_TOP_RIGHT)
-	throbber_container.add_child(_throbber)
-	
-	var throbber_layer: CanvasLayer = CanvasLayer.new()
-	throbber_layer.layer = RenderingServer.CANVAS_LAYER_MAX - 1
-	throbber_layer.add_child(throbber_container)
-	add_child(throbber_layer)
-	
-	_fade_rect.anchor_top = 0.0
-	_fade_rect.anchor_left = 0.0
-	_fade_rect.anchor_bottom = 1.0
-	_fade_rect.anchor_right = 1.0
-	_fade_rect.color = Color.BLACK
-	_fade_rect.modulate.a = 0.0
-	
-	var transition_layer: CanvasLayer = CanvasLayer.new()
-	transition_layer.layer = RenderingServer.CANVAS_LAYER_MAX
-	transition_layer.add_child(_fade_rect)
-	add_child(transition_layer)
-	
+	_setup_throbber()
+	_setup_fader()
 	return OK
 
 
@@ -84,15 +59,16 @@ func _poll_async_load() -> void:
 
 	var new_scene: Node = res.instantiate()
 	
-	var tween: Tween = create_tween()
-	tween.tween_property(_fade_rect, "modulate:a", 1.0, Constants.SCENE_FADE_TIME)
-	tween.tween_callback(func():
+	var fade_in_tween: Tween = create_tween().set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_OUT)
+	fade_in_tween.tween_property(_fade_rect, "modulate:a", 1.0, Constants.SCENE_FADE_TIME)
+	fade_in_tween.tween_callback(func():
 		if _current_scene:
 			_current_scene.queue_free()
 		get_tree().root.add_child(new_scene)
 		_current_scene = new_scene
 		get_tree().current_scene = new_scene
-		create_tween().tween_property(_fade_rect, "modulate:a", 0.0, Constants.SCENE_FADE_TIME)
+		var fade_out_tween: Tween = create_tween().set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_OUT)
+		fade_out_tween.tween_property(_fade_rect, "modulate:a", 0.0, Constants.SCENE_FADE_TIME)
 		)
 
 	DebugManager.log_info(name, "Async scene load complete: %s" % _next_scene_path)
@@ -102,11 +78,93 @@ func _poll_async_load() -> void:
 func _set_is_loading(value: float) -> void:
 	_is_loading = value
 	if _is_loading:
-		get_tree().create_timer(0.5).timeout.connect(func():
-			_throbber.play()
-			create_tween().tween_property(_throbber, "modulate:a", 1.0, 0.5))
+		_throbber.play()
+		_throbber_tween.kill()
+		_throbber_tween = create_tween().set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_OUT)
+		_throbber_tween.tween_interval(Constants.SCENE_THROBBER_DELAY)
+		_throbber_tween.tween_property(
+			_throbber, 
+			"modulate:a", 
+			1.0, 
+			Constants.SCENE_THROBBER_FADE_TIME)
 	else:
-		get_tree().create_timer(0.5).timeout.connect(func():
-			var fade_out_tween: Tween = create_tween()
-			fade_out_tween.tween_property(_throbber, "modulate:a", 0.0, 0.5)
-			fade_out_tween.tween_callback(_throbber.stop))
+		_throbber_tween.kill()
+		_throbber_tween = create_tween().set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_OUT)
+		_throbber_tween.tween_property(
+			_throbber, 
+			"modulate:a", 
+			0.0, 
+			min(Constants.SCENE_THROBBER_FADE_TIME, Constants.SCENE_FADE_TIME))
+		_throbber_tween.tween_callback(_throbber.stop)
+
+
+func _setup_throbber() -> void:
+	_throbber.sprite_frames = preload("res://assets/src/ui/throbber.tres")
+	var throbber_size: Vector2 = _throbber.sprite_frames.get_frame_texture(
+		_throbber.animation, _throbber.frame).get_size()
+	_throbber.scale = Vector2(
+		Constants.SCENE_THROBBER_SIZE_PX.x / throbber_size.x, 
+		Constants.SCENE_THROBBER_SIZE_PX.y / throbber_size.y)
+		
+	match Constants.SCENE_THROBBER_ANCHOR:
+		Control.PRESET_BOTTOM_LEFT: 
+			_throbber.position = Vector2(
+				Constants.SCENE_THROBBER_SIZE_PX.x / 2.0 + Constants.SCENE_THROBBER_OFFSET.x,
+				- Constants.SCENE_THROBBER_SIZE_PX.y / 2.0 - Constants.SCENE_THROBBER_OFFSET.y)
+		Control.PRESET_BOTTOM_RIGHT: 
+			_throbber.position = Vector2(
+				- Constants.SCENE_THROBBER_SIZE_PX.x / 2.0 - Constants.SCENE_THROBBER_OFFSET.x,
+				- Constants.SCENE_THROBBER_SIZE_PX.y / 2.0 - Constants.SCENE_THROBBER_OFFSET.y)
+		Control.PRESET_TOP_LEFT: 
+			_throbber.position = Vector2(
+				Constants.SCENE_THROBBER_SIZE_PX.x / 2.0 + Constants.SCENE_THROBBER_OFFSET.x,
+				Constants.SCENE_THROBBER_SIZE_PX.y / 2.0 + Constants.SCENE_THROBBER_OFFSET.y)
+		Control.PRESET_TOP_RIGHT: 
+			_throbber.position = Vector2(
+				- Constants.SCENE_THROBBER_SIZE_PX.x / 2.0 - Constants.SCENE_THROBBER_OFFSET.x,
+				Constants.SCENE_THROBBER_SIZE_PX.y / 2.0 + Constants.SCENE_THROBBER_OFFSET.y)
+		Control.PRESET_CENTER_TOP: 
+			_throbber.position = Vector2(
+				0.0,
+				Constants.SCENE_THROBBER_SIZE_PX.y / 2.0 + Constants.SCENE_THROBBER_OFFSET.y)
+		Control.PRESET_CENTER_LEFT: 
+			_throbber.position = Vector2(
+				Constants.SCENE_THROBBER_SIZE_PX.x / 2.0 + Constants.SCENE_THROBBER_OFFSET.x,
+				0.0)
+		Control.PRESET_CENTER_RIGHT: 
+			_throbber.position = Vector2(
+				- Constants.SCENE_THROBBER_SIZE_PX.x / 2.0 - Constants.SCENE_THROBBER_OFFSET.x,
+				0.0)
+		Control.PRESET_CENTER_BOTTOM: 
+			_throbber.position = Vector2(
+				0.0,
+				- Constants.SCENE_THROBBER_SIZE_PX.y / 2.0 - Constants.SCENE_THROBBER_OFFSET.y)
+		Control.PRESET_CENTER: 
+			_throbber.position = Vector2(
+				Constants.SCENE_THROBBER_SIZE_PX.x / 2.0 + Constants.SCENE_THROBBER_OFFSET.x,
+				Constants.SCENE_THROBBER_SIZE_PX.y / 2.0 + Constants.SCENE_THROBBER_OFFSET.y)
+		_: _throbber.position = Vector2.ZERO
+	
+	_throbber.modulate.a = 0.0
+	var throbber_container := Control.new()
+	throbber_container.set_anchors_preset(Constants.SCENE_THROBBER_ANCHOR)
+	throbber_container.add_child(_throbber)
+	
+	var throbber_layer: CanvasLayer = CanvasLayer.new()
+	throbber_layer.layer = RenderingServer.CANVAS_LAYER_MAX - 1
+	throbber_layer.add_child(throbber_container)
+	add_child(throbber_layer)
+
+
+func _setup_fader() -> void:
+	_fade_rect.anchor_top = 0.0
+	_fade_rect.anchor_left = 0.0
+	_fade_rect.anchor_bottom = 1.0
+	_fade_rect.anchor_right = 1.0
+	_fade_rect.color = Constants.SCENE_FADE_COLOR
+	_fade_rect.modulate.a = 0.0
+	
+	var transition_layer: CanvasLayer = CanvasLayer.new()
+	transition_layer.layer = RenderingServer.CANVAS_LAYER_MAX
+	transition_layer.add_child(_fade_rect)
+	add_child(transition_layer)

@@ -6,6 +6,12 @@ const INT_MIN: int = int(INF)
 
 # Scene
 const SCENE_FADE_TIME: float = 0.5
+const SCENE_FADE_COLOR: Color = Color.BLACK
+const SCENE_THROBBER_DELAY: float = 0.5
+const SCENE_THROBBER_FADE_TIME: float = 0.5
+const SCENE_THROBBER_SIZE_PX: Vector2 = Vector2(32.0, 32.0)
+const SCENE_THROBBER_ANCHOR: Control.LayoutPreset = Control.PRESET_TOP_RIGHT
+const SCENE_THROBBER_OFFSET: Vector2 = Vector2(16.0, 16.0)
 
 # Debug
 const LOG_FILE_PATH: String = "user://debug.log"
