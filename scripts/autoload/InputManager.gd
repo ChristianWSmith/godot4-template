@@ -37,6 +37,22 @@ func subscribe_released(action: String, callable: Callable) -> void:
 	EventBus.subscribe(_get_released_event(action), callable)
 
 
+func unsubscribe_pressed(action: String, callable: Callable) -> void:
+	EventBus.unsubscribe(_get_pressed_event(action), callable)
+
+
+func unsubscribe_released(action: String, callable: Callable) -> void:
+	EventBus.unsubscribe(_get_released_event(action), callable)
+
+
+func once_pressed(action: String, callable: Callable) -> void:
+	EventBus.once(_get_pressed_event(action), callable)
+
+
+func once_released(action: String, callable: Callable) -> void:
+	EventBus.once(_get_released_event(action), callable)
+
+
 func _on_settings_updated() -> void:
 	_apply_bindings(SettingsManager.get_value("input", "bindings") as Dictionary)
 
