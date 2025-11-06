@@ -29,12 +29,12 @@ func dump_bindings() -> Dictionary:
 	return _bindings.duplicate(true)
 
 
-func get_pressed_event(action: String) -> String:
-	return "just_pressed/" + action
+func subscribe_pressed(action: String, callable: Callable) -> void:
+	EventBus.subscribe(_get_pressed_event(action), callable)
 
 
-func get_released_event(action: String) -> String:
-	return "just_released/" + action
+func subscribe_released(action: String, callable: Callable) -> void:
+	EventBus.subscribe(_get_released_event(action), callable)
 
 
 func _on_settings_updated() -> void:
@@ -176,7 +176,15 @@ func _input(event: InputEvent) -> void:
 		if not event.is_action(action):
 			continue
 		if event.is_action_pressed(action):
-			EventBus.emit(get_pressed_event(action))
+			EventBus.emit(_get_pressed_event(action))
 		elif event.is_action_released(action):
-			EventBus.emit(get_released_event(action))
+			EventBus.emit(_get_released_event(action))
 		break
+
+
+func _get_pressed_event(action: String) -> String:
+	return "just_pressed/" + action
+
+
+func _get_released_event(action: String) -> String:
+	return "just_released/" + action
