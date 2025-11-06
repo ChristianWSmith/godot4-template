@@ -29,8 +29,16 @@ func dump_bindings() -> Dictionary:
 	return _bindings.duplicate(true)
 
 
+func get_pressed_event(action: String) -> String:
+	return "just_pressed/" + action
+
+
+func get_released_event(action: String) -> String:
+	return "just_released/" + action
+
+
 func _on_settings_updated() -> void:
-	_apply_bindings(SettingsManager.get_value("input", "bindings"))
+	_apply_bindings(SettingsManager.get_value("input", "bindings") as Dictionary)
 
 
 func _apply_bindings(bindings: Dictionary) -> void:
@@ -73,53 +81,39 @@ func _register_action(action_name: String, event_defs: Array) -> void:
 			InputMap.action_add_event(action_name, ev)
 
 
-func _parse_event_def(event_def: Variant) -> InputEvent:
-	match typeof(event_def):
-		TYPE_STRING:
-			var ev := InputEventKey.new()
-			ev.physical_keycode = OS.find_keycode_from_string(str(event_def))
-			if ev.physical_keycode == 0:
-				DebugManager.log_warn(name, "Unrecognized key binding string: %s" % event_def)
-				return null
-			return ev
+func _parse_event_def(event_def: Dictionary) -> InputEvent:
+	var type_name: String = str(event_def.get("type", ""))
+	match type_name:
+		"Key":
+			var evk: InputEventKey = InputEventKey.new()
+			evk.physical_keycode = int(event_def.get("physical_keycode", 0)) as Key
+			evk.keycode = int(event_def.get("keycode", 0)) as Key
+			evk.alt_pressed = bool(event_def.get("alt", false))
+			evk.shift_pressed = bool(event_def.get("shift", false))
+			evk.ctrl_pressed = bool(event_def.get("ctrl", false))
+			evk.meta_pressed = bool(event_def.get("meta", false))
+			return evk
 
-		TYPE_DICTIONARY:
-			var type_name := str(event_def.get("type", ""))
-			match type_name:
-				"Key":
-					var evk := InputEventKey.new()
-					evk.physical_keycode = int(event_def.get("physical_keycode", 0)) as Key
-					evk.keycode = int(event_def.get("keycode", 0)) as Key
-					evk.alt_pressed = bool(event_def.get("alt", false))
-					evk.shift_pressed = bool(event_def.get("shift", false))
-					evk.ctrl_pressed = bool(event_def.get("ctrl", false))
-					evk.meta_pressed = bool(event_def.get("meta", false))
-					return evk
+		"MouseButton":
+			var evm: InputEventMouseButton = InputEventMouseButton.new()
+			evm.button_index = int(event_def.get("button_index", MOUSE_BUTTON_LEFT)) as MouseButton
+			return evm
 
-				"MouseButton":
-					var evm := InputEventMouseButton.new()
-					evm.button_index = int(event_def.get("button_index", MOUSE_BUTTON_LEFT)) as MouseButton
-					return evm
+		"JoypadButton":
+			var ejb: InputEventJoypadButton = InputEventJoypadButton.new()
+			ejb.button_index = int(event_def.get("button_index", 0)) as JoyButton
+			ejb.device = int(event_def.get("device", 0))
+			return ejb
 
-				"JoypadButton":
-					var ejb := InputEventJoypadButton.new()
-					ejb.button_index = int(event_def.get("button_index", 0)) as JoyButton
-					ejb.device = int(event_def.get("device", 0))
-					return ejb
-
-				"JoypadMotion":
-					var ejm := InputEventJoypadMotion.new()
-					ejm.axis = int(event_def.get("axis", 0)) as JoyAxis
-					ejm.axis_value = float(event_def.get("axis_value", 0.0))
-					ejm.device = int(event_def.get("device", 0))
-					return ejm
-
-				_:
-					DebugManager.log_warn(name, "Unknown event type in dict: %s" % type_name)
-					return null
+		"JoypadMotion":
+			var ejm: InputEventJoypadMotion = InputEventJoypadMotion.new()
+			ejm.axis = int(event_def.get("axis", 0)) as JoyAxis
+			ejm.axis_value = float(event_def.get("axis_value", 0.0))
+			ejm.device = int(event_def.get("device", 0))
+			return ejm
 
 		_:
-			DebugManager.log_warn(name, "Invalid binding entry type: %s" % typeof(event_def))
+			DebugManager.log_warn(name, "Unknown event type in dict: %s" % type_name)
 			return null
 
 
@@ -166,13 +160,23 @@ func _get_project_default_bindings() -> Dictionary:
 		if not prop_name.begins_with("input/"):
 			continue
 
-		var action_name := prop_name.get_slice("/", 1)
-		var action_data: Variant= ProjectSettings.get_setting(prop_name)
+		var action_name: String = prop_name.get_slice("/", 1)
+		var action_data: Variant = ProjectSettings.get_setting(prop_name)
 		if typeof(action_data) == TYPE_DICTIONARY and action_data.has("events"):
-			# Convert events to simple dicts
 			var serialized := []
 			for ev in action_data["events"]:
 				if ev is InputEvent:
 					serialized.append(_serialize_input_event(ev))
 			defaults[action_name] = serialized
 	return defaults
+
+
+func _input(event: InputEvent) -> void:
+	for action in _bindings.keys():
+		if not event.is_action(action):
+			continue
+		if event.is_action_pressed(action):
+			EventBus.emit(get_pressed_event(action))
+		elif event.is_action_released(action):
+			EventBus.emit(get_released_event(action))
+		break
