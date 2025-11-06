@@ -101,18 +101,15 @@ func cloud_list_files() -> Array[String]:
 
 func _queue_write(filename: String, data: PackedByteArray) -> void:
 	_reconciliation_mutex.lock()
-	if filename in _files_to_delete:
-		_files_to_delete.erase(filename)
+	_files_to_delete.erase(filename)
 	_files_to_write[filename] = data
 	_reconciliation_mutex.unlock()
 
 
 func _queue_delete(filename: String) -> void:
 	_reconciliation_mutex.lock()
-	if filename not in _files_to_write:
-		_files_to_write.erase(filename)
-	if filename in _files_to_delete:
-		_files_to_delete[filename] = true
+	_files_to_write.erase(filename)
+	_files_to_delete[filename] = true
 	_reconciliation_mutex.unlock()
 
 
@@ -124,6 +121,8 @@ func _dequeue_reconciliation(filename: String) -> void:
 
 
 func _attempt_reconciliation() -> void:
+	if not is_cloud_available():
+		return
 	_reconciliation_mutex.lock()
 	if not _files_to_delete.is_empty():
 		var successfully_deleted: Array[String] = []
