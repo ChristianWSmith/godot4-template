@@ -49,27 +49,38 @@ func get_data(slot_name: String) -> Dictionary:
 
 
 func delete_slot(slot_name: String) -> Error:
+	var local_result: Error = FAILED
+	var steam_result: Error = FAILED
+	
 	if _slots.has(slot_name):
 		_slots.erase(slot_name)
 
 	var local_file: String = "%s/%s.save" % [Constants.LOCAL_SAVE_PATH, slot_name]
 	if FileAccess.file_exists(local_file):
-		if DirAccess.remove_absolute(local_file) != OK:
-			DebugManager.log_warn(name, "Failed to delete local slot file: %s" % local_file)
-		else:
+		if DirAccess.remove_absolute(local_file) == OK:
 			DebugManager.log_info(name, "Deleted local slot file: %s" % local_file)
+			local_result = OK
+		else:
+			DebugManager.log_warn(name, "Failed to delete local slot file: %s" % local_file)
 	else:
 		DebugManager.log_info(name, "Local slot file does not exist, cannot delete: %s" % local_file)
 
 	if SteamManager.is_cloud_available():
-		if not SteamManager.cloud_delete("%s.save" % slot_name):
-			DebugManager.log_warn(name, "Failed to delete Steam Cloud slot: %s" % slot_name)
-		else:
+		if SteamManager.cloud_delete("%s.save" % slot_name) == OK:
 			DebugManager.log_info(name, "Deleted Steam Cloud slot: %s" % slot_name)
+			steam_result = OK
+		elif Constants.STEAM_REQUIRED:
+			DebugManager.log_warn(name, "Failed to delete Steam Cloud slot, Steam is required: %s" % slot_name)
+		else:
+			DebugManager.log_warn(name, "Failed to delete Steam Cloud slot, but Steam is not required: %s" % slot_name)
+			steam_result = OK
+	elif Constants.STEAM_REQUIRED:
+		DebugManager.log_info(name, "Steam Cloud not active, cannot delete, Steam is required: %s" % slot_name)
 	else:
-		DebugManager.log_info(name, "Steam Cloud not active, cannot delete: %s" % slot_name)
-
-	return OK
+		DebugManager.log_info(name, "Steam Cloud not active, cannot delete, but Steam is not required: %s" % slot_name)
+		steam_result = OK
+	
+	return OK if (steam_result == OK and local_result == OK) else FAILED
 
 
 func _persist_slot(slot_name: String) -> Error:
@@ -95,7 +106,7 @@ func _persist_slot(slot_name: String) -> Error:
 	DebugManager.log_debug(name, "Saved slot locally: %s" % slot_name)
 
 	if SteamManager.is_cloud_available():
-		if SteamManager.cloud_write("%s.save" % slot_name, bytes):
+		if SteamManager.cloud_write("%s.save" % slot_name, bytes) == OK:
 			DebugManager.log_info(name, "Saved slot to Steam Cloud: %s" % slot_name)
 		else:
 			DebugManager.log_warn(name, "Failed to save slot to Steam Cloud: %s" % slot_name)

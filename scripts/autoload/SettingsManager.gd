@@ -69,11 +69,12 @@ func set_values(section: String, keys: Array[String], values: Array[Variant], pe
 	if persist_immediately:
 		save()
 
+
 func save() -> Error:
 	var result: Error
 	_settings = _stamp_settings(_settings)
 	
-	result = _save_local_settings()
+	result = _save_local_settings(_settings)
 	if result != OK:
 		return result
 	
@@ -86,7 +87,7 @@ func save() -> Error:
 
 func reset_to_default() -> void:
 	DebugManager.log_info(name, "Resetting settings to default.")
-	_settings = _generate_defaults()
+	_settings = Constants.DEFAULT_SETTINGS.duplicate(true)
 	save()
 
 
@@ -101,30 +102,38 @@ func _load_settings() -> Error:
 	var steam_settings_timestamp: float = steam_settings.get("meta", {}).get("timestamp", -1.0)
 	var local_settings_timestamp: float = local_settings.get("meta", {}).get("timestamp", -1.0)
 	
-	if steam_settings_timestamp > local_settings_timestamp:
+	var steam_fresher: bool = steam_settings_timestamp > local_settings_timestamp
+	var local_fresher: bool = local_settings_timestamp > steam_settings_timestamp
+	
+	if steam_fresher:
+		DebugManager.log_info(name, "Steam settings are fresher.")
 		_settings = steam_settings
-		if _save_local_settings() == OK:
-			DebugManager.log_info(name, "Updated local settings from Steam.")
-			return OK
-		else:
-			DebugManager.log_error(name, "Failed to update local settings from Steam.")
-			return FAILED
-	elif steam_settings_timestamp < local_settings_timestamp:
+	else:
+		DebugManager.log_info(name, "Local settings are fresher or tied.")
 		_settings = local_settings
+		
+	var migrated_settings: Dictionary = _migrate_settings(_settings)
+	var migrated: bool = not _settings.recursive_equal(migrated_settings, -1)
+	
+	if migrated:
+		DebugManager.log_info(name, "Migrated settings, saving...")
+		_settings = migrated_settings
+		return save()
+	
+	if steam_fresher and _save_local_settings(_settings) == OK:
+		DebugManager.log_info(name, "Updated local settings from Steam.")
+		return OK
+	elif local_fresher:
 		if _save_steam_settings() == OK:
 			DebugManager.log_info(name, "Updated Steam settings from local.")
 			return OK
 		else:
-			if Constants.STEAM_REQUIRED:
-				DebugManager.log_error(name, "Failed to update Steam settings from local, Steam is required.")
-				return FAILED
-			else:
-				DebugManager.log_warn(name, "Failed to update Steam settings from local, but Steam is not required.")
-				return OK
+			DebugManager.log_warn(name, "Failed to update Steam settings from local.")
+			return OK
 	else:
-		_settings = local_settings
-		DebugManager.log_info(name, "Settings loaded successfully, Steam and local in sync.")
+		DebugManager.log_info(name, "Local and Steam settings are in sync.")
 		return OK
+		
 
 
 func _migrate_settings(settings: Dictionary) -> Dictionary:
@@ -136,7 +145,7 @@ func _migrate_settings(settings: Dictionary) -> Dictionary:
 			_: 
 				did_migration = true
 				DebugManager.log_warn(name, "Unknown settings version encountered during migration, loading defaults.")
-				result = _generate_defaults()
+				result = Constants.DEFAULT_SETTINGS.duplicate(true)
 	
 	if did_migration:
 		result = _stamp_settings(result)
@@ -172,7 +181,7 @@ func _load_steam_settings() -> Dictionary:
 			DebugManager.log_debug(name, "Steam settings file was empty.")
 	else:
 		DebugManager.log_info(name, "Steam cloud not available, will not load.")
-	return _migrate_settings(steam_settings)
+	return steam_settings
 
 
 func _load_local_settings() -> Dictionary:
@@ -181,23 +190,19 @@ func _load_local_settings() -> Dictionary:
 	if local_config.load(Constants.LOCAL_SETTINGS_PATH) == OK:
 		DebugManager.log_debug(name, "Local settings file found, loading.")
 		local_settings = _parse_config(local_config)
-		var migrated_local_settings: Dictionary = _migrate_settings(local_settings)
-		if not local_settings.recursive_equal(migrated_local_settings, -1):
-			_settings = migrated_local_settings
-			local_settings = migrated_local_settings
-			save()
 	else:
 		DebugManager.log_warn(name, "No local settings file found. Loading defaults.")
-		_settings = _generate_defaults()
-		save()
+		local_settings = Constants.DEFAULT_SETTINGS.duplicate(true)
+		_save_local_settings(local_settings)
 	return local_settings
 
 
-func _save_local_settings() -> Error:
+func _save_local_settings(settings: Dictionary) -> Error:
 	var config: ConfigFile = ConfigFile.new()
-	for section in _settings.keys():
-		for key in _settings[section].keys():
-			config.set_value(section, key, _settings[section][key])
+	
+	for section in settings.keys():
+		for key in settings[section].keys():
+			config.set_value(section, key, settings[section][key])
 
 	if config.save(Constants.LOCAL_SETTINGS_PATH) != OK:
 		DebugManager.log_error(name, "Failed to save local settings.")
@@ -213,7 +218,7 @@ func _save_steam_settings() -> Error:
 		if local_file:
 			var bytes: PackedByteArray = local_file.get_buffer(local_file.get_length())
 			local_file.close()
-			if SteamManager.cloud_write(Constants.CLOUD_SETTINGS_FILE, bytes):
+			if SteamManager.cloud_write(Constants.CLOUD_SETTINGS_FILE, bytes) == OK:
 				DebugManager.log_info(name, "Settings uploaded to Steam Cloud.")
 				return OK
 			else:
@@ -222,7 +227,12 @@ func _save_steam_settings() -> Error:
 			DebugManager.log_warn(name, "Failed to open local settings file for upload.")
 	else:
 		DebugManager.log_warn(name, "Steam cloud not available, skipping sync.")
-	return FAILED
+	if Constants.STEAM_REQUIRED:
+		DebugManager.log_error(name, "Failed to upload settings to Steam, and Steam is required.")
+		return FAILED
+	else:
+		DebugManager.log_warn(name, "Failed to upload settings to Steam, but Steam is not required.")
+		return OK
 
 
 func _stamp_settings(settings: Dictionary) -> Dictionary:
@@ -232,11 +242,6 @@ func _stamp_settings(settings: Dictionary) -> Dictionary:
 	result["meta"]["version"] = Constants.SETTINGS_VERSION
 	result["meta"]["timestamp"] = Time.get_unix_time_from_system()
 	return result
-
-
-func _generate_defaults() -> Dictionary:
-	var result: Dictionary = Constants.DEFAULT_SETTINGS.duplicate(true)
-	return _stamp_settings(result)
 
 
 func _parse_config(config: ConfigFile) -> Dictionary:

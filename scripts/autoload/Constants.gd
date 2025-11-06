@@ -75,7 +75,9 @@ const DEFAULT_SETTINGS: Dictionary = {
 		"resolution": Vector2i(1152, 648),
 		"max_fps": 0,
 	},
-	"graphics": {},
+	"graphics": {
+		"placeholder": true
+	},
 	"audio": {
 		"master": 1.0,
 		"music": 1.0,
@@ -86,5 +88,7 @@ const DEFAULT_SETTINGS: Dictionary = {
 	"input": {
 		"bindings": DEFAULT_INPUT_BINDINGS_SETTINGS
 	},
-	"gameplay": {}
+	"gameplay": {
+		"placeholder": true
+	}
 }

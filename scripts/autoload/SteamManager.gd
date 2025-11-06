@@ -36,11 +36,7 @@ func _process(_delta: float) -> void:
 
 
 func is_cloud_available() -> bool:
-	return is_active() and Steam.isCloudEnabledForAccount() and Steam.isCloudEnabledForApp()
-
-
-func is_active() -> bool:
-	return Steam.isSteamRunning() and Steam.loggedOn()
+	return Steam.isSteamRunning() and Steam.loggedOn() and Steam.isCloudEnabledForAccount() and Steam.isCloudEnabledForApp()
 
 
 func cloud_write(file_path: String, data: PackedByteArray) -> Error:
@@ -61,7 +57,6 @@ func cloud_delete(filename: String) -> Error:
 	if not is_cloud_available():
 		DebugManager.log_warn(name, "Steam Cloud not available. Cannot delete %s" % filename)
 		return FAILED
-	
 	if Steam.fileDelete(filename):
 		DebugManager.log_info(name, "Deleted Steam Cloud file: %s" % filename)
 		return OK
