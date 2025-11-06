@@ -7,6 +7,8 @@ var _loaded: bool = false
 
 
 func initialize() -> Error:
+	super()
+	DebugManager.log_info(name, "Initializing...")
 	_reset_state()
 	return OK
 
