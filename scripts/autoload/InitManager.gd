@@ -32,6 +32,14 @@ func initialize() -> Error:
 	if result != OK:
 		return result
 	
+	result = AudioManager.initialize()
+	if result != OK:
+		return result
+	
+	result = SceneManager.initialize()
+	if result != OK:
+		return result
+	
 	result = SettingsManager.initialize()
 	if result != OK:
 		return result
