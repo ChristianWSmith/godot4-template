@@ -1,5 +1,9 @@
 extends Node
 
+# General
+const INT_MAX: int = int(INF) - 1
+const INT_MIN: int = int(INF)
+
 # Debug
 const LOG_FILE_PATH: String = "user://debug.log"
 
