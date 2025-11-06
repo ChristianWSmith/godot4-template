@@ -54,6 +54,7 @@ func cloud_write(filename: String, data: PackedByteArray) -> Error:
 		return FAILED
 	if Steam.fileWrite(filename, data):
 		DebugManager.log_info(name, "Wrote Steam Cloud file: %s" % filename)
+		_dequeue_reconciliation(filename)
 		return OK
 	else:
 		DebugManager.log_warn(name, "Failed to write Steam Cloud file: %s" % filename)
@@ -74,6 +75,7 @@ func cloud_delete(filename: String) -> Error:
 		return FAILED
 	if Steam.fileDelete(filename):
 		DebugManager.log_info(name, "Deleted Steam Cloud file: %s" % filename)
+		_dequeue_reconciliation(filename)
 		return OK
 	else:
 		DebugManager.log_warn(name, "Failed to delete Steam Cloud file: %s" % filename)
@@ -111,6 +113,13 @@ func _queue_delete(filename: String) -> void:
 		_files_to_write.erase(filename)
 	if filename in _files_to_delete:
 		_files_to_delete[filename] = true
+	_reconciliation_mutex.unlock()
+
+
+func _dequeue_reconciliation(filename: String) -> void:
+	_reconciliation_mutex.lock()
+	_files_to_delete.erase(filename)
+	_files_to_write.erase(filename)
 	_reconciliation_mutex.unlock()
 
 
