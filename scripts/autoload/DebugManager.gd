@@ -1,14 +1,28 @@
 extends BaseManager
 
-enum LogLevel { DEBUG, INFO, WARN, ERROR, FATAL }
+enum LogLevel { DEBUG, INFO, WARN, ERROR, FATAL, NONE }
 
-var _current_level: LogLevel = LogLevel.DEBUG
+var _current_level: LogLevel = LogLevel.NONE
 var _log_to_file: bool = false
 var _file_path: String = Constants.LOG_FILE_PATH
 var _file: FileAccess = null
 
 func initialize() -> Error:
 	super()
+	var args: PackedStringArray = OS.get_cmdline_args()
+	for arg in args:
+		if arg.to_lower().begins_with("--log-level="):
+			var level: String = arg.split("=")[1]
+			match level.to_lower():
+				"debug": _current_level = LogLevel.DEBUG
+				"info": _current_level = LogLevel.INFO
+				"warn": _current_level = LogLevel.WARN
+				"error": _current_level = LogLevel.ERROR
+				"fatal": _current_level = LogLevel.FATAL
+				_: _current_level = LogLevel.NONE
+		elif arg.to_lower().begins_with("--log-file="):
+			_file_path = arg.split("=")[1]
+			_log_to_file = true
 	_clear_log_file()
 	_open_log_file()
 	_log_internal(LogLevel.INFO, name, "Initialized and ready.")
@@ -28,14 +42,6 @@ func set_log_to_file(enabled: bool, path: String = Constants.LOG_FILE_PATH) -> v
 	else:
 		_close_log_file()
 	_log_internal(LogLevel.INFO, name, "File logging %s (%s)" % ["enabled" if enabled else "disabled", _file_path])
-
-
-func _clear_log_file() -> void:
-	if FileAccess.file_exists(_file_path):
-		var f = FileAccess.open(_file_path, FileAccess.WRITE)
-		f.store_string("")
-		f.close()
-		_log_internal(LogLevel.INFO, name, "Cleared log file: %s" % _file_path)
 
 
 func log_debug(source: String, message: String) -> void:
@@ -58,6 +64,14 @@ func log_fatal(source: String, message: String) -> void:
 	_log_internal(LogLevel.FATAL, source, message)
 
 
+func _clear_log_file() -> void:
+	if FileAccess.file_exists(_file_path):
+		var f = FileAccess.open(_file_path, FileAccess.WRITE)
+		f.store_string("")
+		f.close()
+		_log_internal(LogLevel.INFO, name, "Cleared log file: %s" % _file_path)
+
+
 func _log_internal(level: LogLevel, source: String, message: String) -> void:
 	if level < _current_level:
 		return
@@ -70,9 +84,9 @@ func _log_internal(level: LogLevel, source: String, message: String) -> void:
 
 	match level:
 		LogLevel.DEBUG:
-			print_rich("[color=green]%s[/color]" % formatted)
-		LogLevel.INFO:
 			print_rich("[color=cyan]%s[/color]" % formatted)
+		LogLevel.INFO:
+			print_rich("[color=green]%s[/color]" % formatted)
 		LogLevel.WARN:
 			print_rich("[color=yellow]%s[/color]" % formatted)
 		LogLevel.ERROR:
@@ -84,7 +98,7 @@ func _log_internal(level: LogLevel, source: String, message: String) -> void:
 		_file.store_line(formatted)
 		_file.flush()
 
-	if EventBus:
+	if source != EventBus.name:
 		var payload = {
 			"timestamp": timestamp,
 			"level": level_str,
@@ -105,8 +119,8 @@ func _open_log_file() -> void:
 	if _file:
 		_file.store_line("----- Debug Log Started: %s -----" % Time.get_datetime_string_from_system())
 	else:
-		push_warning("[%s] Failed to open log file: %s" % name, _file_path)
-		CrashReport.crash(name, "Failed to open log file: %s" % _file_path)
+		_file_path = Constants.LOG_FILE_PATH
+		_open_log_file()
 
 
 func _close_log_file() -> void:

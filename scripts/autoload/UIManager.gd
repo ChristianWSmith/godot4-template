@@ -20,7 +20,7 @@ func initialize() -> Error:
 
 func open_ui(ui_name: String) -> void:
 	if not ui_nodes.has(ui_name):
-		DebugManager.log_error(name, "No UI registered with name '%s'" % name)
+		DebugManager.log_error(name, "No UI registered with name '%s'" % ui_name)
 		return
 
 	DebugManager.log_debug(name, "Opening UI '%s'" % ui_name)
@@ -32,6 +32,7 @@ func open_ui(ui_name: String) -> void:
 	ui_node.visible = true
 	_activate_ui(ui_node)
 	menu_stack.append(ui_name)
+	EventBus.emit(get_ui_open_event(ui_name))
 
 
 func close_ui() -> void:
@@ -45,6 +46,7 @@ func close_ui() -> void:
 
 	if menu_stack.size() > 0:
 		_activate_ui(ui_nodes[menu_stack[-1]])
+	EventBus.emit(get_ui_close_event(closing_name))
 
 
 func close_specific(ui_name: String) -> void:
@@ -56,21 +58,41 @@ func close_specific(ui_name: String) -> void:
 		node.visible = false
 		if menu_stack.size() > 0:
 			_activate_ui(ui_nodes[menu_stack[-1]])
+		EventBus.emit(get_ui_close_event(ui_name))
+
+
+func get_ui(ui_name: String) -> Control:
+	return ui_nodes.get(ui_name, null)
+
+
+func get_top_ui() -> Control:
+	if menu_stack.size() == 0:
+		return null
+	return ui_nodes[menu_stack[-1]]
+
+
+func get_ui_open_event(ui_name: String) -> String:
+	if ui_name not in ui_nodes:
+		DebugManager.log_warn(name, "No open event for UI '%s'" % ui_name)
+		return ""
+	return "ui_open/" + ui_name
+
+
+func get_ui_close_event(ui_name: String) -> String:
+	if ui_name not in ui_nodes:
+		DebugManager.log_warn(name, "No close event for UI '%s'" % ui_name)
+		return ""
+	return "ui_close/" + ui_name
 
 
 func _activate_ui(ui_node: Control) -> void:
 	ui_node.set_process(true)
 	ui_node.set_process_input(true)
 	ui_node.set_process_unhandled_input(true)
-	ui_node.visibility_layer += 1
+	ui_node.visibility_layer = menu_stack.size()
 
 
 func _deactivate_ui(ui_node: Control) -> void:
 	ui_node.set_process(false)
 	ui_node.set_process_input(false)
 	ui_node.set_process_unhandled_input(false)
-	ui_node.visibility_layer -= 1
-
-
-func get_ui(ui_name: String) -> Control:
-	return ui_nodes.get(ui_name, null)

@@ -57,6 +57,8 @@ func _once_wrapper(data: Variant, event_name: String, callable: Callable) -> voi
 
 
 func emit(event_name: String, data: Variant = null) -> void:
+	if event_name != "debug_log":
+		DebugManager.log_debug(name, "emit %s" % event_name)
 	if _subscribers.has(event_name):
 		var to_call: Array = _subscribers[event_name].duplicate()
 		for callable in to_call:

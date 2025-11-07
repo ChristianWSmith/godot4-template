@@ -51,6 +51,10 @@ shader_language/warnings/treat_warnings_as_errors=true
 
 window/subwindows/embed_subwindows=false
 
+[editor]
+
+run/main_run_args="--log-level=DEBUG"
+
 [gui]
 
 theme/custom="uid://ctqknopqbjr8m"
