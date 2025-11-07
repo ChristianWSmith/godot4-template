@@ -10,28 +10,58 @@ anchor_bottom = 0.5
 grow_horizontal = 2
 grow_vertical = 2
 
-[node name="TabContainer" type="TabContainer" parent="."]
+[node name="Panel" type="Panel" parent="."]
 layout_mode = 1
 anchors_preset = 8
 anchor_left = 0.5
 anchor_top = 0.5
 anchor_right = 0.5
 anchor_bottom = 0.5
-offset_left = -256.0
-offset_top = -192.0
-offset_right = 256.0
-offset_bottom = 192.0
+offset_left = -272.0
+offset_top = -208.0
+offset_right = 272.0
+offset_bottom = 208.0
 grow_horizontal = 2
 grow_vertical = 2
+
+[node name="VBoxContainer" type="VBoxContainer" parent="Panel"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="MarginContainer" type="MarginContainer" parent="Panel/VBoxContainer"]
+layout_mode = 2
 size_flags_vertical = 3
-tab_alignment = 1
+theme_override_constants/margin_left = 16
+theme_override_constants/margin_top = 16
+theme_override_constants/margin_right = 16
+theme_override_constants/margin_bottom = 16
+
+[node name="VBoxContainer" type="VBoxContainer" parent="Panel/VBoxContainer/MarginContainer"]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="Panel/VBoxContainer/MarginContainer/VBoxContainer"]
+layout_mode = 2
+text = "Settings"
+horizontal_alignment = 1
+
+[node name="HSeparator" type="HSeparator" parent="Panel/VBoxContainer/MarginContainer/VBoxContainer"]
+visible = false
+layout_mode = 2
+
+[node name="TabContainer" type="TabContainer" parent="Panel/VBoxContainer/MarginContainer/VBoxContainer"]
+layout_mode = 2
+size_flags_vertical = 3
 current_tab = 0
 
-[node name="Audio" type="TabBar" parent="TabContainer"]
+[node name="Audio" type="TabBar" parent="Panel/VBoxContainer/MarginContainer/VBoxContainer/TabContainer"]
 layout_mode = 2
 metadata/_tab_index = 0
 
-[node name="MarginContainer" type="MarginContainer" parent="TabContainer/Audio"]
+[node name="MarginContainer" type="MarginContainer" parent="Panel/VBoxContainer/MarginContainer/VBoxContainer/TabContainer/Audio"]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -43,100 +73,101 @@ theme_override_constants/margin_top = 16
 theme_override_constants/margin_right = 16
 theme_override_constants/margin_bottom = 16
 
-[node name="VBoxContainer" type="VBoxContainer" parent="TabContainer/Audio/MarginContainer"]
+[node name="VBoxContainer" type="VBoxContainer" parent="Panel/VBoxContainer/MarginContainer/VBoxContainer/TabContainer/Audio/MarginContainer"]
 layout_mode = 2
 
-[node name="GridContainer" type="GridContainer" parent="TabContainer/Audio/MarginContainer/VBoxContainer"]
-layout_mode = 2
-columns = 3
-
-[node name="AudioMasterLabel" type="Label" parent="TabContainer/Audio/MarginContainer/VBoxContainer/GridContainer"]
-layout_mode = 2
-text = "Master"
-
-[node name="AudioMasterSlider" type="HSlider" parent="TabContainer/Audio/MarginContainer/VBoxContainer/GridContainer"]
-layout_mode = 2
-size_flags_horizontal = 3
-size_flags_vertical = 4
-
-[node name="AudioMasterSpinbox" type="SpinBox" parent="TabContainer/Audio/MarginContainer/VBoxContainer/GridContainer"]
-layout_mode = 2
-
-[node name="AudioMusicLabel" type="Label" parent="TabContainer/Audio/MarginContainer/VBoxContainer/GridContainer"]
-layout_mode = 2
-text = "Music"
-
-[node name="AudioMusicSlide" type="HSlider" parent="TabContainer/Audio/MarginContainer/VBoxContainer/GridContainer"]
-layout_mode = 2
-size_flags_horizontal = 3
-size_flags_vertical = 4
-
-[node name="AudioMusicSpinbox" type="SpinBox" parent="TabContainer/Audio/MarginContainer/VBoxContainer/GridContainer"]
-layout_mode = 2
-
-[node name="AudioSFXLabel" type="Label" parent="TabContainer/Audio/MarginContainer/VBoxContainer/GridContainer"]
-layout_mode = 2
-text = "SFX"
-
-[node name="AudioSFXSlider" type="HSlider" parent="TabContainer/Audio/MarginContainer/VBoxContainer/GridContainer"]
-layout_mode = 2
-size_flags_horizontal = 3
-size_flags_vertical = 4
-
-[node name="AudioSFXSpinbox" type="SpinBox" parent="TabContainer/Audio/MarginContainer/VBoxContainer/GridContainer"]
-layout_mode = 2
-
-[node name="AudioVoiceLabel" type="Label" parent="TabContainer/Audio/MarginContainer/VBoxContainer/GridContainer"]
-layout_mode = 2
-text = "Voice"
-
-[node name="AudioVoiceSlider" type="HSlider" parent="TabContainer/Audio/MarginContainer/VBoxContainer/GridContainer"]
-layout_mode = 2
-size_flags_horizontal = 3
-size_flags_vertical = 4
-
-[node name="AudioVoiceSpinbox" type="SpinBox" parent="TabContainer/Audio/MarginContainer/VBoxContainer/GridContainer"]
-layout_mode = 2
-
-[node name="AudioUILabel" type="Label" parent="TabContainer/Audio/MarginContainer/VBoxContainer/GridContainer"]
-layout_mode = 2
-text = "UI"
-
-[node name="AudioUISlider" type="HSlider" parent="TabContainer/Audio/MarginContainer/VBoxContainer/GridContainer"]
-layout_mode = 2
-size_flags_horizontal = 3
-size_flags_vertical = 4
-
-[node name="AudioUISpinbox" type="SpinBox" parent="TabContainer/Audio/MarginContainer/VBoxContainer/GridContainer"]
-layout_mode = 2
-
-[node name="Control" type="Control" parent="TabContainer/Audio/MarginContainer/VBoxContainer"]
+[node name="ScrollContainer" type="ScrollContainer" parent="Panel/VBoxContainer/MarginContainer/VBoxContainer/TabContainer/Audio/MarginContainer/VBoxContainer"]
 layout_mode = 2
 size_flags_vertical = 3
 
-[node name="HBoxContainer" type="HBoxContainer" parent="TabContainer/Audio/MarginContainer/VBoxContainer"]
+[node name="GridContainer" type="GridContainer" parent="Panel/VBoxContainer/MarginContainer/VBoxContainer/TabContainer/Audio/MarginContainer/VBoxContainer/ScrollContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+columns = 3
+
+[node name="AudioMasterLabel" type="Label" parent="Panel/VBoxContainer/MarginContainer/VBoxContainer/TabContainer/Audio/MarginContainer/VBoxContainer/ScrollContainer/GridContainer"]
+layout_mode = 2
+text = "Master"
+
+[node name="AudioMasterSlider" type="HSlider" parent="Panel/VBoxContainer/MarginContainer/VBoxContainer/TabContainer/Audio/MarginContainer/VBoxContainer/ScrollContainer/GridContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 4
+
+[node name="AudioMasterSpinbox" type="SpinBox" parent="Panel/VBoxContainer/MarginContainer/VBoxContainer/TabContainer/Audio/MarginContainer/VBoxContainer/ScrollContainer/GridContainer"]
 layout_mode = 2
 
-[node name="AudioCloseButton" type="Button" parent="TabContainer/Audio/MarginContainer/VBoxContainer/HBoxContainer"]
+[node name="AudioMusicLabel" type="Label" parent="Panel/VBoxContainer/MarginContainer/VBoxContainer/TabContainer/Audio/MarginContainer/VBoxContainer/ScrollContainer/GridContainer"]
+layout_mode = 2
+text = "Music"
+
+[node name="AudioMusicSlide" type="HSlider" parent="Panel/VBoxContainer/MarginContainer/VBoxContainer/TabContainer/Audio/MarginContainer/VBoxContainer/ScrollContainer/GridContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 4
+
+[node name="AudioMusicSpinbox" type="SpinBox" parent="Panel/VBoxContainer/MarginContainer/VBoxContainer/TabContainer/Audio/MarginContainer/VBoxContainer/ScrollContainer/GridContainer"]
+layout_mode = 2
+
+[node name="AudioSFXLabel" type="Label" parent="Panel/VBoxContainer/MarginContainer/VBoxContainer/TabContainer/Audio/MarginContainer/VBoxContainer/ScrollContainer/GridContainer"]
+layout_mode = 2
+text = "SFX"
+
+[node name="AudioSFXSlider" type="HSlider" parent="Panel/VBoxContainer/MarginContainer/VBoxContainer/TabContainer/Audio/MarginContainer/VBoxContainer/ScrollContainer/GridContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 4
+
+[node name="AudioSFXSpinbox" type="SpinBox" parent="Panel/VBoxContainer/MarginContainer/VBoxContainer/TabContainer/Audio/MarginContainer/VBoxContainer/ScrollContainer/GridContainer"]
+layout_mode = 2
+
+[node name="AudioVoiceLabel" type="Label" parent="Panel/VBoxContainer/MarginContainer/VBoxContainer/TabContainer/Audio/MarginContainer/VBoxContainer/ScrollContainer/GridContainer"]
+layout_mode = 2
+text = "Voice"
+
+[node name="AudioVoiceSlider" type="HSlider" parent="Panel/VBoxContainer/MarginContainer/VBoxContainer/TabContainer/Audio/MarginContainer/VBoxContainer/ScrollContainer/GridContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 4
+
+[node name="AudioVoiceSpinbox" type="SpinBox" parent="Panel/VBoxContainer/MarginContainer/VBoxContainer/TabContainer/Audio/MarginContainer/VBoxContainer/ScrollContainer/GridContainer"]
+layout_mode = 2
+
+[node name="AudioUILabel" type="Label" parent="Panel/VBoxContainer/MarginContainer/VBoxContainer/TabContainer/Audio/MarginContainer/VBoxContainer/ScrollContainer/GridContainer"]
+layout_mode = 2
+text = "UI"
+
+[node name="AudioUISlider" type="HSlider" parent="Panel/VBoxContainer/MarginContainer/VBoxContainer/TabContainer/Audio/MarginContainer/VBoxContainer/ScrollContainer/GridContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 4
+
+[node name="AudioUISpinbox" type="SpinBox" parent="Panel/VBoxContainer/MarginContainer/VBoxContainer/TabContainer/Audio/MarginContainer/VBoxContainer/ScrollContainer/GridContainer"]
+layout_mode = 2
+
+[node name="HBoxContainer" type="HBoxContainer" parent="Panel/VBoxContainer/MarginContainer/VBoxContainer/TabContainer/Audio/MarginContainer/VBoxContainer"]
+layout_mode = 2
+
+[node name="AudioCloseButton" type="Button" parent="Panel/VBoxContainer/MarginContainer/VBoxContainer/TabContainer/Audio/MarginContainer/VBoxContainer/HBoxContainer"]
 unique_name_in_owner = true
 layout_mode = 2
 text = "Close"
 
-[node name="Control" type="Control" parent="TabContainer/Audio/MarginContainer/VBoxContainer/HBoxContainer"]
+[node name="Control" type="Control" parent="Panel/VBoxContainer/MarginContainer/VBoxContainer/TabContainer/Audio/MarginContainer/VBoxContainer/HBoxContainer"]
 layout_mode = 2
 size_flags_horizontal = 3
 
-[node name="AudioApplyButton" type="Button" parent="TabContainer/Audio/MarginContainer/VBoxContainer/HBoxContainer"]
+[node name="AudioApplyButton" type="Button" parent="Panel/VBoxContainer/MarginContainer/VBoxContainer/TabContainer/Audio/MarginContainer/VBoxContainer/HBoxContainer"]
 unique_name_in_owner = true
 layout_mode = 2
 text = "Apply"
 
-[node name="Video" type="TabBar" parent="TabContainer"]
+[node name="Video" type="TabBar" parent="Panel/VBoxContainer/MarginContainer/VBoxContainer/TabContainer"]
 visible = false
 layout_mode = 2
 metadata/_tab_index = 1
 
-[node name="Input" type="TabBar" parent="TabContainer"]
+[node name="Input" type="TabBar" parent="Panel/VBoxContainer/MarginContainer/VBoxContainer/TabContainer"]
 visible = false
 layout_mode = 2
 metadata/_tab_index = 2
