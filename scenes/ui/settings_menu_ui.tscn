@@ -1,24 +1,84 @@
-[gd_scene format=3 uid="uid://dl828qmy0xo1f"]
+[gd_scene load_steps=2 format=3 uid="uid://dl828qmy0xo1f"]
+
+[sub_resource type="NoiseTexture2D" id="NoiseTexture2D_2iwuv"]
+width = 1
+height = 1
 
 [node name="SettingsMenuUI" type="Control"]
 layout_mode = 3
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
 grow_horizontal = 2
 grow_vertical = 2
 
-[node name="Label" type="Label" parent="."]
+[node name="CenterContainer" type="CenterContainer" parent="."]
 layout_mode = 1
 anchors_preset = 8
 anchor_left = 0.5
 anchor_top = 0.5
 anchor_right = 0.5
 anchor_bottom = 0.5
-offset_left = -30.5
-offset_top = -11.5
-offset_right = 30.5
-offset_bottom = 11.5
+offset_left = -256.0
+offset_top = -128.0
+offset_right = 256.0
+offset_bottom = 128.0
 grow_horizontal = 2
 grow_vertical = 2
+
+[node name="MarginContainer2" type="MarginContainer" parent="CenterContainer"]
+custom_minimum_size = Vector2(544, 288)
+layout_mode = 2
+
+[node name="TextureRect" type="TextureRect" parent="CenterContainer/MarginContainer2"]
+layout_mode = 2
+texture = SubResource("NoiseTexture2D_2iwuv")
+stretch_mode = 1
+
+[node name="MarginContainer" type="MarginContainer" parent="CenterContainer"]
+custom_minimum_size = Vector2(512, 256)
+layout_mode = 2
+
+[node name="VBoxContainer" type="VBoxContainer" parent="CenterContainer/MarginContainer"]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="CenterContainer/MarginContainer/VBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 4
 text = "Settings"
+
+[node name="TabContainer" type="TabContainer" parent="CenterContainer/MarginContainer/VBoxContainer"]
+layout_mode = 2
+size_flags_vertical = 3
+tab_alignment = 1
+current_tab = 0
+
+[node name="Video" type="TabBar" parent="CenterContainer/MarginContainer/VBoxContainer/TabContainer"]
+layout_mode = 2
+metadata/_tab_index = 0
+
+[node name="Audio" type="TabBar" parent="CenterContainer/MarginContainer/VBoxContainer/TabContainer"]
+visible = false
+layout_mode = 2
+metadata/_tab_index = 1
+
+[node name="Input" type="TabBar" parent="CenterContainer/MarginContainer/VBoxContainer/TabContainer"]
+visible = false
+layout_mode = 2
+metadata/_tab_index = 2
+
+[node name="CenterContainer" type="CenterContainer" parent="CenterContainer/MarginContainer/VBoxContainer"]
+layout_mode = 2
+
+[node name="HBoxContainer" type="HBoxContainer" parent="CenterContainer/MarginContainer/VBoxContainer/CenterContainer"]
+layout_mode = 2
+
+[node name="Button" type="Button" parent="CenterContainer/MarginContainer/VBoxContainer/CenterContainer/HBoxContainer"]
+layout_mode = 2
+text = "Close"
+
+[node name="Button2" type="Button" parent="CenterContainer/MarginContainer/VBoxContainer/CenterContainer/HBoxContainer"]
+layout_mode = 2
+text = "Apply"
