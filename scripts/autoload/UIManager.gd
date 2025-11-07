@@ -89,7 +89,7 @@ func _activate_ui(ui_node: Control) -> void:
 	ui_node.set_process(true)
 	ui_node.set_process_input(true)
 	ui_node.set_process_unhandled_input(true)
-	ui_node.visibility_layer = menu_stack.size()
+	# ui_node.visibility_layer = menu_stack.size() + 1
 
 
 func _deactivate_ui(ui_node: Control) -> void:

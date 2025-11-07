@@ -163,6 +163,7 @@ func _setup_fader() -> void:
 	_fade_rect.anchor_right = 1.0
 	_fade_rect.color = Constants.SCENE_FADE_COLOR
 	_fade_rect.modulate.a = 0.0
+	_fade_rect.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	
 	var transition_layer: CanvasLayer = CanvasLayer.new()
 	transition_layer.layer = RenderingServer.CANVAS_LAYER_MAX
