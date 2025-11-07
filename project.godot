@@ -42,6 +42,8 @@ CrashReport="*res://scripts/autoload/CrashReport.gd"
 VideoManager="*res://scripts/autoload/VideoManager.gd"
 InitManager="*res://scripts/autoload/InitManager.gd"
 UIManager="*res://scripts/autoload/UIManager.gd"
+GameplayManager="*res://scripts/autoload/GameplayManager.gd"
+GraphicsManager="*res://scripts/autoload/GraphicsManager.gd"
 
 [debug]
 

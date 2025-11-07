@@ -16,7 +16,7 @@ var _bindings: Dictionary = {}
 func initialize() -> Error:
 	super()
 	DebugManager.log_info(name, "Initializing InputManager...")
-	EventBus.subscribe(SettingsManager.get_section_event("input"), _on_settings_updated)
+	EventBus.subscribe(SettingsManager.get_section_event("input"), _on_input_settings_updated)
 	return OK
 
 
@@ -53,7 +53,7 @@ func once_released(action: String, callable: Callable) -> void:
 	EventBus.once(_get_released_event(action), callable)
 
 
-func _on_settings_updated() -> void:
+func _on_input_settings_updated() -> void:
 	_apply_bindings(SettingsManager.get_value("input", "bindings") as Dictionary)
 
 

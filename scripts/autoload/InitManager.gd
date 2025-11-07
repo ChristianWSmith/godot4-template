@@ -44,6 +44,14 @@ func initialize() -> Error:
 	if result != OK:
 		return result
 	
+	result = GameplayManager.initialize()
+	if result != OK:
+		return result
+	
+	result = GraphicsManager.initialize()
+	if result != OK:
+		return result
+	
 	result = SettingsManager.initialize()
 	if result != OK:
 		return result

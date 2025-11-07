@@ -3,11 +3,11 @@ extends BaseManager
 func initialize() -> Error:
 	super()
 	DebugManager.log_info(name, "Initializing...")
-	EventBus.subscribe(SettingsManager.get_section_event("video"), apply_video_settings)
+	EventBus.subscribe(SettingsManager.get_section_event("video"), _on_video_settings_updated)
 	return OK
 
 
-func apply_video_settings() -> void:
+func _on_video_settings_updated() -> void:
 	var fullscreen: bool = SettingsManager.get_value("video", "fullscreen")
 	var borderless: bool = SettingsManager.get_value("video", "borderless")
 	var vsync: bool = SettingsManager.get_value("video", "vsync")
