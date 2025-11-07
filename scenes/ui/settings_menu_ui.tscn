@@ -1,8 +1,4 @@
-[gd_scene load_steps=2 format=3 uid="uid://dl828qmy0xo1f"]
-
-[sub_resource type="NoiseTexture2D" id="NoiseTexture2D_2iwuv"]
-width = 1
-height = 1
+[gd_scene format=3 uid="uid://dl828qmy0xo1f"]
 
 [node name="SettingsMenuUI" type="Control"]
 layout_mode = 3
@@ -14,7 +10,7 @@ anchor_bottom = 0.5
 grow_horizontal = 2
 grow_vertical = 2
 
-[node name="CenterContainer" type="CenterContainer" parent="."]
+[node name="TabContainer" type="TabContainer" parent="."]
 layout_mode = 1
 anchors_preset = 8
 anchor_left = 0.5
@@ -22,63 +18,125 @@ anchor_top = 0.5
 anchor_right = 0.5
 anchor_bottom = 0.5
 offset_left = -256.0
-offset_top = -128.0
+offset_top = -192.0
 offset_right = 256.0
-offset_bottom = 128.0
+offset_bottom = 192.0
 grow_horizontal = 2
 grow_vertical = 2
-
-[node name="MarginContainer2" type="MarginContainer" parent="CenterContainer"]
-custom_minimum_size = Vector2(544, 288)
-layout_mode = 2
-
-[node name="TextureRect" type="TextureRect" parent="CenterContainer/MarginContainer2"]
-layout_mode = 2
-texture = SubResource("NoiseTexture2D_2iwuv")
-stretch_mode = 1
-
-[node name="MarginContainer" type="MarginContainer" parent="CenterContainer"]
-custom_minimum_size = Vector2(512, 256)
-layout_mode = 2
-
-[node name="VBoxContainer" type="VBoxContainer" parent="CenterContainer/MarginContainer"]
-layout_mode = 2
-
-[node name="Label" type="Label" parent="CenterContainer/MarginContainer/VBoxContainer"]
-layout_mode = 2
-size_flags_horizontal = 4
-text = "Settings"
-
-[node name="TabContainer" type="TabContainer" parent="CenterContainer/MarginContainer/VBoxContainer"]
-layout_mode = 2
 size_flags_vertical = 3
 tab_alignment = 1
 current_tab = 0
 
-[node name="Video" type="TabBar" parent="CenterContainer/MarginContainer/VBoxContainer/TabContainer"]
+[node name="Audio" type="TabBar" parent="TabContainer"]
 layout_mode = 2
 metadata/_tab_index = 0
 
-[node name="Audio" type="TabBar" parent="CenterContainer/MarginContainer/VBoxContainer/TabContainer"]
+[node name="MarginContainer" type="MarginContainer" parent="TabContainer/Audio"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/margin_left = 16
+theme_override_constants/margin_top = 16
+theme_override_constants/margin_right = 16
+theme_override_constants/margin_bottom = 16
+
+[node name="VBoxContainer" type="VBoxContainer" parent="TabContainer/Audio/MarginContainer"]
+layout_mode = 2
+
+[node name="GridContainer" type="GridContainer" parent="TabContainer/Audio/MarginContainer/VBoxContainer"]
+layout_mode = 2
+columns = 3
+
+[node name="AudioMasterLabel" type="Label" parent="TabContainer/Audio/MarginContainer/VBoxContainer/GridContainer"]
+layout_mode = 2
+text = "Master"
+
+[node name="AudioMasterSlider" type="HSlider" parent="TabContainer/Audio/MarginContainer/VBoxContainer/GridContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 4
+
+[node name="AudioMasterSpinbox" type="SpinBox" parent="TabContainer/Audio/MarginContainer/VBoxContainer/GridContainer"]
+layout_mode = 2
+
+[node name="AudioMusicLabel" type="Label" parent="TabContainer/Audio/MarginContainer/VBoxContainer/GridContainer"]
+layout_mode = 2
+text = "Music"
+
+[node name="AudioMusicSlide" type="HSlider" parent="TabContainer/Audio/MarginContainer/VBoxContainer/GridContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 4
+
+[node name="AudioMusicSpinbox" type="SpinBox" parent="TabContainer/Audio/MarginContainer/VBoxContainer/GridContainer"]
+layout_mode = 2
+
+[node name="AudioSFXLabel" type="Label" parent="TabContainer/Audio/MarginContainer/VBoxContainer/GridContainer"]
+layout_mode = 2
+text = "SFX"
+
+[node name="AudioSFXSlider" type="HSlider" parent="TabContainer/Audio/MarginContainer/VBoxContainer/GridContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 4
+
+[node name="AudioSFXSpinbox" type="SpinBox" parent="TabContainer/Audio/MarginContainer/VBoxContainer/GridContainer"]
+layout_mode = 2
+
+[node name="AudioVoiceLabel" type="Label" parent="TabContainer/Audio/MarginContainer/VBoxContainer/GridContainer"]
+layout_mode = 2
+text = "Voice"
+
+[node name="AudioVoiceSlider" type="HSlider" parent="TabContainer/Audio/MarginContainer/VBoxContainer/GridContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 4
+
+[node name="AudioVoiceSpinbox" type="SpinBox" parent="TabContainer/Audio/MarginContainer/VBoxContainer/GridContainer"]
+layout_mode = 2
+
+[node name="AudioUILabel" type="Label" parent="TabContainer/Audio/MarginContainer/VBoxContainer/GridContainer"]
+layout_mode = 2
+text = "UI"
+
+[node name="AudioUISlider" type="HSlider" parent="TabContainer/Audio/MarginContainer/VBoxContainer/GridContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 4
+
+[node name="AudioUISpinbox" type="SpinBox" parent="TabContainer/Audio/MarginContainer/VBoxContainer/GridContainer"]
+layout_mode = 2
+
+[node name="Control" type="Control" parent="TabContainer/Audio/MarginContainer/VBoxContainer"]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="HBoxContainer" type="HBoxContainer" parent="TabContainer/Audio/MarginContainer/VBoxContainer"]
+layout_mode = 2
+
+[node name="AudioCloseButton" type="Button" parent="TabContainer/Audio/MarginContainer/VBoxContainer/HBoxContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Close"
+
+[node name="Control" type="Control" parent="TabContainer/Audio/MarginContainer/VBoxContainer/HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="AudioApplyButton" type="Button" parent="TabContainer/Audio/MarginContainer/VBoxContainer/HBoxContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Apply"
+
+[node name="Video" type="TabBar" parent="TabContainer"]
 visible = false
 layout_mode = 2
 metadata/_tab_index = 1
 
-[node name="Input" type="TabBar" parent="CenterContainer/MarginContainer/VBoxContainer/TabContainer"]
+[node name="Input" type="TabBar" parent="TabContainer"]
 visible = false
 layout_mode = 2
 metadata/_tab_index = 2
-
-[node name="CenterContainer" type="CenterContainer" parent="CenterContainer/MarginContainer/VBoxContainer"]
-layout_mode = 2
-
-[node name="HBoxContainer" type="HBoxContainer" parent="CenterContainer/MarginContainer/VBoxContainer/CenterContainer"]
-layout_mode = 2
-
-[node name="Button" type="Button" parent="CenterContainer/MarginContainer/VBoxContainer/CenterContainer/HBoxContainer"]
-layout_mode = 2
-text = "Close"
-
-[node name="Button2" type="Button" parent="CenterContainer/MarginContainer/VBoxContainer/CenterContainer/HBoxContainer"]
-layout_mode = 2
-text = "Apply"
