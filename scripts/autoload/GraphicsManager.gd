@@ -2,7 +2,7 @@ extends BaseManager
 
 func initialize() -> Error:
 	super()
-	DebugManager.log_info(name, "Initializing...")
+	Log.info(name, "Initializing...")
 	EventBus.subscribe(SettingsManager.get_section_event("graphics"), _on_graphics_settings_updated)
 	return OK
 

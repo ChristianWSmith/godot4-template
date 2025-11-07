@@ -4,12 +4,12 @@ var _settings: Dictionary = {}
 
 func initialize() -> Error:
 	super()
-	DebugManager.log_info(name, "Initializing...")
+	Log.info(name, "Initializing...")
 	if _load_settings() == OK:
-		DebugManager.log_info(name, "Successfully initialized settings.")
+		Log.info(name, "Successfully initialized settings.")
 		emit_changed()
 		return OK
-	DebugManager.log_error(name, "Failed to initialize settings.")
+	Log.error(name, "Failed to initialize settings.")
 	return FAILED
 
 
@@ -29,13 +29,13 @@ func get_section_event(section: String) -> String:
 func get_value(section: String, key: String) -> Variant:
 	if _settings.has(section) and _settings[section].has(key):
 		return _settings[section][key]
-	DebugManager.log_warn(name, "Missing key: '%s/%s'" % [section, key])
+	Log.warn(name, "Missing key: '%s/%s'" % [section, key])
 	if Constants.DEFAULT_SETTINGS.has(section) and Constants.DEFAULT_SETTINGS[section].has(key):
 		if not _settings.has(section):
 			_settings[section] = {}
 		_settings[section][key] = Constants.DEFAULT_SETTINGS[section][key]
 		return Constants.DEFAULT_SETTINGS[section][key]
-	DebugManager.log_fatal(name, "Default settings missing key: '%s/%s'" % [section, key])
+	Log.fatal(name, "Default settings missing key: '%s/%s'" % [section, key])
 	return null
 
 
@@ -44,7 +44,7 @@ func set_value(section: String, key: String, value: Variant, persist_immediately
 		_settings[section] = {}
 	_settings[section][key] = value
 
-	DebugManager.log_debug(name, "Set %s/%s = %s" % [section, key, str(value)])
+	Log.debug(name, "Set %s/%s = %s" % [section, key, str(value)])
 	emit_section_changed(section)
 
 	if persist_immediately:
@@ -55,7 +55,7 @@ func set_values(section: String, keys: Array[String], values: Array[Variant], pe
 	if keys.size() != values.size():
 		print(keys.size(), keys)
 		print(values.size(), values)
-		DebugManager.log_error(name, "Attempted to set multiple values, but keys.size() != values.size()")
+		Log.error(name, "Attempted to set multiple values, but keys.size() != values.size()")
 		return
 	if not _settings.has(section):
 		_settings[section] = {}
@@ -63,7 +63,7 @@ func set_values(section: String, keys: Array[String], values: Array[Variant], pe
 	for i in range(keys.size()):
 		_settings[section][keys[i]] = values[i]
 
-	DebugManager.log_debug(name, "Set values for section %s - %s = %s" % [section, keys, values])
+	Log.debug(name, "Set values for section %s - %s = %s" % [section, keys, values])
 	emit_section_changed(section)
 
 	if persist_immediately:
@@ -86,7 +86,7 @@ func save() -> Error:
 
 
 func reset_to_default() -> void:
-	DebugManager.log_info(name, "Resetting settings to default.")
+	Log.info(name, "Resetting settings to default.")
 	_settings = Constants.DEFAULT_SETTINGS.duplicate(true)
 	save()
 
@@ -106,32 +106,32 @@ func _load_settings() -> Error:
 	var local_fresher: bool = local_settings_timestamp > steam_settings_timestamp
 	
 	if steam_fresher:
-		DebugManager.log_info(name, "Steam settings are fresher.")
+		Log.info(name, "Steam settings are fresher.")
 		_settings = steam_settings
 	else:
-		DebugManager.log_info(name, "Local settings are fresher or tied.")
+		Log.info(name, "Local settings are fresher or tied.")
 		_settings = local_settings
 		
 	var migrated_settings: Dictionary = _migrate_settings(_settings)
 	var migrated: bool = not _settings.recursive_equal(migrated_settings, -1)
 	
 	if migrated:
-		DebugManager.log_info(name, "Migrated settings, saving...")
+		Log.info(name, "Migrated settings, saving...")
 		_settings = migrated_settings
 		return save()
 	
 	if steam_fresher and _save_local_settings(_settings) == OK:
-		DebugManager.log_info(name, "Updated local settings from Steam.")
+		Log.info(name, "Updated local settings from Steam.")
 		return OK
 	elif local_fresher:
 		if _save_steam_settings() == OK:
-			DebugManager.log_info(name, "Updated Steam settings from local.")
+			Log.info(name, "Updated Steam settings from local.")
 			return OK
 		else:
-			DebugManager.log_warn(name, "Failed to update Steam settings from local.")
+			Log.warn(name, "Failed to update Steam settings from local.")
 			return OK
 	else:
-		DebugManager.log_info(name, "Local and Steam settings are in sync.")
+		Log.info(name, "Local and Steam settings are in sync.")
 		return OK
 		
 
@@ -144,7 +144,7 @@ func _migrate_settings(settings: Dictionary) -> Dictionary:
 		match result.get("meta", {}).get("version", -1):
 			_: 
 				did_migration = true
-				DebugManager.log_warn(name, "Unknown settings version encountered during migration, loading defaults.")
+				Log.warn(name, "Unknown settings version encountered during migration, loading defaults.")
 				result = Constants.DEFAULT_SETTINGS.duplicate(true)
 	
 	if did_migration:
@@ -171,16 +171,16 @@ func _load_steam_settings() -> Dictionary:
 				temp_file.store_buffer(bytes)
 				temp_file.close()
 				if steam_config.load(temp_file.get_path()) == OK:
-					DebugManager.log_info(name, "Loaded settings from Steam Cloud.")
+					Log.info(name, "Loaded settings from Steam Cloud.")
 					steam_settings = _parse_config(steam_config)
 				else:
-					DebugManager.log_warn(name, "Failed to parse Steam Cloud settings, using local file.")
+					Log.warn(name, "Failed to parse Steam Cloud settings, using local file.")
 			else:
-				DebugManager.log_warn(name, "Failed to write temp cloud settings to disk.")
+				Log.warn(name, "Failed to write temp cloud settings to disk.")
 		else:
-			DebugManager.log_debug(name, "Steam settings file was empty.")
+			Log.debug(name, "Steam settings file was empty.")
 	else:
-		DebugManager.log_info(name, "Steam cloud not available, will not load.")
+		Log.info(name, "Steam cloud not available, will not load.")
 	return steam_settings
 
 
@@ -188,10 +188,10 @@ func _load_local_settings() -> Dictionary:
 	var local_config: ConfigFile = ConfigFile.new()
 	var local_settings: Dictionary = {}
 	if local_config.load(Constants.LOCAL_SETTINGS_PATH) == OK:
-		DebugManager.log_debug(name, "Local settings file found, loading.")
+		Log.debug(name, "Local settings file found, loading.")
 		local_settings = _parse_config(local_config)
 	else:
-		DebugManager.log_warn(name, "No local settings file found. Loading defaults.")
+		Log.warn(name, "No local settings file found. Loading defaults.")
 		local_settings = Constants.DEFAULT_SETTINGS.duplicate(true)
 		_save_local_settings(local_settings)
 	return local_settings
@@ -205,10 +205,10 @@ func _save_local_settings(settings: Dictionary) -> Error:
 			config.set_value(section, key, settings[section][key])
 
 	if config.save(Constants.LOCAL_SETTINGS_PATH) != OK:
-		DebugManager.log_error(name, "Failed to save local settings.")
+		Log.error(name, "Failed to save local settings.")
 		return FAILED
 
-	DebugManager.log_debug(name, "Settings saved locally to %s" % Constants.LOCAL_SETTINGS_PATH)
+	Log.debug(name, "Settings saved locally to %s" % Constants.LOCAL_SETTINGS_PATH)
 	return OK
 
 
@@ -219,15 +219,15 @@ func _save_steam_settings() -> Error:
 			var bytes: PackedByteArray = local_file.get_buffer(local_file.get_length())
 			local_file.close()
 			if SteamManager.cloud_write(Constants.CLOUD_SETTINGS_FILE, bytes) == OK:
-				DebugManager.log_info(name, "Settings uploaded to Steam Cloud.")
+				Log.info(name, "Settings uploaded to Steam Cloud.")
 				return OK
 			else:
-				DebugManager.log_warn(name, "Failed to upload settings to Steam Cloud.")
+				Log.warn(name, "Failed to upload settings to Steam Cloud.")
 		else:
-			DebugManager.log_warn(name, "Failed to open local settings file for upload.")
+			Log.warn(name, "Failed to open local settings file for upload.")
 	else:
-		DebugManager.log_warn(name, "Steam cloud not available, skipping sync.")
-	DebugManager.log_warn(name, "Failed to upload settings to Steam, will retry.")
+		Log.warn(name, "Steam cloud not available, skipping sync.")
+	Log.warn(name, "Failed to upload settings to Steam, will retry.")
 	return OK
 
 

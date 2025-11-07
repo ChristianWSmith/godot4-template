@@ -9,7 +9,7 @@ var _throbber_tween: Tween = create_tween()
 
 func initialize() -> Error:
 	super()
-	DebugManager.log_info(name, "Initializing...")
+	Log.info(name, "Initializing...")
 	_setup_throbber()
 	_setup_fader()
 	return OK
@@ -17,7 +17,7 @@ func initialize() -> Error:
 
 func change_scene(scene_path: String) -> void:
 	if _is_loading:
-		DebugManager.log_warn(name, "Scene change already in progress; ignoring request.")
+		Log.warn(name, "Scene change already in progress; ignoring request.")
 		return
 	
 	_set_is_loading(true)
@@ -28,13 +28,13 @@ func change_scene(scene_path: String) -> void:
 
 func reload_scene() -> void:
 	if not _current_scene:
-		DebugManager.log_warn(name, "No scene to reload.")
+		Log.warn(name, "No scene to reload.")
 		return
 	change_scene(_current_scene.scene_file_path)
 
 
 func _do_change_scene() -> void:
-	DebugManager.log_info(name, "Starting async scene load for %s" % _next_scene_path)
+	Log.info(name, "Starting async scene load for %s" % _next_scene_path)
 	ResourceLoader.load_threaded_request(_next_scene_path)
 	await _poll_async_load()
 
@@ -46,13 +46,13 @@ func _poll_async_load() -> void:
 		status = ResourceLoader.load_threaded_get_status(_next_scene_path)
 
 	if status != ResourceLoader.THREAD_LOAD_LOADED:
-		DebugManager.log_fatal(name, "Async scene load failed for %s (status=%s)" % [_next_scene_path, status])
+		Log.fatal(name, "Async scene load failed for %s (status=%s)" % [_next_scene_path, status])
 		_set_is_loading(false)
 		return
 
 	var res: PackedScene = ResourceLoader.load_threaded_get(_next_scene_path)
 	if not res:
-		DebugManager.log_fatal(name, "Threaded load returned null: %s" % _next_scene_path)
+		Log.fatal(name, "Threaded load returned null: %s" % _next_scene_path)
 		_set_is_loading(false)
 		return
 
@@ -71,7 +71,7 @@ func _poll_async_load() -> void:
 		EventBus.emit("scene_changed", _next_scene_path)
 		)
 
-	DebugManager.log_info(name, "Async scene load complete: %s" % _next_scene_path)
+	Log.info(name, "Async scene load complete: %s" % _next_scene_path)
 	_set_is_loading(false)
 
 

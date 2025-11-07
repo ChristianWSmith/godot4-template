@@ -8,7 +8,7 @@ func initialize() -> Error:
 	if result != OK:
 		return result
 	
-	result = DebugManager.initialize()
+	result = Log.initialize()
 	if result != OK:
 		return result
 	

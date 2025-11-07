@@ -44,23 +44,23 @@ func set_log_to_file(enabled: bool, path: String = Constants.LOG_FILE_PATH) -> v
 	_log_internal(LogLevel.INFO, name, "File logging %s (%s)" % ["enabled" if enabled else "disabled", _file_path])
 
 
-func log_debug(source: String, message: String) -> void:
+func debug(source: String, message: String) -> void:
 	_log_internal(LogLevel.DEBUG, source, message)
 
 
-func log_info(source: String, message: String) -> void:
+func info(source: String, message: String) -> void:
 	_log_internal(LogLevel.INFO, source, message)
 
 
-func log_warn(source: String, message: String) -> void:
+func warn(source: String, message: String) -> void:
 	_log_internal(LogLevel.WARN, source, message)
 
 
-func log_error(source: String, message: String) -> void:
+func error(source: String, message: String) -> void:
 	_log_internal(LogLevel.ERROR, source, message)
 
 
-func log_fatal(source: String, message: String) -> void:
+func fatal(source: String, message: String) -> void:
 	_log_internal(LogLevel.FATAL, source, message)
 
 
@@ -105,7 +105,7 @@ func _log_internal(level: LogLevel, source: String, message: String) -> void:
 			"source": source,
 			"message": message,
 		}
-		EventBus.emit("debug_log", payload)
+		EventBus.emit(Constants.LOG_EVENT, payload)
 	
 	if level == LogLevel.FATAL:
 		CrashReport.crash(source, message)

@@ -5,7 +5,7 @@ var ui_nodes: Dictionary[String, Control] = {}
 
 func initialize() -> Error:
 	super()
-	DebugManager.log_info(name, "Initializing...")
+	Log.info(name, "Initializing...")
 	var ui_layer: CanvasLayer = CanvasLayer.new()
 	ui_layer.layer = Constants.UI_LAYER_INDEX
 	for ui_name in Constants.UI_PRELOADS.keys():
@@ -20,10 +20,10 @@ func initialize() -> Error:
 
 func open_ui(ui_name: String) -> void:
 	if not ui_nodes.has(ui_name):
-		DebugManager.log_error(name, "No UI registered with name '%s'" % ui_name)
+		Log.error(name, "No UI registered with name '%s'" % ui_name)
 		return
 
-	DebugManager.log_debug(name, "Opening UI '%s'" % ui_name)
+	Log.debug(name, "Opening UI '%s'" % ui_name)
 	
 	if menu_stack.size() > 0:
 		_deactivate_ui(ui_nodes[menu_stack[-1]])
@@ -39,7 +39,7 @@ func close_ui() -> void:
 	if menu_stack.size() == 0:
 		return
 	var closing_name = menu_stack.pop_back()
-	DebugManager.log_debug(name, "Closing UI '%s'" % closing_name)
+	Log.debug(name, "Closing UI '%s'" % closing_name)
 	var closing_node = ui_nodes[closing_name]
 	_deactivate_ui(closing_node)
 	closing_node.visible = false
@@ -51,7 +51,7 @@ func close_ui() -> void:
 
 func close_specific(ui_name: String) -> void:
 	if ui_name in menu_stack:
-		DebugManager.log_debug(name, "Closing UI '%s'" % ui_name)
+		Log.debug(name, "Closing UI '%s'" % ui_name)
 		menu_stack.erase(ui_name)
 		var node = ui_nodes[ui_name]
 		_deactivate_ui(node)
@@ -73,14 +73,14 @@ func get_top_ui() -> Control:
 
 func get_ui_open_event(ui_name: String) -> String:
 	if ui_name not in ui_nodes:
-		DebugManager.log_warn(name, "No open event for UI '%s'" % ui_name)
+		Log.warn(name, "No open event for UI '%s'" % ui_name)
 		return ""
 	return "ui_open/" + ui_name
 
 
 func get_ui_close_event(ui_name: String) -> String:
 	if ui_name not in ui_nodes:
-		DebugManager.log_warn(name, "No close event for UI '%s'" % ui_name)
+		Log.warn(name, "No close event for UI '%s'" % ui_name)
 		return ""
 	return "ui_close/" + ui_name
 

@@ -4,7 +4,7 @@ var music_player: AudioStreamPlayer
 
 func initialize() -> Error:
 	super()
-	DebugManager.log_info(name, "Initializing...")
+	Log.info(name, "Initializing...")
 	EventBus.subscribe(SettingsManager.get_section_event("audio"), _on_settings_updated)
 	return OK
 
@@ -19,7 +19,7 @@ func play_music(stream: AudioStream, fade_time: float = Constants.MUSIC_FADE_TIM
 	add_child(music_player)
 	create_tween().tween_property(music_player, "volume_db", 0.0, fade_time)
 	music_player.play()
-	DebugManager.log_info(name, "Playing music: %s" % music_player.stream.resource_path)
+	Log.info(name, "Playing music: %s" % music_player.stream.resource_path)
 	
 	_fade_out_music(old_player, fade_time)
 
@@ -49,12 +49,12 @@ func _play_sound(stream: AudioStream, bus: String) -> void:
 	player.finished.connect(player.queue_free)
 	add_child(player)
 	player.play()
-	DebugManager.log_info(name, "Playing sound on bus: %s %s" % [bus, stream.resource_path])
+	Log.info(name, "Playing sound on bus: %s %s" % [bus, stream.resource_path])
 
 
 func _fade_out_music(player: AudioStreamPlayer, fade_time: float) -> void:
 	if player == null or not is_instance_valid(player):
-		DebugManager.log_debug(name, "No music to fade out")
+		Log.debug(name, "No music to fade out")
 		return
 	var fade_out: Tween = create_tween()
 	fade_out.tween_property(player, "volume_db", Constants.SILENCE_DB, fade_time)
@@ -63,7 +63,7 @@ func _fade_out_music(player: AudioStreamPlayer, fade_time: float) -> void:
 			remove_child(player)
 			player.queue_free()
 	)
-	DebugManager.log_info(name, "Fading out music: %s" % player.stream.resource_path)
+	Log.info(name, "Fading out music: %s" % player.stream.resource_path)
 
 
 func _on_settings_updated() -> void:
@@ -79,4 +79,4 @@ func _on_settings_updated() -> void:
 	AudioServer.set_bus_volume_db(
 		AudioServer.get_bus_index("Voice"), 
 		SettingsManager.get_value("audio", "voice"))
-	DebugManager.log_info(name, "Updated from settings.")
+	Log.info(name, "Updated from settings.")

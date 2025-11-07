@@ -2,7 +2,7 @@ extends BaseManager
 
 func initialize() -> Error:
 	super()
-	DebugManager.log_info(name, "Initializing...")
+	Log.info(name, "Initializing...")
 	EventBus.subscribe(SettingsManager.get_section_event("video"), _on_video_settings_updated)
 	return OK
 
@@ -24,5 +24,5 @@ func _on_video_settings_updated() -> void:
 		DisplayServer.VSYNC_ENABLED if vsync else DisplayServer.VSYNC_DISABLED
 	)
 
-	DebugManager.log_info(name, "Display settings applied (mode=%s, res=%s)" %
+	Log.info(name, "Display settings applied (mode=%s, res=%s)" %
 		[DisplayServer.window_get_mode(), resolution])

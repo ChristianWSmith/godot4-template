@@ -21,6 +21,7 @@ const SCENE_THROBBER_OFFSET: Vector2 = Vector2(16.0, 16.0)
 
 # Debug
 const LOG_FILE_PATH: String = "user://debug.log"
+const LOG_EVENT: String = "log"
 
 # Steam
 const STEAM_APP_ID: int = 480
