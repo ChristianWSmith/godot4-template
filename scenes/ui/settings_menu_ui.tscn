@@ -1,4 +1,11 @@
-[gd_scene format=3 uid="uid://dl828qmy0xo1f"]
+[gd_scene load_steps=2 format=3 uid="uid://dl828qmy0xo1f"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_2iwuv"]
+bg_color = Color(0.3491902, 0.3491902, 0.3491902, 1)
+corner_radius_top_left = 3
+corner_radius_top_right = 3
+corner_radius_bottom_right = 3
+corner_radius_bottom_left = 3
 
 [node name="SettingsMenuUI" type="Control"]
 layout_mode = 3
@@ -23,6 +30,7 @@ offset_right = 272.0
 offset_bottom = 208.0
 grow_horizontal = 2
 grow_vertical = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_2iwuv")
 
 [node name="VBoxContainer" type="VBoxContainer" parent="Panel"]
 layout_mode = 1
@@ -145,23 +153,6 @@ size_flags_vertical = 4
 [node name="AudioUISpinbox" type="SpinBox" parent="Panel/VBoxContainer/MarginContainer/VBoxContainer/TabContainer/Audio/MarginContainer/VBoxContainer/ScrollContainer/GridContainer"]
 layout_mode = 2
 
-[node name="HBoxContainer" type="HBoxContainer" parent="Panel/VBoxContainer/MarginContainer/VBoxContainer/TabContainer/Audio/MarginContainer/VBoxContainer"]
-layout_mode = 2
-
-[node name="AudioCloseButton" type="Button" parent="Panel/VBoxContainer/MarginContainer/VBoxContainer/TabContainer/Audio/MarginContainer/VBoxContainer/HBoxContainer"]
-unique_name_in_owner = true
-layout_mode = 2
-text = "Close"
-
-[node name="Control" type="Control" parent="Panel/VBoxContainer/MarginContainer/VBoxContainer/TabContainer/Audio/MarginContainer/VBoxContainer/HBoxContainer"]
-layout_mode = 2
-size_flags_horizontal = 3
-
-[node name="AudioApplyButton" type="Button" parent="Panel/VBoxContainer/MarginContainer/VBoxContainer/TabContainer/Audio/MarginContainer/VBoxContainer/HBoxContainer"]
-unique_name_in_owner = true
-layout_mode = 2
-text = "Apply"
-
 [node name="Video" type="TabBar" parent="Panel/VBoxContainer/MarginContainer/VBoxContainer/TabContainer"]
 visible = false
 layout_mode = 2
@@ -171,3 +162,20 @@ metadata/_tab_index = 1
 visible = false
 layout_mode = 2
 metadata/_tab_index = 2
+
+[node name="HBoxContainer" type="HBoxContainer" parent="Panel/VBoxContainer/MarginContainer/VBoxContainer"]
+layout_mode = 2
+
+[node name="CloseButton" type="Button" parent="Panel/VBoxContainer/MarginContainer/VBoxContainer/HBoxContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Close"
+
+[node name="Control" type="Control" parent="Panel/VBoxContainer/MarginContainer/VBoxContainer/HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="ApplyButton" type="Button" parent="Panel/VBoxContainer/MarginContainer/VBoxContainer/HBoxContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Apply"
