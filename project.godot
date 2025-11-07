@@ -55,7 +55,7 @@ window/subwindows/embed_subwindows=false
 
 [editor]
 
-run/main_run_args="--log-level=DEBUG"
+run/main_run_args="--log-level=TRACE"
 
 [gui]
 

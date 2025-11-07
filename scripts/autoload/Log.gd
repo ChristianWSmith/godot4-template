@@ -1,6 +1,6 @@
 extends BaseManager
 
-enum LogLevel { DEBUG, INFO, WARN, ERROR, FATAL, NONE }
+enum LogLevel { TRACE, DEBUG, INFO, WARN, ERROR, FATAL, NONE }
 
 var _current_level: LogLevel = LogLevel.NONE
 var _log_to_file: bool = false
@@ -10,20 +10,7 @@ var _initialized: bool = false
 
 func initialize() -> Error:
 	super()
-	var args: PackedStringArray = OS.get_cmdline_args()
-	for arg in args:
-		if arg.to_lower().begins_with("--log-level="):
-			var level: String = arg.split("=")[1]
-			match level.to_lower():
-				"debug": _current_level = LogLevel.DEBUG
-				"info": _current_level = LogLevel.INFO
-				"warn": _current_level = LogLevel.WARN
-				"error": _current_level = LogLevel.ERROR
-				"fatal": _current_level = LogLevel.FATAL
-				_: _current_level = LogLevel.NONE
-		elif arg.to_lower().begins_with("--log-file="):
-			_file_path = arg.split("=")[1]
-			_log_to_file = true
+	_handle_cli_args()
 	_clear_log_file()
 	_open_log_file()
 	_log_internal(LogLevel.INFO, name, "Initialized and ready.")
@@ -50,32 +37,38 @@ func set_log_to_file(enabled: bool, path: String = Constants.LOG_FILE_PATH) -> v
 	_log_internal(LogLevel.INFO, name, "File logging %s (%s)" % ["enabled" if enabled else "disabled", _file_path])
 
 
-func debug(source: String, message: String) -> void:
+func trace(source: Node, message: String) -> void:
 	if not _initialized:
 		return
-	_log_internal(LogLevel.DEBUG, source, message)
+	_log_internal(LogLevel.TRACE, source.name, message)
 
 
-func info(source: String, message: String) -> void:
+func debug(source: Node, message: String) -> void:
 	if not _initialized:
 		return
-	_log_internal(LogLevel.INFO, source, message)
+	_log_internal(LogLevel.DEBUG, source.name, message)
 
 
-func warn(source: String, message: String) -> void:
+func info(source: Node, message: String) -> void:
 	if not _initialized:
 		return
-	_log_internal(LogLevel.WARN, source, message)
+	_log_internal(LogLevel.INFO, source.name, message)
 
 
-func error(source: String, message: String) -> void:
+func warn(source: Node, message: String) -> void:
 	if not _initialized:
 		return
-	_log_internal(LogLevel.ERROR, source, message)
+	_log_internal(LogLevel.WARN, source.name, message)
 
 
-func fatal(source: String, message: String) -> void:
-	_log_internal(LogLevel.FATAL, source, message)
+func error(source: Node, message: String) -> void:
+	if not _initialized:
+		return
+	_log_internal(LogLevel.ERROR, source.name, message)
+
+
+func fatal(source: Node, message: String) -> void:
+	_log_internal(LogLevel.FATAL, source.name, message)
 
 
 func _clear_log_file() -> void:
@@ -97,6 +90,8 @@ func _log_internal(level: LogLevel, source: String, message: String) -> void:
 	var formatted := "[%s] [%s] (%s) %s" % [timestr, level_str, source, message]
 
 	match level:
+		LogLevel.TRACE:
+			print_rich("[color=gray]%s[/color]" % formatted)
 		LogLevel.DEBUG:
 			print_rich("[color=cyan]%s[/color]" % formatted)
 		LogLevel.INFO:
@@ -145,6 +140,7 @@ func _close_log_file() -> void:
 
 func _get_level_name(level: LogLevel) -> String:
 	match level:
+		LogLevel.TRACE: return "TRACE"
 		LogLevel.DEBUG: return "DEBUG"
 		LogLevel.INFO: return "INFO"
 		LogLevel.WARN: return "WARN"
@@ -155,3 +151,22 @@ func _get_level_name(level: LogLevel) -> String:
 
 func _exit_tree() -> void:
 	_close_log_file()
+
+
+func _handle_cli_args() -> void:
+	var args: PackedStringArray = OS.get_cmdline_args()
+	for arg in args:
+		if arg.to_lower().begins_with("--log-level="):
+			var level: String = arg.split("=")[1]
+			match level.to_lower():
+				"trace": _current_level = LogLevel.TRACE
+				"debug": _current_level = LogLevel.DEBUG
+				"info": _current_level = LogLevel.INFO
+				"warn": _current_level = LogLevel.WARN
+				"error": _current_level = LogLevel.ERROR
+				"fatal": _current_level = LogLevel.FATAL
+				_: _current_level = LogLevel.NONE
+		elif arg.to_lower().begins_with("--log-file="):
+			_file_path = arg.split("=")[1]
+			_log_to_file = true
+	

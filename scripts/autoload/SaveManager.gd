@@ -4,20 +4,20 @@ var _slots: Dictionary[String, Dictionary] = {}
 
 func initialize() -> Error:
 	super()
-	Log.info(name, "Initializing...")
+	Log.info(self, "Initializing...")
 
 	var dir: DirAccess = DirAccess.open(Constants.LOCAL_SAVE_BASE_PATH)
 	if dir == null:
 		dir = DirAccess.open("user://")
 	if dir.make_dir_recursive(Constants.LOCAL_SAVE_SUBPATH) != OK:
-		Log.error(name, "Failed to create local save directory: %s" % Constants.LOCAL_SAVE_PATH)
+		Log.error(self, "Failed to create local save directory: %s" % Constants.LOCAL_SAVE_PATH)
 
 	_load_local_slots()
 
 	if SteamManager.is_cloud_available():
 		_sync_steam_cloud()
 
-	Log.info(name, "Initialized with slots: [%s]" % ", ".join(_slots.keys()))
+	Log.info(self, "Initialized with slots: [%s]" % ", ".join(_slots.keys()))
 	return OK
 
 
@@ -43,7 +43,7 @@ func save_data(slot_name: String, data: Dictionary = {}) -> Error:
 
 func get_data(slot_name: String) -> Dictionary:
 	if not _slots.has(slot_name) or not _slots[slot_name].has("data"):
-		Log.error(name, "Slot does not exist or is empty: %s" % slot_name)
+		Log.error(self, "Slot does not exist or is empty: %s" % slot_name)
 		return {}
 	return _slots[slot_name]["data"]
 
@@ -57,27 +57,27 @@ func delete_slot(slot_name: String) -> Error:
 	var local_file: String = "%s/%s.save" % [Constants.LOCAL_SAVE_PATH, slot_name]
 	if FileAccess.file_exists(local_file):
 		if DirAccess.remove_absolute(local_file) == OK:
-			Log.info(name, "Deleted local slot file: %s" % local_file)
+			Log.info(self, "Deleted local slot file: %s" % local_file)
 			result = OK
 		else:
-			Log.error(name, "Failed to delete local slot file: %s" % local_file)
+			Log.error(self, "Failed to delete local slot file: %s" % local_file)
 	else:
-		Log.warn(name, "Local slot file does not exist, cannot delete: %s" % local_file)
+		Log.warn(self, "Local slot file does not exist, cannot delete: %s" % local_file)
 
 	if SteamManager.is_cloud_available():
 		if SteamManager.cloud_delete("%s.save" % slot_name) == OK:
-			Log.info(name, "Deleted Steam Cloud slot: %s" % slot_name)
+			Log.debug(self, "Deleted Steam Cloud slot: %s" % slot_name)
 		else:
-			Log.warn(name, "Failed to delete Steam Cloud slot, will retry: %s" % slot_name)
+			Log.warn(self, "Failed to delete Steam Cloud slot, will retry: %s" % slot_name)
 	else:
-		Log.warn(name, "Steam Cloud not active, cannot delete, will retry: %s" % slot_name)
+		Log.warn(self, "Steam Cloud not active, cannot delete, will retry: %s" % slot_name)
 	
 	return result
 
 
 func _persist_slot(slot_name: String) -> Error:
 	if not _slots.has(slot_name):
-		Log.error(name, "Attempted to persist non-existent slot: %s" % slot_name)
+		Log.error(self, "Attempted to persist non-existent slot: %s" % slot_name)
 		return FAILED
 
 	var slot: Dictionary = _slots[slot_name]
@@ -90,18 +90,18 @@ func _persist_slot(slot_name: String) -> Error:
 	var local_file: String = "%s/%s.save" % [Constants.LOCAL_SAVE_PATH, slot_name]
 	var file: FileAccess = FileAccess.open(local_file, FileAccess.WRITE)
 	if file == null:
-		Log.error(name, "Failed to write local save file: %s" % local_file)
+		Log.error(self, "Failed to write local save file: %s" % local_file)
 		return FAILED
 
 	file.store_buffer(bytes)
 	file.close()
-	Log.debug(name, "Saved slot locally: %s" % slot_name)
+	Log.debug(self, "Saved slot locally: %s" % slot_name)
 
 	if SteamManager.is_cloud_available():
 		if SteamManager.cloud_write("%s.save" % slot_name, bytes) == OK:
-			Log.info(name, "Saved slot to Steam Cloud: %s" % slot_name)
+			Log.debug(self, "Saved slot to Steam Cloud: %s" % slot_name)
 		else:
-			Log.warn(name, "Failed to save slot to Steam Cloud: %s" % slot_name)
+			Log.warn(self, "Failed to save slot to Steam Cloud: %s" % slot_name)
 
 	return OK
 
@@ -110,7 +110,7 @@ func _load_local_slots() -> void:
 	_slots.clear()
 	var dir: DirAccess = DirAccess.open(Constants.LOCAL_SAVE_PATH)
 	if dir == null:
-		Log.info(name, "No local save directory found, starting fresh.")
+		Log.info(self, "No local save directory found, starting fresh.")
 		return
 
 	dir.list_dir_begin()
@@ -127,7 +127,7 @@ func _load_local_slots() -> void:
 					var migrated := _migrate_slot(parsed)
 					var slot_name := file_name.replace(".save", "")
 					_slots[slot_name] = migrated
-					Log.debug(name, "Loaded local save slot: %s" % slot_name)
+					Log.debug(self, "Loaded local save slot: %s" % slot_name)
 		file_name = dir.get_next()
 	dir.list_dir_end()
 
@@ -145,7 +145,7 @@ func _sync_steam_cloud() -> void:
 
 		var slot_json: Variant = JSON.parse_string(bytes.get_string_from_utf8())
 		if typeof(slot_json) != TYPE_DICTIONARY:
-			Log.warn(name, "Failed to parse cloud slot %s, skipping" % cloud_file)
+			Log.warn(self, "Failed to parse cloud slot %s, skipping" % cloud_file)
 			continue
 
 		var cloud_slot: Dictionary = _migrate_slot(slot_json)
@@ -156,7 +156,7 @@ func _sync_steam_cloud() -> void:
 
 		if cloud_ts > local_ts:
 			_slots[slot_name] = cloud_slot
-			Log.info(name, "Updated local slot from Steam Cloud: %s" % slot_name)
+			Log.debug(self, "Updated local slot from Steam Cloud: %s" % slot_name)
 
 			var local_file := "%s/%s.save" % [Constants.LOCAL_SAVE_PATH, slot_name]
 			var file := FileAccess.open(local_file, FileAccess.WRITE)
@@ -174,7 +174,7 @@ func _migrate_slot(slot_data: Dictionary) -> Dictionary:
 		match current_version:
 			_:
 				did_migration = true
-				Log.warn(name, "Unknown save version %d, using default save." % current_version)
+				Log.warn(self, "Unknown save version %d, using default save." % current_version)
 				result = _generate_defaults()
 	
 	if did_migration:

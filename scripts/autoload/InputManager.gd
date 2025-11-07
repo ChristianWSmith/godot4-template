@@ -15,7 +15,7 @@ var _bindings: Dictionary = {}
 
 func initialize() -> Error:
 	super()
-	Log.info(name, "Initializing InputManager...")
+	Log.info(self, "Initializing InputManager...")
 	EventBus.subscribe(SettingsManager.get_section_event("input"), _on_input_settings_updated)
 	return OK
 
@@ -61,14 +61,14 @@ func _apply_bindings(bindings: Dictionary) -> void:
 	_bindings = bindings
 
 	if not _bindings or _bindings.is_empty():
-		Log.info(name, "No custom bindings found, using project defaults.")
+		Log.debug(self, "No custom bindings found, using project defaults.")
 		_save(_get_project_default_bindings())
 		return
 
 	for action_name in _bindings.keys():
 		_register_action(action_name, _bindings[action_name])
 
-	Log.info(name, "Applied bindings for actions: %s" % ", ".join(_bindings.keys()))
+	Log.info(self, "Applied bindings for actions: %s" % ", ".join(_bindings.keys()))
 
 
 func _save(bindings: Dictionary) -> void:
@@ -129,7 +129,7 @@ func _parse_event_def(event_def: Dictionary) -> InputEvent:
 			return ejm
 
 		_:
-			Log.warn(name, "Unknown event type in dict: %s" % type_name)
+			Log.warn(self, "Unknown event type in dict: %s" % type_name)
 			return null
 
 
@@ -163,7 +163,7 @@ func _serialize_input_event(ev: InputEvent) -> Dictionary:
 			"device": ev.device
 		}
 	else:
-		Log.warn(name, "Cannot serialize unknown input event: %s" % ev)
+		Log.warn(self, "Cannot serialize unknown input event: %s" % ev)
 		return {}
 
 

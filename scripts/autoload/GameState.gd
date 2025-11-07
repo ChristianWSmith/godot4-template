@@ -8,7 +8,7 @@ var _loaded: bool = false
 
 func initialize() -> Error:
 	super()
-	Log.info(name, "Initializing...")
+	Log.info(self, "Initializing...")
 	_reset_state()
 	return OK
 
@@ -25,14 +25,14 @@ func save_to_slot(slot_name: String) -> Error:
 
 func get_data(path: String) -> Variant:
 	if not _loaded:
-		Log.warn(name, "No state data is loaded, data may be invalid (get): %s" % path)
+		Log.warn(self, "No state data is loaded, data may be invalid (get): %s" % path)
 	return _current_data.get(path, null)
 
 
 func set_data(path: String, value: Variant) -> Error:
 	_current_data[path] = value
 	if not _loaded:
-		Log.warn(name, "No state data is loaded, data may be invalid (set): %s" % path)
+		Log.warn(self, "No state data is loaded, data may be invalid (set): %s" % path)
 		return FAILED
 	return OK
 

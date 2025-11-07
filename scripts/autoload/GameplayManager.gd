@@ -2,8 +2,10 @@ extends BaseManager
 
 func initialize() -> Error:
 	super()
-	Log.info(name, "Initializing...")
-	EventBus.subscribe(SettingsManager.get_section_event("gameplay"), _on_gameplayer_settings_updated)
+	Log.info(self, "Initializing...")
+	EventBus.subscribe(
+		SettingsManager.get_section_event("gameplay"), 
+		_on_gameplayer_settings_updated)
 	return OK
 
 

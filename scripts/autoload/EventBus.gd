@@ -49,16 +49,9 @@ func once(event_name: String, callable: Callable) -> void:
 	subscribe(event_name, wrapper)
 
 
-func _once_wrapper(data: Variant, event_name: String, callable: Callable) -> void:
-	if callable != null and (callable.get_object() == null or is_instance_valid(callable.get_object())):
-		callable.call(data)
-
-	unsubscribe(event_name, Callable(self, "_once_wrapper").bind(event_name, callable))
-
-
 func emit(event_name: String, data: Variant = null) -> void:
 	if event_name != Constants.LOG_EVENT:
-		Log.debug(name, "emit %s" % event_name)
+		Log.trace(self, "emit %s" % event_name)
 	if _subscribers.has(event_name):
 		var to_call: Array = _subscribers[event_name].duplicate()
 		for callable in to_call:
@@ -94,6 +87,13 @@ func wait_for(event_name: String) -> Variant:
 	while not state.done:
 		await get_tree().process_frame
 	return state.result
+
+
+func _once_wrapper(data: Variant, event_name: String, callable: Callable) -> void:
+	if callable != null and (callable.get_object() == null or is_instance_valid(callable.get_object())):
+		callable.call(data)
+
+	unsubscribe(event_name, Callable(self, "_once_wrapper").bind(event_name, callable))
 
 
 func _cleanup_signal_if_empty(event_name: String) -> void:
