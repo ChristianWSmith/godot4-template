@@ -6,6 +6,7 @@ var _current_level: LogLevel = LogLevel.NONE
 var _log_to_file: bool = false
 var _file_path: String = Constants.LOG_FILE_PATH
 var _file: FileAccess = null
+var _initialized: bool = false
 
 func initialize() -> Error:
 	super()
@@ -26,15 +27,20 @@ func initialize() -> Error:
 	_clear_log_file()
 	_open_log_file()
 	_log_internal(LogLevel.INFO, name, "Initialized and ready.")
+	_initialized = true
 	return OK
 
 
 func set_log_level(level: LogLevel) -> void:
+	if not _initialized:
+		return
 	_current_level = level
 	_log_internal(LogLevel.INFO, name, "Log level set to %s" % [_get_level_name(level)])
 
 
 func set_log_to_file(enabled: bool, path: String = Constants.LOG_FILE_PATH) -> void:
+	if not _initialized:
+		return
 	_log_to_file = enabled
 	_file_path = path
 	if enabled:
@@ -45,18 +51,26 @@ func set_log_to_file(enabled: bool, path: String = Constants.LOG_FILE_PATH) -> v
 
 
 func debug(source: String, message: String) -> void:
+	if not _initialized:
+		return
 	_log_internal(LogLevel.DEBUG, source, message)
 
 
 func info(source: String, message: String) -> void:
+	if not _initialized:
+		return
 	_log_internal(LogLevel.INFO, source, message)
 
 
 func warn(source: String, message: String) -> void:
+	if not _initialized:
+		return
 	_log_internal(LogLevel.WARN, source, message)
 
 
 func error(source: String, message: String) -> void:
+	if not _initialized:
+		return
 	_log_internal(LogLevel.ERROR, source, message)
 
 
