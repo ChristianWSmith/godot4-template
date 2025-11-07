@@ -4,56 +4,28 @@ func initialize() -> Error:
 	super()
 	var result: Error
 	
-	result = EventBus.initialize()
-	if result != OK:
-		return result
-	
-	result = Log.initialize()
-	if result != OK:
-		return result
-	
-	result = SteamManager.initialize()
-	if result != OK:
-		return result
-	
-	result = VideoManager.initialize()
-	if result != OK:
-		return result
-	
-	result = SaveManager.initialize()
-	if result != OK:
-		return result
-	
-	result = GameState.initialize()
-	if result != OK:
-		return result
-	
-	result = InputManager.initialize()
-	if result != OK:
-		return result
-	
-	result = AudioManager.initialize()
-	if result != OK:
-		return result
-	
-	result = SceneManager.initialize()
-	if result != OK:
-		return result
-	
-	result = UIManager.initialize()
-	if result != OK:
-		return result
-	
-	result = GameplayManager.initialize()
-	if result != OK:
-		return result
-	
-	result = GraphicsManager.initialize()
-	if result != OK:
-		return result
-	
-	result = SettingsManager.initialize()
-	if result != OK:
-		return result
+	for system in _systems():
+		result = system.initialize()
+		if result != OK:
+			return result
 	
 	return OK
+
+
+func _systems() -> Array[BaseManager]: 
+	return [
+		EventBus,
+		Log,
+		SteamManager,
+		VideoManager,
+		SaveManager,
+		GameState,
+		InputManager,
+		AudioManager,
+		SceneManager,
+		UIManager,
+		GameplayManager,
+		GraphicsManager,
+		SettingsManager
+	]
+	
