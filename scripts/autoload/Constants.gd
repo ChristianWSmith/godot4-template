@@ -7,7 +7,8 @@ const INT_MIN: int = int(INF)
 # UI
 const UI_LAYER_INDEX: int = 100
 const UI_PRELOADS: Dictionary[String, PackedScene] = {
-	"main_menu": preload("res://scenes/ui/main_menu_ui.tscn")
+	"main_menu": preload("res://scenes/ui/main_menu_ui.tscn"),
+	"settings_menu": preload("res://scenes/ui/settings_menu_ui.tscn"),
 }
 
 # Scene
