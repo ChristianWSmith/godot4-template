@@ -4,6 +4,12 @@ extends Node
 const INT_MAX: int = int(INF) - 1
 const INT_MIN: int = int(INF)
 
+# UI
+const UI_LAYER_INDEX: int = 100
+const UI_PRELOADS: Dictionary[String, PackedScene] = {
+	# "pause_menu": preload("res://scenes/ui/pause_menu.tscn")
+}
+
 # Scene
 const SCENE_FADE_TIME: float = 0.5
 const SCENE_FADE_COLOR: Color = Color.BLACK

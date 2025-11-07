@@ -41,6 +41,7 @@ SteamManager="*res://scripts/autoload/SteamManager.gd"
 CrashReport="*res://scripts/autoload/CrashReport.gd"
 VideoManager="*res://scripts/autoload/VideoManager.gd"
 InitManager="*res://scripts/autoload/InitManager.gd"
+UIManager="*res://scripts/autoload/UIManager.gd"
 
 [debug]
 

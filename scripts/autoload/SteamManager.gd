@@ -73,7 +73,7 @@ func cloud_delete(filename: String) -> Error:
 	if not is_cloud_available():
 		DebugManager.log_warn(name, "Steam Cloud not available. Cannot delete %s" % filename)
 		return FAILED
-	if Steam.fileDelete(filename):
+	if Steam.fileDelete(filename) or filename not in cloud_list_files():
 		DebugManager.log_info(name, "Deleted Steam Cloud file: %s" % filename)
 		_dequeue_reconciliation(filename)
 		return OK

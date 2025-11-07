@@ -43,7 +43,6 @@ func _poll_async_load() -> void:
 	var status: ResourceLoader.ThreadLoadStatus = ResourceLoader.load_threaded_get_status(_next_scene_path)
 	while status == ResourceLoader.THREAD_LOAD_IN_PROGRESS:
 		await get_tree().process_frame
-		await get_tree().create_timer(5.0).timeout
 		status = ResourceLoader.load_threaded_get_status(_next_scene_path)
 
 	if status != ResourceLoader.THREAD_LOAD_LOADED:
