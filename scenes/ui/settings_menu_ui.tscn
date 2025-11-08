@@ -63,10 +63,9 @@ layout_mode = 2
 [node name="TabContainer" type="TabContainer" parent="Panel/VBoxContainer/MarginContainer/VBoxContainer"]
 layout_mode = 2
 size_flags_vertical = 3
-current_tab = 4
+current_tab = 0
 
 [node name="Audio" type="TabBar" parent="Panel/VBoxContainer/MarginContainer/VBoxContainer/TabContainer"]
-visible = false
 layout_mode = 2
 metadata/_tab_index = 0
 
@@ -347,6 +346,7 @@ layout_mode = 2
 size_flags_horizontal = 0
 
 [node name="Gameplay" type="TabBar" parent="Panel/VBoxContainer/MarginContainer/VBoxContainer/TabContainer"]
+visible = false
 layout_mode = 2
 metadata/_tab_index = 4
 
