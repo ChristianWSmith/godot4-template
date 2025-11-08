@@ -15,6 +15,7 @@ extends Control
 @onready var audio_ui_spinbox: SpinBox = %AudioUISpinbox
 
 @onready var video_window_mode_option_button: OptionButton = %VideoWindowModeOptionButton
+@onready var video_resolution_label: Label = %VideoResolutionLabel
 @onready var video_resolution_option_button: OptionButton = %VideoResolutionOptionButton
 @onready var video_vsync_check_button: CheckButton = %VideoVsyncCheckButton
 @onready var video_max_fps_option_button: OptionButton = %VideoMaxFPSOptionButton
@@ -40,16 +41,20 @@ func _make_connections() -> void:
 		match idx:
 			0: 
 				video_resolution_option_button.disabled = false
-				_load_video_resolution()
+				video_resolution_label.visible = true
+				video_resolution_option_button.visible = true
 			1: 
 				video_resolution_option_button.disabled = true
-				video_resolution_option_button.select(-1)
+				video_resolution_label.visible = false
+				video_resolution_option_button.visible = false
 			2: 
 				video_resolution_option_button.disabled = true
-				video_resolution_option_button.select(-1)
+				video_resolution_label.visible = false
+				video_resolution_option_button.visible = false
 			_: 
 				video_resolution_option_button.disabled = true
-				video_resolution_option_button.select(-1)
+				video_resolution_label.visible = false
+				video_resolution_option_button.visible = false
 		)
 
 
@@ -65,7 +70,24 @@ func _load_values() -> void:
 	audio_ui_slider.value = SettingsManager.get_value("audio", "ui") * \
 		audio_ui_slider.max_value
 	
-	_load_video_resolution()
+	match SettingsManager.get_value("video", "resolution"):
+		Vector2i(1280, 720): video_resolution_option_button.select(0)
+		Vector2i(1280, 800): video_resolution_option_button.select(1)
+		Vector2i(1280, 1024): video_resolution_option_button.select(2)
+		Vector2i(1360, 768): video_resolution_option_button.select(3)
+		Vector2i(1366, 768): video_resolution_option_button.select(4)
+		Vector2i(1440, 900): video_resolution_option_button.select(5)
+		Vector2i(1600, 900): video_resolution_option_button.select(6)
+		Vector2i(1600, 1200): video_resolution_option_button.select(7)
+		Vector2i(1680, 1050): video_resolution_option_button.select(8)
+		Vector2i(1920, 1080): video_resolution_option_button.select(9)
+		Vector2i(1920, 1200): video_resolution_option_button.select(10)
+		Vector2i(2560, 1080): video_resolution_option_button.select(11)
+		Vector2i(2560, 1440): video_resolution_option_button.select(12)
+		Vector2i(2560, 1600): video_resolution_option_button.select(13)
+		Vector2i(3440, 1440): video_resolution_option_button.select(14)
+		Vector2i(3840, 2180): video_resolution_option_button.select(15)
+		_: video_resolution_option_button.select(0)
 	
 	if SettingsManager.get_value("video", "fullscreen"):
 		video_window_mode_option_button.select(2) # Fullscreen
@@ -90,27 +112,6 @@ func _load_values() -> void:
 	graphics_placeholder_check_button.button_pressed = SettingsManager.get_value("graphics", "placeholder")
 	
 	gameplay_placeholder_check_button.button_pressed = SettingsManager.get_value("gameplay", "placeholder")
-
-
-func _load_video_resolution() -> void:
-	match SettingsManager.get_value("video", "resolution"):
-		Vector2i(1280, 720): video_resolution_option_button.select(0)
-		Vector2i(1280, 800): video_resolution_option_button.select(1)
-		Vector2i(1280, 1024): video_resolution_option_button.select(2)
-		Vector2i(1360, 768): video_resolution_option_button.select(3)
-		Vector2i(1366, 768): video_resolution_option_button.select(4)
-		Vector2i(1440, 900): video_resolution_option_button.select(5)
-		Vector2i(1600, 900): video_resolution_option_button.select(6)
-		Vector2i(1600, 1200): video_resolution_option_button.select(7)
-		Vector2i(1680, 1050): video_resolution_option_button.select(8)
-		Vector2i(1920, 1080): video_resolution_option_button.select(9)
-		Vector2i(1920, 1200): video_resolution_option_button.select(10)
-		Vector2i(2560, 1080): video_resolution_option_button.select(11)
-		Vector2i(2560, 1440): video_resolution_option_button.select(12)
-		Vector2i(2560, 1600): video_resolution_option_button.select(13)
-		Vector2i(3440, 1440): video_resolution_option_button.select(14)
-		Vector2i(3840, 2180): video_resolution_option_button.select(15)
-		_: video_resolution_option_button.select(0)
 
 
 func _on_apply_pressed() -> void:
