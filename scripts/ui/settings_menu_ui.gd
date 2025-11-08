@@ -19,6 +19,10 @@ extends Control
 @onready var video_vsync_check_button: CheckButton = %VideoVsyncCheckButton
 @onready var video_max_fps_option_button: OptionButton = %VideoMaxFPSOptionButton
 
+@onready var graphics_placeholder_check_button: CheckButton = %GrapicsPlaceholderCheckButton
+
+@onready var gameplay_placeholder_check_button: CheckButton = %GameplayPlaceholderCheckButton
+
 func _ready() -> void:
 	_make_connections()
 	visibility_changed.connect(_load_values)
@@ -82,6 +86,10 @@ func _load_values() -> void:
 		_: video_max_fps_option_button.select(4)
 	
 	video_vsync_check_button.button_pressed = SettingsManager.get_value("video", "vsync")
+
+	graphics_placeholder_check_button.button_pressed = SettingsManager.get_value("graphics", "placeholder")
+	
+	gameplay_placeholder_check_button.button_pressed = SettingsManager.get_value("gameplay", "placeholder")
 
 
 func _load_video_resolution() -> void:
@@ -169,4 +177,10 @@ func _on_apply_pressed() -> void:
 			_: video_values.append(Vector2i(1280, 720))
 	
 	SettingsManager.set_values("video", video_keys, video_values, false)
+
+	SettingsManager.set_value("graphics", "placeholder", 
+		graphics_placeholder_check_button.button_pressed, false)
+	SettingsManager.set_value("gameplay", "placeholder", 
+		gameplay_placeholder_check_button.button_pressed, false)
+	
 	SettingsManager.save()
