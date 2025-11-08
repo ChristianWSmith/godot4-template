@@ -6,6 +6,11 @@ class_name InputCaptorButton
 @export var joypad_button_allowed: bool = true
 @export var joypad_motion_allowed: bool = true
 
+# Examples:
+#   { "type": "Key", "alt": false, "ctrl": false, "keycode": 0, "meta": false, "physical_keycode": 32, "shift": false },
+#   { "type": "MouseButton", "button_index": 1 }
+#   { "type": "JoypadButton" , "button_index": 0, "device": -1 }
+#   { "type": "JoypadMotion", "axis": 1, "axis_value": -1.0, "device": -1 }
 var _binding: Dictionary = {}
 
 func _ready() -> void:
@@ -17,11 +22,6 @@ func set_binding(binding: Dictionary) -> void:
 	_binding = binding
 
 
-# Examples:
-#   { "type": "Key", "alt": false, "ctrl": false, "keycode": 0, "meta": false, "physical_keycode": 32, "shift": false },
-#   { "type": "MouseButton", "button_index": 1 }
-#   { "type": "JoypadButton" , "button_index": 0, "device": -1 }
-#   { "type": "JoypadMotion", "axis": 1, "axis_value": -1.0, "device": -1 }
 func get_binding() -> Dictionary:
 	return _binding
 
