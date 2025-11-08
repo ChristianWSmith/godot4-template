@@ -63,9 +63,10 @@ layout_mode = 2
 [node name="TabContainer" type="TabContainer" parent="Panel/VBoxContainer/MarginContainer/VBoxContainer"]
 layout_mode = 2
 size_flags_vertical = 3
-current_tab = 0
+current_tab = 2
 
 [node name="Audio" type="TabBar" parent="Panel/VBoxContainer/MarginContainer/VBoxContainer/TabContainer"]
+visible = false
 layout_mode = 2
 metadata/_tab_index = 0
 
@@ -285,7 +286,6 @@ popup/item_4/text = "Unlimitted"
 popup/item_4/id = 4
 
 [node name="Input" type="TabBar" parent="Panel/VBoxContainer/MarginContainer/VBoxContainer/TabContainer"]
-visible = false
 layout_mode = 2
 metadata/_tab_index = 2
 
@@ -308,7 +308,37 @@ size_flags_vertical = 3
 [node name="GridContainer" type="GridContainer" parent="Panel/VBoxContainer/MarginContainer/VBoxContainer/TabContainer/Input/MarginContainer/ScrollContainer"]
 layout_mode = 2
 size_flags_horizontal = 3
-columns = 2
+columns = 3
+
+[node name="InputTitleAction" type="Label" parent="Panel/VBoxContainer/MarginContainer/VBoxContainer/TabContainer/Input/MarginContainer/ScrollContainer/GridContainer"]
+layout_mode = 2
+text = "Action"
+horizontal_alignment = 2
+
+[node name="InputTItleKeyboard" type="Label" parent="Panel/VBoxContainer/MarginContainer/VBoxContainer/TabContainer/Input/MarginContainer/ScrollContainer/GridContainer"]
+layout_mode = 2
+text = "Keyboard"
+horizontal_alignment = 1
+
+[node name="InputTitleController" type="Label" parent="Panel/VBoxContainer/MarginContainer/VBoxContainer/TabContainer/Input/MarginContainer/ScrollContainer/GridContainer"]
+layout_mode = 2
+text = "Controller"
+horizontal_alignment = 1
+
+[node name="InputSomeActionLabel" type="Label" parent="Panel/VBoxContainer/MarginContainer/VBoxContainer/TabContainer/Input/MarginContainer/ScrollContainer/GridContainer"]
+layout_mode = 2
+text = "Some Action"
+horizontal_alignment = 2
+
+[node name="InputSomeActionKeyboardButton" type="Button" parent="Panel/VBoxContainer/MarginContainer/VBoxContainer/TabContainer/Input/MarginContainer/ScrollContainer/GridContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="InputSomeActionControllerButton" type="Button" parent="Panel/VBoxContainer/MarginContainer/VBoxContainer/TabContainer/Input/MarginContainer/ScrollContainer/GridContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
 
 [node name="Graphics" type="TabBar" parent="Panel/VBoxContainer/MarginContainer/VBoxContainer/TabContainer"]
 visible = false
