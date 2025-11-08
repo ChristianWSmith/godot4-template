@@ -22,6 +22,7 @@ func load_from_slot(slot_name: String) -> void:
 	_current_data = DictUtils.flatten(SaveManager.get_data(slot_name))
 	_current_slot = slot_name
 	_loaded = true
+	EventBus.emit("slot_loaded")
 
 
 func save_to_slot(slot_name: String) -> Error:

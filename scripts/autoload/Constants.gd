@@ -4,6 +4,9 @@ extends Node
 const INT_MAX: int = int(INF) - 1
 const INT_MIN: int = int(INF)
 
+# Gameplay
+const AUTOSAVE_INTERVAL: float = 300.0
+
 # UI
 const UI_LAYER_INDEX: int = 100
 const UI_PRELOADS: Dictionary[String, PackedScene] = {
@@ -110,7 +113,7 @@ const DEFAULT_SETTINGS: Dictionary = {
 		"bindings": DEFAULT_INPUT_BINDINGS_SETTINGS
 	},
 	"gameplay": {
-		"placeholder": true
+		"autosave": true
 	},
 	"graphics": {
 		"ui_scale": 1.0,

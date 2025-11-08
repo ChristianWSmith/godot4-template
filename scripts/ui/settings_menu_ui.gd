@@ -26,7 +26,7 @@ extends Control
 @onready var graphics_ui_scale_slider: Slider = %GraphicsUIScaleSlider
 @onready var graphics_ui_scale_spinbox: SpinBox = %GraphicsUIScaleSpinbox
 
-@onready var gameplay_placeholder_check_button: CheckButton = %GameplayPlaceholderCheckButton
+@onready var gameplay_autosave_check_button: CheckButton = %GameplayAutosaveCheckButton
 
 func _ready() -> void:
 	_make_connections()
@@ -121,7 +121,7 @@ func _load_values() -> void:
 	
 	graphics_ui_scale_slider.value = SettingsManager.get_value("graphics", "ui_scale")
 
-	gameplay_placeholder_check_button.button_pressed = SettingsManager.get_value("gameplay", "placeholder")
+	gameplay_autosave_check_button.button_pressed = SettingsManager.get_value("gameplay", "autosave")
 
 
 func _load_binding(
@@ -212,7 +212,7 @@ func _on_apply_pressed() -> void:
 	SettingsManager.set_value("graphics", "ui_scale", 
 		graphics_ui_scale_slider.value, false)
 
-	SettingsManager.set_value("gameplay", "placeholder", 
-		gameplay_placeholder_check_button.button_pressed, false)
+	SettingsManager.set_value("gameplay", "autosave", 
+		gameplay_autosave_check_button.button_pressed, false)
 	
 	SettingsManager.save()
