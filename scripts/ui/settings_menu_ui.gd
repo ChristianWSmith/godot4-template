@@ -20,6 +20,9 @@ extends Control
 @onready var video_vsync_check_button: CheckButton = %VideoVsyncCheckButton
 @onready var video_max_fps_option_button: OptionButton = %VideoMaxFPSOptionButton
 
+@onready var input_some_action_key: InputCaptorButton = %InputSomeActionKeyboardButton
+@onready var input_some_action_joypad: InputCaptorButton = %InputSomeActionJoypadButton
+
 @onready var graphics_ui_scale_slider: Slider = %GraphicsUIScaleSlider
 @onready var graphics_ui_scale_spinbox: SpinBox = %GraphicsUIScaleSpinbox
 
