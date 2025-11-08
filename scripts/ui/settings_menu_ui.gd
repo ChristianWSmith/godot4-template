@@ -20,8 +20,8 @@ extends Control
 @onready var video_vsync_check_button: CheckButton = %VideoVsyncCheckButton
 @onready var video_max_fps_option_button: OptionButton = %VideoMaxFPSOptionButton
 
-@onready var input_some_action_key: InputCaptorButton = %InputSomeActionKeyboardButton
-@onready var input_some_action_joypad: InputCaptorButton = %InputSomeActionJoypadButton
+@onready var input_some_action_key_button: InputCaptorButton = %InputSomeActionKeyboardButton
+@onready var input_some_action_joypad_button: InputCaptorButton = %InputSomeActionJoypadButton
 
 @onready var graphics_ui_scale_slider: Slider = %GraphicsUIScaleSlider
 @onready var graphics_ui_scale_spinbox: SpinBox = %GraphicsUIScaleSpinbox
@@ -116,6 +116,8 @@ func _load_values() -> void:
 	
 	video_vsync_check_button.button_pressed = SettingsManager.get_value("video", "vsync")
 
+	# TODO: load bindings
+	
 	graphics_ui_scale_slider.value = SettingsManager.get_value("graphics", "ui_scale")
 
 	gameplay_placeholder_check_button.button_pressed = SettingsManager.get_value("gameplay", "placeholder")
@@ -185,6 +187,8 @@ func _on_apply_pressed() -> void:
 			_: video_values.append(Vector2i(1280, 720))
 	
 	SettingsManager.set_values("video", video_keys, video_values, false)
+	
+	# TODO: set bindings
 
 	SettingsManager.set_value("graphics", "ui_scale", 
 		graphics_ui_scale_slider.value, false)
