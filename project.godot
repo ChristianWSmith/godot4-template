@@ -51,7 +51,11 @@ shader_language/warnings/treat_warnings_as_errors=true
 
 [display]
 
+window/size/viewport_width=1280
+window/size/viewport_height=720
+window/size/resizable=false
 window/subwindows/embed_subwindows=false
+window/per_pixel_transparency/allowed=true
 
 [editor]
 

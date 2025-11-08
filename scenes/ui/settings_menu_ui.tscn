@@ -1,7 +1,9 @@
-[gd_scene load_steps=2 format=3 uid="uid://dl828qmy0xo1f"]
+[gd_scene load_steps=3 format=3 uid="uid://dl828qmy0xo1f"]
+
+[ext_resource type="Script" uid="uid://d2js48bt464oc" path="res://scripts/ui/settings_menu_ui.gd" id="1_cpkmu"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_2iwuv"]
-bg_color = Color(0.3491902, 0.3491902, 0.3491902, 1)
+bg_color = Color(0.24780053, 0.24780053, 0.24780053, 1)
 corner_radius_top_left = 3
 corner_radius_top_right = 3
 corner_radius_bottom_right = 3
@@ -16,8 +18,9 @@ anchor_right = 0.5
 anchor_bottom = 0.5
 grow_horizontal = 2
 grow_vertical = 2
+script = ExtResource("1_cpkmu")
 
-[node name="Panel" type="Panel" parent="."]
+[node name="Panel" type="PanelContainer" parent="."]
 layout_mode = 1
 anchors_preset = 8
 anchor_left = 0.5
@@ -33,12 +36,7 @@ grow_vertical = 2
 theme_override_styles/panel = SubResource("StyleBoxFlat_2iwuv")
 
 [node name="VBoxContainer" type="VBoxContainer" parent="Panel"]
-layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
+layout_mode = 2
 
 [node name="MarginContainer" type="MarginContainer" parent="Panel/VBoxContainer"]
 layout_mode = 2
@@ -51,21 +49,24 @@ theme_override_constants/margin_bottom = 16
 [node name="VBoxContainer" type="VBoxContainer" parent="Panel/VBoxContainer/MarginContainer"]
 layout_mode = 2
 
-[node name="Label" type="Label" parent="Panel/VBoxContainer/MarginContainer/VBoxContainer"]
+[node name="PanelContainer" type="PanelContainer" parent="Panel/VBoxContainer/MarginContainer/VBoxContainer"]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="Panel/VBoxContainer/MarginContainer/VBoxContainer/PanelContainer"]
 layout_mode = 2
 text = "Settings"
 horizontal_alignment = 1
 
 [node name="HSeparator" type="HSeparator" parent="Panel/VBoxContainer/MarginContainer/VBoxContainer"]
-visible = false
 layout_mode = 2
 
 [node name="TabContainer" type="TabContainer" parent="Panel/VBoxContainer/MarginContainer/VBoxContainer"]
 layout_mode = 2
 size_flags_vertical = 3
-current_tab = 0
+current_tab = 1
 
 [node name="Audio" type="TabBar" parent="Panel/VBoxContainer/MarginContainer/VBoxContainer/TabContainer"]
+visible = false
 layout_mode = 2
 metadata/_tab_index = 0
 
@@ -81,87 +82,209 @@ theme_override_constants/margin_top = 16
 theme_override_constants/margin_right = 16
 theme_override_constants/margin_bottom = 16
 
-[node name="VBoxContainer" type="VBoxContainer" parent="Panel/VBoxContainer/MarginContainer/VBoxContainer/TabContainer/Audio/MarginContainer"]
-layout_mode = 2
-
-[node name="ScrollContainer" type="ScrollContainer" parent="Panel/VBoxContainer/MarginContainer/VBoxContainer/TabContainer/Audio/MarginContainer/VBoxContainer"]
+[node name="ScrollContainer" type="ScrollContainer" parent="Panel/VBoxContainer/MarginContainer/VBoxContainer/TabContainer/Audio/MarginContainer"]
 layout_mode = 2
 size_flags_vertical = 3
 
-[node name="GridContainer" type="GridContainer" parent="Panel/VBoxContainer/MarginContainer/VBoxContainer/TabContainer/Audio/MarginContainer/VBoxContainer/ScrollContainer"]
+[node name="GridContainer" type="GridContainer" parent="Panel/VBoxContainer/MarginContainer/VBoxContainer/TabContainer/Audio/MarginContainer/ScrollContainer"]
 layout_mode = 2
 size_flags_horizontal = 3
 columns = 3
 
-[node name="AudioMasterLabel" type="Label" parent="Panel/VBoxContainer/MarginContainer/VBoxContainer/TabContainer/Audio/MarginContainer/VBoxContainer/ScrollContainer/GridContainer"]
+[node name="AudioMasterLabel" type="Label" parent="Panel/VBoxContainer/MarginContainer/VBoxContainer/TabContainer/Audio/MarginContainer/ScrollContainer/GridContainer"]
 layout_mode = 2
+size_flags_horizontal = 8
 text = "Master"
 
-[node name="AudioMasterSlider" type="HSlider" parent="Panel/VBoxContainer/MarginContainer/VBoxContainer/TabContainer/Audio/MarginContainer/VBoxContainer/ScrollContainer/GridContainer"]
+[node name="AudioMasterSlider" type="HSlider" parent="Panel/VBoxContainer/MarginContainer/VBoxContainer/TabContainer/Audio/MarginContainer/ScrollContainer/GridContainer"]
+unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 4
 
-[node name="AudioMasterSpinbox" type="SpinBox" parent="Panel/VBoxContainer/MarginContainer/VBoxContainer/TabContainer/Audio/MarginContainer/VBoxContainer/ScrollContainer/GridContainer"]
+[node name="AudioMasterSpinbox" type="SpinBox" parent="Panel/VBoxContainer/MarginContainer/VBoxContainer/TabContainer/Audio/MarginContainer/ScrollContainer/GridContainer"]
+unique_name_in_owner = true
 layout_mode = 2
 
-[node name="AudioMusicLabel" type="Label" parent="Panel/VBoxContainer/MarginContainer/VBoxContainer/TabContainer/Audio/MarginContainer/VBoxContainer/ScrollContainer/GridContainer"]
+[node name="AudioMusicLabel" type="Label" parent="Panel/VBoxContainer/MarginContainer/VBoxContainer/TabContainer/Audio/MarginContainer/ScrollContainer/GridContainer"]
 layout_mode = 2
+size_flags_horizontal = 8
 text = "Music"
 
-[node name="AudioMusicSlide" type="HSlider" parent="Panel/VBoxContainer/MarginContainer/VBoxContainer/TabContainer/Audio/MarginContainer/VBoxContainer/ScrollContainer/GridContainer"]
+[node name="AudioMusicSlider" type="HSlider" parent="Panel/VBoxContainer/MarginContainer/VBoxContainer/TabContainer/Audio/MarginContainer/ScrollContainer/GridContainer"]
+unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 4
 
-[node name="AudioMusicSpinbox" type="SpinBox" parent="Panel/VBoxContainer/MarginContainer/VBoxContainer/TabContainer/Audio/MarginContainer/VBoxContainer/ScrollContainer/GridContainer"]
+[node name="AudioMusicSpinbox" type="SpinBox" parent="Panel/VBoxContainer/MarginContainer/VBoxContainer/TabContainer/Audio/MarginContainer/ScrollContainer/GridContainer"]
+unique_name_in_owner = true
 layout_mode = 2
 
-[node name="AudioSFXLabel" type="Label" parent="Panel/VBoxContainer/MarginContainer/VBoxContainer/TabContainer/Audio/MarginContainer/VBoxContainer/ScrollContainer/GridContainer"]
+[node name="AudioSFXLabel" type="Label" parent="Panel/VBoxContainer/MarginContainer/VBoxContainer/TabContainer/Audio/MarginContainer/ScrollContainer/GridContainer"]
 layout_mode = 2
+size_flags_horizontal = 8
 text = "SFX"
 
-[node name="AudioSFXSlider" type="HSlider" parent="Panel/VBoxContainer/MarginContainer/VBoxContainer/TabContainer/Audio/MarginContainer/VBoxContainer/ScrollContainer/GridContainer"]
+[node name="AudioSFXSlider" type="HSlider" parent="Panel/VBoxContainer/MarginContainer/VBoxContainer/TabContainer/Audio/MarginContainer/ScrollContainer/GridContainer"]
+unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 4
 
-[node name="AudioSFXSpinbox" type="SpinBox" parent="Panel/VBoxContainer/MarginContainer/VBoxContainer/TabContainer/Audio/MarginContainer/VBoxContainer/ScrollContainer/GridContainer"]
+[node name="AudioSFXSpinbox" type="SpinBox" parent="Panel/VBoxContainer/MarginContainer/VBoxContainer/TabContainer/Audio/MarginContainer/ScrollContainer/GridContainer"]
+unique_name_in_owner = true
 layout_mode = 2
 
-[node name="AudioVoiceLabel" type="Label" parent="Panel/VBoxContainer/MarginContainer/VBoxContainer/TabContainer/Audio/MarginContainer/VBoxContainer/ScrollContainer/GridContainer"]
+[node name="AudioVoiceLabel" type="Label" parent="Panel/VBoxContainer/MarginContainer/VBoxContainer/TabContainer/Audio/MarginContainer/ScrollContainer/GridContainer"]
 layout_mode = 2
+size_flags_horizontal = 8
 text = "Voice"
 
-[node name="AudioVoiceSlider" type="HSlider" parent="Panel/VBoxContainer/MarginContainer/VBoxContainer/TabContainer/Audio/MarginContainer/VBoxContainer/ScrollContainer/GridContainer"]
+[node name="AudioVoiceSlider" type="HSlider" parent="Panel/VBoxContainer/MarginContainer/VBoxContainer/TabContainer/Audio/MarginContainer/ScrollContainer/GridContainer"]
+unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 4
 
-[node name="AudioVoiceSpinbox" type="SpinBox" parent="Panel/VBoxContainer/MarginContainer/VBoxContainer/TabContainer/Audio/MarginContainer/VBoxContainer/ScrollContainer/GridContainer"]
+[node name="AudioVoiceSpinbox" type="SpinBox" parent="Panel/VBoxContainer/MarginContainer/VBoxContainer/TabContainer/Audio/MarginContainer/ScrollContainer/GridContainer"]
+unique_name_in_owner = true
 layout_mode = 2
 
-[node name="AudioUILabel" type="Label" parent="Panel/VBoxContainer/MarginContainer/VBoxContainer/TabContainer/Audio/MarginContainer/VBoxContainer/ScrollContainer/GridContainer"]
+[node name="AudioUILabel" type="Label" parent="Panel/VBoxContainer/MarginContainer/VBoxContainer/TabContainer/Audio/MarginContainer/ScrollContainer/GridContainer"]
 layout_mode = 2
+size_flags_horizontal = 8
 text = "UI"
 
-[node name="AudioUISlider" type="HSlider" parent="Panel/VBoxContainer/MarginContainer/VBoxContainer/TabContainer/Audio/MarginContainer/VBoxContainer/ScrollContainer/GridContainer"]
+[node name="AudioUISlider" type="HSlider" parent="Panel/VBoxContainer/MarginContainer/VBoxContainer/TabContainer/Audio/MarginContainer/ScrollContainer/GridContainer"]
+unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 4
 
-[node name="AudioUISpinbox" type="SpinBox" parent="Panel/VBoxContainer/MarginContainer/VBoxContainer/TabContainer/Audio/MarginContainer/VBoxContainer/ScrollContainer/GridContainer"]
+[node name="AudioUISpinbox" type="SpinBox" parent="Panel/VBoxContainer/MarginContainer/VBoxContainer/TabContainer/Audio/MarginContainer/ScrollContainer/GridContainer"]
+unique_name_in_owner = true
 layout_mode = 2
 
 [node name="Video" type="TabBar" parent="Panel/VBoxContainer/MarginContainer/VBoxContainer/TabContainer"]
-visible = false
 layout_mode = 2
 metadata/_tab_index = 1
 
-[node name="Input" type="TabBar" parent="Panel/VBoxContainer/MarginContainer/VBoxContainer/TabContainer"]
-visible = false
+[node name="MarginContainer" type="MarginContainer" parent="Panel/VBoxContainer/MarginContainer/VBoxContainer/TabContainer/Video"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/margin_left = 16
+theme_override_constants/margin_top = 16
+theme_override_constants/margin_right = 16
+theme_override_constants/margin_bottom = 16
+
+[node name="ScrollContainer" type="ScrollContainer" parent="Panel/VBoxContainer/MarginContainer/VBoxContainer/TabContainer/Video/MarginContainer"]
 layout_mode = 2
-metadata/_tab_index = 2
+size_flags_vertical = 3
+
+[node name="GridContainer" type="GridContainer" parent="Panel/VBoxContainer/MarginContainer/VBoxContainer/TabContainer/Video/MarginContainer/ScrollContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+columns = 2
+
+[node name="VideoWindowModeLabel" type="Label" parent="Panel/VBoxContainer/MarginContainer/VBoxContainer/TabContainer/Video/MarginContainer/ScrollContainer/GridContainer"]
+layout_mode = 2
+size_flags_horizontal = 8
+text = "Window Mode"
+
+[node name="VideoWindowModeOptionButton" type="OptionButton" parent="Panel/VBoxContainer/MarginContainer/VBoxContainer/TabContainer/Video/MarginContainer/ScrollContainer/GridContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+selected = 0
+item_count = 3
+popup/item_0/text = "Windowed"
+popup/item_0/id = 0
+popup/item_1/text = "Borderless"
+popup/item_1/id = 1
+popup/item_2/text = "Fullscreen"
+popup/item_2/id = 2
+
+[node name="VideoResolutionLabel" type="Label" parent="Panel/VBoxContainer/MarginContainer/VBoxContainer/TabContainer/Video/MarginContainer/ScrollContainer/GridContainer"]
+layout_mode = 2
+size_flags_horizontal = 8
+text = "Resolution"
+
+[node name="VideoResolutionOptionButton" type="OptionButton" parent="Panel/VBoxContainer/MarginContainer/VBoxContainer/TabContainer/Video/MarginContainer/ScrollContainer/GridContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+selected = 0
+item_count = 16
+popup/item_0/text = "1280x720"
+popup/item_0/id = 0
+popup/item_1/text = "1280x800"
+popup/item_1/id = 1
+popup/item_2/text = "1280x1024"
+popup/item_2/id = 2
+popup/item_3/text = "1360x768"
+popup/item_3/id = 3
+popup/item_4/text = "1366x768"
+popup/item_4/id = 4
+popup/item_5/text = "1440x900"
+popup/item_5/id = 5
+popup/item_6/text = "1600x900"
+popup/item_6/id = 6
+popup/item_7/text = "1600x1200"
+popup/item_7/id = 7
+popup/item_8/text = "1680x1050"
+popup/item_8/id = 8
+popup/item_9/text = "1920x1080"
+popup/item_9/id = 9
+popup/item_10/text = "1920x1200"
+popup/item_10/id = 10
+popup/item_11/text = "2560x1080"
+popup/item_11/id = 11
+popup/item_12/text = "2560x1440"
+popup/item_12/id = 12
+popup/item_13/text = "2560x1600"
+popup/item_13/id = 13
+popup/item_14/text = "3440x1440"
+popup/item_14/id = 14
+popup/item_15/text = "3840x2160"
+popup/item_15/id = 15
+
+[node name="VideoVsyncLabel" type="Label" parent="Panel/VBoxContainer/MarginContainer/VBoxContainer/TabContainer/Video/MarginContainer/ScrollContainer/GridContainer"]
+layout_mode = 2
+size_flags_horizontal = 8
+text = "Vsync"
+
+[node name="VideoVsyncCheckButton" type="CheckButton" parent="Panel/VBoxContainer/MarginContainer/VBoxContainer/TabContainer/Video/MarginContainer/ScrollContainer/GridContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 0
+
+[node name="VideoMaxFPSLabel" type="Label" parent="Panel/VBoxContainer/MarginContainer/VBoxContainer/TabContainer/Video/MarginContainer/ScrollContainer/GridContainer"]
+layout_mode = 2
+size_flags_horizontal = 8
+text = "Max FPS"
+
+[node name="VideoMaxFPSOptionButton" type="OptionButton" parent="Panel/VBoxContainer/MarginContainer/VBoxContainer/TabContainer/Video/MarginContainer/ScrollContainer/GridContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+selected = 0
+item_count = 5
+popup/item_0/text = "30"
+popup/item_0/id = 0
+popup/item_1/text = "60"
+popup/item_1/id = 1
+popup/item_2/text = "120"
+popup/item_2/id = 2
+popup/item_3/text = "240"
+popup/item_3/id = 3
+popup/item_4/text = "Unlimitted"
+popup/item_4/id = 4
+
+[node name="HSeparator2" type="HSeparator" parent="Panel/VBoxContainer/MarginContainer/VBoxContainer"]
+layout_mode = 2
 
 [node name="HBoxContainer" type="HBoxContainer" parent="Panel/VBoxContainer/MarginContainer/VBoxContainer"]
 layout_mode = 2

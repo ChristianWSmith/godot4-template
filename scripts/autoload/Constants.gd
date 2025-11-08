@@ -94,7 +94,7 @@ const DEFAULT_SETTINGS: Dictionary = {
 		"fullscreen": false,
 		"borderless": false,
 		"vsync": true,
-		"resolution": Vector2i(1152, 648),
+		"resolution": Vector2i(1280, 720),
 		"max_fps": 0,
 	},
 	"graphics": {
@@ -104,8 +104,8 @@ const DEFAULT_SETTINGS: Dictionary = {
 		"master": 1.0,
 		"music": 1.0,
 		"sfx": 1.0,
-		"ui": 1.0,
 		"voice": 1.0,
+		"ui": 1.0,
 	},
 	"input": {
 		"bindings": DEFAULT_INPUT_BINDINGS_SETTINGS
