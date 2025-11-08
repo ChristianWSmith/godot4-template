@@ -96,6 +96,7 @@ const DEFAULT_SETTINGS: Dictionary = {
 		"vsync": true,
 		"resolution": Vector2i(1280, 720),
 		"max_fps": 0,
+		"ui_scale": 1.0,
 	},
 	"audio": {
 		"master": 1.0,

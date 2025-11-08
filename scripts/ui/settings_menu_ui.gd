@@ -19,6 +19,8 @@ extends Control
 @onready var video_resolution_option_button: OptionButton = %VideoResolutionOptionButton
 @onready var video_vsync_check_button: CheckButton = %VideoVsyncCheckButton
 @onready var video_max_fps_option_button: OptionButton = %VideoMaxFPSOptionButton
+@onready var video_ui_scale_slider: Slider = %VideoUIScaleSlider
+@onready var video_ui_scale_spinbox: SpinBox = %VideoUIScaleSpinbox
 
 @onready var graphics_placeholder_check_button: CheckButton = %GrapicsPlaceholderCheckButton
 
@@ -37,6 +39,7 @@ func _make_connections() -> void:
 	UIUtils.tether_values(audio_sfx_slider, audio_sfx_spinbox)
 	UIUtils.tether_values(audio_ui_slider, audio_ui_spinbox)
 	UIUtils.tether_values(audio_voice_slider, audio_voice_spinbox)
+	UIUtils.tether_values(video_ui_scale_slider, video_ui_scale_spinbox)
 	video_window_mode_option_button.item_selected.connect(func(idx: int):
 		match idx:
 			0: 
@@ -59,6 +62,8 @@ func _make_connections() -> void:
 
 
 func _load_values() -> void:
+	if not visible:
+		return
 	audio_master_slider.value = SettingsManager.get_value("audio", "master") * \
 		audio_master_slider.max_value
 	audio_music_slider.value = SettingsManager.get_value("audio", "music") * \
@@ -106,6 +111,8 @@ func _load_values() -> void:
 		240: video_max_fps_option_button.select(3)
 		0: video_max_fps_option_button.select(4)
 		_: video_max_fps_option_button.select(4)
+	
+	video_ui_scale_slider.value = SettingsManager.get_value("video", "ui_scale")
 	
 	video_vsync_check_button.button_pressed = SettingsManager.get_value("video", "vsync")
 
@@ -176,6 +183,9 @@ func _on_apply_pressed() -> void:
 			14: video_values.append(Vector2i(3440, 1440))
 			15: video_values.append(Vector2i(3840, 2180))
 			_: video_values.append(Vector2i(1280, 720))
+	
+	video_keys.append("ui_scale")
+	video_values.append(video_ui_scale_slider.value)
 	
 	SettingsManager.set_values("video", video_keys, video_values, false)
 

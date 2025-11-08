@@ -8,6 +8,6 @@ static func tether_values(node_a: Control, node_b: Control):
 		node_b.has_method("set_value_no_signal"):
 		node_a.value_changed.connect(node_b.set_value_no_signal)
 		node_b.value_changed.connect(node_a.set_value_no_signal)
-		Log.debug(node_a, "Tethered to '%s'" % node_b.name)
+		Log.trace(node_a, "Tethered to '%s'" % node_b.name)
 	else:
 		Log.warn(node_a, "Failed to tether to '%s'" % node_b.name)
