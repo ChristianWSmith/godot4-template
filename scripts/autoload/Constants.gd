@@ -41,7 +41,9 @@ const DEFAULT_SAVE: Dictionary = {
 		"timestamp": -1.0,
 	},
 	"data": {
-		
+		"current_scene": "",
+		"global_data": {},
+		"scene_data": {},
 	}
 }
 
