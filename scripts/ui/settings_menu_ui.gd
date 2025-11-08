@@ -116,11 +116,23 @@ func _load_values() -> void:
 	
 	video_vsync_check_button.button_pressed = SettingsManager.get_value("video", "vsync")
 
-	# TODO: load bindings
+	var bindings: Dictionary = SettingsManager.get_value("input", "bindings")
+	_load_binding(bindings.get("some_action", []), input_some_action_key_button, input_some_action_joypad_button)
 	
 	graphics_ui_scale_slider.value = SettingsManager.get_value("graphics", "ui_scale")
 
 	gameplay_placeholder_check_button.button_pressed = SettingsManager.get_value("gameplay", "placeholder")
+
+
+func _load_binding(
+		bindings: Array, 
+		key_button: InputCaptorButton, 
+		joypad_button: InputCaptorButton) -> void:
+	for binding: Dictionary in bindings:
+		match binding.get("type", ""):
+			"Key": key_button.set_binding(binding)
+			"JoypadButton": joypad_button.set_binding(binding)
+			_: Log.warn(self, "Unsupported bind type: '%s'" % binding.get("type", ""))
 
 
 func _on_apply_pressed() -> void:
@@ -188,7 +200,14 @@ func _on_apply_pressed() -> void:
 	
 	SettingsManager.set_values("video", video_keys, video_values, false)
 	
-	# TODO: set bindings
+	var bindings: Dictionary = {}
+	
+	bindings["some_action"] = [
+		input_some_action_key_button.get_binding(),
+		input_some_action_joypad_button.get_binding(),
+	]
+	
+	SettingsManager.set_value("input", "bindings", bindings, false)
 
 	SettingsManager.set_value("graphics", "ui_scale", 
 		graphics_ui_scale_slider.value, false)
