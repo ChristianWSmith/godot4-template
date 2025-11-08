@@ -53,10 +53,9 @@ layout_mode = 2
 [node name="TabContainer" type="TabContainer" parent="VBoxContainer/MarginContainer/VBoxContainer"]
 layout_mode = 2
 size_flags_vertical = 3
-current_tab = 2
+current_tab = 0
 
 [node name="Audio" type="TabBar" parent="VBoxContainer/MarginContainer/VBoxContainer/TabContainer"]
-visible = false
 layout_mode = 2
 metadata/_tab_index = 0
 
@@ -276,6 +275,7 @@ popup/item_4/text = "Unlimitted"
 popup/item_4/id = 4
 
 [node name="Input" type="TabBar" parent="VBoxContainer/MarginContainer/VBoxContainer/TabContainer"]
+visible = false
 layout_mode = 2
 metadata/_tab_index = 2
 

@@ -30,6 +30,10 @@ func save_to_slot(slot_name: String) -> Error:
 	return SaveManager.save_data(slot_name, DictUtils.unflatten(_current_data))
 
 
+func unload() -> void:
+	_reset_state()
+
+
 func get_scene_data(path: String) -> Variant:
 	path = "scene_data/" + _current_data["current_scene"] + "/" + path
 	if not _loaded:

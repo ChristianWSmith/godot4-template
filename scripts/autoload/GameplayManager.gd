@@ -14,17 +14,16 @@ func initialize() -> Error:
 
 
 func _on_gameplayer_settings_updated() -> void:
-	_enable_autosave(
-		SettingsManager.get_value("gameplay", "autosave") and GameState.get_loaded())
+	_update_autosave()
 
 
 func _on_slot_loaded() -> void:
-	_enable_autosave(
-		SettingsManager.get_value("gameplay", "autosave") and GameState.get_loaded())
+	_update_autosave()
 
 
-func _enable_autosave(enabled: bool) -> void:
-	if enabled:
+func _update_autosave() -> void:
+	if SettingsManager.get_value("gameplay", "autosave") and \
+		GameState.get_loaded():
 		_autosave_timer.timeout.connect(_autosave)
 		_autosave_timer.start(Constants.AUTOSAVE_INTERVAL)
 	else:
