@@ -1,6 +1,7 @@
-[gd_scene load_steps=3 format=3 uid="uid://dl828qmy0xo1f"]
+[gd_scene load_steps=4 format=3 uid="uid://dl828qmy0xo1f"]
 
 [ext_resource type="Script" uid="uid://d2js48bt464oc" path="res://scripts/ui/settings_menu_ui.gd" id="1_cpkmu"]
+[ext_resource type="Script" uid="uid://i2165tn5td64" path="res://scripts/ui/input_captor_button.gd" id="2_ytofq"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_2iwuv"]
 bg_color = Color(0.24780053, 0.24780053, 0.24780053, 1)
@@ -334,6 +335,7 @@ horizontal_alignment = 2
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
+script = ExtResource("2_ytofq")
 
 [node name="InputSomeActionControllerButton" type="Button" parent="Panel/VBoxContainer/MarginContainer/VBoxContainer/TabContainer/Input/MarginContainer/ScrollContainer/GridContainer"]
 unique_name_in_owner = true
