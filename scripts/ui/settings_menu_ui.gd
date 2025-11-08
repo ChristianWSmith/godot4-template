@@ -19,10 +19,9 @@ extends Control
 @onready var video_resolution_option_button: OptionButton = %VideoResolutionOptionButton
 @onready var video_vsync_check_button: CheckButton = %VideoVsyncCheckButton
 @onready var video_max_fps_option_button: OptionButton = %VideoMaxFPSOptionButton
-@onready var video_ui_scale_slider: Slider = %VideoUIScaleSlider
-@onready var video_ui_scale_spinbox: SpinBox = %VideoUIScaleSpinbox
 
-@onready var graphics_placeholder_check_button: CheckButton = %GrapicsPlaceholderCheckButton
+@onready var graphics_ui_scale_slider: Slider = %GraphicsUIScaleSlider
+@onready var graphics_ui_scale_spinbox: SpinBox = %GraphicsUIScaleSpinbox
 
 @onready var gameplay_placeholder_check_button: CheckButton = %GameplayPlaceholderCheckButton
 
@@ -39,7 +38,7 @@ func _make_connections() -> void:
 	UIUtils.tether_values(audio_sfx_slider, audio_sfx_spinbox)
 	UIUtils.tether_values(audio_ui_slider, audio_ui_spinbox)
 	UIUtils.tether_values(audio_voice_slider, audio_voice_spinbox)
-	UIUtils.tether_values(video_ui_scale_slider, video_ui_scale_spinbox)
+	UIUtils.tether_values(graphics_ui_scale_slider, graphics_ui_scale_spinbox)
 	video_window_mode_option_button.item_selected.connect(func(idx: int):
 		match idx:
 			0: 
@@ -112,12 +111,10 @@ func _load_values() -> void:
 		0: video_max_fps_option_button.select(4)
 		_: video_max_fps_option_button.select(4)
 	
-	video_ui_scale_slider.value = SettingsManager.get_value("video", "ui_scale")
-	
 	video_vsync_check_button.button_pressed = SettingsManager.get_value("video", "vsync")
 
-	graphics_placeholder_check_button.button_pressed = SettingsManager.get_value("graphics", "placeholder")
-	
+	graphics_ui_scale_slider.value = SettingsManager.get_value("graphics", "ui_scale")
+
 	gameplay_placeholder_check_button.button_pressed = SettingsManager.get_value("gameplay", "placeholder")
 
 
@@ -184,13 +181,11 @@ func _on_apply_pressed() -> void:
 			15: video_values.append(Vector2i(3840, 2180))
 			_: video_values.append(Vector2i(1280, 720))
 	
-	video_keys.append("ui_scale")
-	video_values.append(video_ui_scale_slider.value)
-	
 	SettingsManager.set_values("video", video_keys, video_values, false)
 
-	SettingsManager.set_value("graphics", "placeholder", 
-		graphics_placeholder_check_button.button_pressed, false)
+	SettingsManager.set_value("graphics", "ui_scale", 
+		graphics_ui_scale_slider.value, false)
+
 	SettingsManager.set_value("gameplay", "placeholder", 
 		gameplay_placeholder_check_button.button_pressed, false)
 	
