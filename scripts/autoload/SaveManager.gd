@@ -6,11 +6,11 @@ func initialize() -> Error:
 	super()
 	Log.info(self, "Initializing...")
 
-	var dir: DirAccess = DirAccess.open(Constants.LOCAL_SAVE_BASE_PATH)
+	var dir: DirAccess = DirAccess.open(SystemConstants.LOCAL_SAVE_BASE_PATH)
 	if dir == null:
 		dir = DirAccess.open("user://")
-	if dir.make_dir_recursive(Constants.LOCAL_SAVE_SUBPATH) != OK:
-		Log.error(self, "Failed to create local save directory: %s" % Constants.LOCAL_SAVE_PATH)
+	if dir.make_dir_recursive(SystemConstants.LOCAL_SAVE_SUBPATH) != OK:
+		Log.error(self, "Failed to create local save directory: %s" % SystemConstants.LOCAL_SAVE_PATH)
 
 	_load_local_slots()
 
@@ -31,7 +31,7 @@ func new_slot(slot_name: String) -> Error:
 
 func save_data(slot_name: String, data: Dictionary = {}) -> Error:
 	if not _slots.has(slot_name):
-		_slots[slot_name] = Constants.DEFAULT_SAVE.duplicate(true)
+		_slots[slot_name] = SystemConstants.DEFAULT_SAVE.duplicate(true)
 	
 	if not data.is_empty():
 		_slots[slot_name]["data"] = data
@@ -54,7 +54,7 @@ func delete_slot(slot_name: String) -> Error:
 	if _slots.has(slot_name):
 		_slots.erase(slot_name)
 
-	var local_file: String = "%s/%s.save" % [Constants.LOCAL_SAVE_PATH, slot_name]
+	var local_file: String = "%s/%s.save" % [SystemConstants.LOCAL_SAVE_PATH, slot_name]
 	if FileAccess.file_exists(local_file):
 		if DirAccess.remove_absolute(local_file) == OK:
 			Log.info(self, "Deleted local slot file: %s" % local_file)
@@ -82,12 +82,12 @@ func _persist_slot(slot_name: String) -> Error:
 
 	var slot: Dictionary = _slots[slot_name]
 	var dict: Dictionary = {
-		"meta": slot.get("meta", {"version": Constants.SAVE_VERSION, "timestamp": Time.get_unix_time_from_system()}),
+		"meta": slot.get("meta", {"version": SystemConstants.SAVE_VERSION, "timestamp": Time.get_unix_time_from_system()}),
 		"data": slot.get("data", {})
 	}
 	var bytes: PackedByteArray = var_to_bytes_with_objects(dict)
 
-	var local_file: String = "%s/%s.save" % [Constants.LOCAL_SAVE_PATH, slot_name]
+	var local_file: String = "%s/%s.save" % [SystemConstants.LOCAL_SAVE_PATH, slot_name]
 	var file: FileAccess = FileAccess.open(local_file, FileAccess.WRITE)
 	if file == null:
 		Log.error(self, "Failed to write local save file: %s" % local_file)
@@ -108,7 +108,7 @@ func _persist_slot(slot_name: String) -> Error:
 
 func _load_local_slots() -> void:
 	_slots.clear()
-	var dir: DirAccess = DirAccess.open(Constants.LOCAL_SAVE_PATH)
+	var dir: DirAccess = DirAccess.open(SystemConstants.LOCAL_SAVE_PATH)
 	if dir == null:
 		Log.info(self, "No local save directory found, starting fresh.")
 		return
@@ -117,7 +117,7 @@ func _load_local_slots() -> void:
 	var file_name: String = dir.get_next()
 	while file_name != "":
 		if file_name.ends_with(".save"):
-			var local_path: String = "%s/%s" % [Constants.LOCAL_SAVE_PATH, file_name]
+			var local_path: String = "%s/%s" % [SystemConstants.LOCAL_SAVE_PATH, file_name]
 			var file: FileAccess = FileAccess.open(local_path, FileAccess.READ)
 			if file:
 				var parsed: Variant = bytes_to_var_with_objects(file.get_buffer(file.get_length()))
@@ -157,7 +157,7 @@ func _sync_steam_cloud() -> void:
 			_slots[slot_name] = cloud_slot
 			Log.debug(self, "Updated local slot from Steam Cloud: %s" % slot_name)
 
-			var local_file := "%s/%s.save" % [Constants.LOCAL_SAVE_PATH, slot_name]
+			var local_file := "%s/%s.save" % [SystemConstants.LOCAL_SAVE_PATH, slot_name]
 			var file := FileAccess.open(local_file, FileAccess.WRITE)
 			if file:
 				file.store_buffer(var_to_bytes_with_objects(cloud_slot))
@@ -168,7 +168,7 @@ func _migrate_slot(slot_data: Dictionary) -> Dictionary:
 	var result: Dictionary = slot_data.duplicate(true)
 	var did_migration := false
 	
-	while result.get("meta", {}).get("version", -1) != Constants.SAVE_VERSION:
+	while result.get("meta", {}).get("version", -1) != SystemConstants.SAVE_VERSION:
 		var current_version: int = result.get("meta", {}).get("version", -1)
 		match current_version:
 			_:
@@ -183,7 +183,7 @@ func _migrate_slot(slot_data: Dictionary) -> Dictionary:
 
 
 func _generate_defaults() -> Dictionary:
-	var result: Dictionary = Constants.DEFAULT_SAVE.duplicate(true)
+	var result: Dictionary = SystemConstants.DEFAULT_SAVE.duplicate(true)
 	return _stamp_slot(result)
 
 
@@ -191,6 +191,6 @@ func _stamp_slot(slot: Dictionary) -> Dictionary:
 	var result: Dictionary = slot.duplicate(true)
 	if not result.has("meta"):
 		result["meta"] = {}
-	result["meta"]["version"] = Constants.SAVE_VERSION
+	result["meta"]["version"] = SystemConstants.SAVE_VERSION
 	result["meta"]["timestamp"] = Time.get_unix_time_from_system()
 	return result

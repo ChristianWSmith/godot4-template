@@ -26,7 +26,7 @@ func _update_autosave() -> void:
 		GameState.get_loaded():
 		if not _autosave_timer.timeout.is_connected(_autosave):
 			_autosave_timer.timeout.connect(_autosave)
-		_autosave_timer.start(Constants.AUTOSAVE_INTERVAL)
+		_autosave_timer.start(SystemConstants.AUTOSAVE_INTERVAL)
 	else:
 		_autosave_timer.stop()
 		if _autosave_timer.timeout.is_connected(_autosave):
@@ -35,4 +35,4 @@ func _update_autosave() -> void:
 
 func _autosave() -> void:
 	GameState.save_to_slot("Autosave %s" % Time.get_datetime_string_from_system())
-	_autosave_timer.start(Constants.AUTOSAVE_INTERVAL)
+	_autosave_timer.start(SystemConstants.AUTOSAVE_INTERVAL)

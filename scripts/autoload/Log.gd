@@ -4,7 +4,7 @@ enum LogLevel { TRACE, DEBUG, INFO, WARN, ERROR, FATAL, NONE }
 
 var _current_level: LogLevel = LogLevel.NONE
 var _log_to_file: bool = false
-var _file_path: String = Constants.LOG_FILE_PATH
+var _file_path: String = SystemConstants.LOG_FILE_PATH
 var _file: FileAccess = null
 var _initialized: bool = false
 
@@ -25,7 +25,7 @@ func set_log_level(level: LogLevel) -> void:
 	_log_internal(LogLevel.INFO, name, "Log level set to %s" % [_get_level_name(level)])
 
 
-func set_log_to_file(enabled: bool, path: String = Constants.LOG_FILE_PATH) -> void:
+func set_log_to_file(enabled: bool, path: String = SystemConstants.LOG_FILE_PATH) -> void:
 	if not _initialized:
 		return
 	_log_to_file = enabled
@@ -114,7 +114,7 @@ func _log_internal(level: LogLevel, source: String, message: String) -> void:
 			"source": source,
 			"message": message,
 		}
-		EventBus.emit(Constants.LOG_EVENT, payload)
+		EventBus.emit(SystemConstants.LOG_EVENT, payload)
 	
 	if level == LogLevel.FATAL:
 		CrashReport.crash(source, message)
@@ -128,7 +128,7 @@ func _open_log_file() -> void:
 	if _file:
 		_file.store_line("----- Debug Log Started: %s -----" % Time.get_datetime_string_from_system())
 	else:
-		_file_path = Constants.LOG_FILE_PATH
+		_file_path = SystemConstants.LOG_FILE_PATH
 		_open_log_file()
 
 

@@ -50,7 +50,7 @@ func once(event_name: String, callable: Callable) -> void:
 
 
 func emit(event_name: String, data: Variant = null) -> void:
-	if event_name != Constants.LOG_EVENT:
+	if event_name != SystemConstants.LOG_EVENT:
 		Log.trace(self, "emit %s" % event_name)
 	if _subscribers.has(event_name):
 		var to_call: Array = _subscribers[event_name].duplicate()

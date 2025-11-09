@@ -8,7 +8,7 @@ var _files_to_delete: Dictionary[String, bool] = {}
 func initialize() -> Error:
 	super()
 	Log.info(self, "Initializing Steam...")
-	var response: Dictionary = Steam.steamInitEx( Constants.STEAM_APP_ID, false )
+	var response: Dictionary = Steam.steamInitEx( SystemConstants.STEAM_APP_ID, false )
 	var status: int = response.get("status", -1)
 	var message: String
 	var active: bool = false
@@ -27,12 +27,12 @@ func initialize() -> Error:
 	
 	_reconciliation_timer.timeout.connect(_attempt_reconciliation)
 	add_child(_reconciliation_timer)
-	_reconciliation_timer.start(Constants.STEAM_RECONCILIATION_INTERVAL)
+	_reconciliation_timer.start(SystemConstants.STEAM_RECONCILIATION_INTERVAL)
 	
 	if active:
 		Log.info(self, message)
 		return OK
-	elif Constants.STEAM_REQUIRED:
+	elif SystemConstants.STEAM_REQUIRED:
 		Log.fatal(self, message)
 		return FAILED
 	else:
@@ -139,4 +139,4 @@ func _attempt_reconciliation() -> void:
 		for filename in successfully_written:
 			_files_to_write.erase(filename)
 	_reconciliation_mutex.unlock()
-	_reconciliation_timer.start(Constants.STEAM_RECONCILIATION_INTERVAL)
+	_reconciliation_timer.start(SystemConstants.STEAM_RECONCILIATION_INTERVAL)

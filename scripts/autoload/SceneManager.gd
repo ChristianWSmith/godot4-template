@@ -57,7 +57,7 @@ func _poll_async_load() -> void:
 	var new_scene: Node = res.instantiate()
 	
 	var fade_in_tween: Tween = create_tween().set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_OUT)
-	fade_in_tween.tween_property(_fade_rect, "modulate:a", 1.0, Constants.SCENE_FADE_TIME)
+	fade_in_tween.tween_property(_fade_rect, "modulate:a", 1.0, SystemConstants.SCENE_FADE_TIME)
 	fade_in_tween.tween_callback(func():
 		if _current_scene:
 			_current_scene.queue_free()
@@ -65,7 +65,7 @@ func _poll_async_load() -> void:
 		_current_scene = new_scene
 		get_tree().current_scene = new_scene
 		var fade_out_tween: Tween = create_tween().set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_OUT)
-		fade_out_tween.tween_property(_fade_rect, "modulate:a", 0.0, Constants.SCENE_FADE_TIME)
+		fade_out_tween.tween_property(_fade_rect, "modulate:a", 0.0, SystemConstants.SCENE_FADE_TIME)
 		EventBus.emit("scene_changed", _next_scene_path)
 		)
 
@@ -83,11 +83,11 @@ func _setup_fader() -> void:
 	_fade_rect.anchor_left = 0.0
 	_fade_rect.anchor_bottom = 1.0
 	_fade_rect.anchor_right = 1.0
-	_fade_rect.color = Constants.SCENE_FADE_COLOR
+	_fade_rect.color = SystemConstants.SCENE_FADE_COLOR
 	_fade_rect.modulate.a = 0.0
 	_fade_rect.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	
 	var transition_layer: CanvasLayer = CanvasLayer.new()
-	transition_layer.layer = Constants.SCENE_FADE_LAYER
+	transition_layer.layer = SystemConstants.SCENE_FADE_LAYER
 	transition_layer.add_child(_fade_rect)
 	add_child(transition_layer)

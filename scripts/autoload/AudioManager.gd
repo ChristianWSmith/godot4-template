@@ -11,13 +11,13 @@ func initialize() -> Error:
 	return OK
 
 
-func play_music(stream: AudioStream, fade_time: float = Constants.MUSIC_FADE_TIME) -> void:
+func play_music(stream: AudioStream, fade_time: float = SystemConstants.MUSIC_FADE_TIME) -> void:
 	var old_player: AudioStreamPlayer = music_player
 	
 	music_player = AudioStreamPlayer.new()
 	music_player.stream = stream
 	music_player.bus = "Music"
-	music_player.volume_db = Constants.SILENCE_DB
+	music_player.volume_db = SystemConstants.SILENCE_DB
 	add_child(music_player)
 	create_tween().tween_property(music_player, "volume_db", 0.0, fade_time)
 	music_player.play()
@@ -26,7 +26,7 @@ func play_music(stream: AudioStream, fade_time: float = Constants.MUSIC_FADE_TIM
 	_fade_out_music(old_player, fade_time)
 
 
-func stop_music(fade_time: float = Constants.MUSIC_FADE_TIME) -> void:
+func stop_music(fade_time: float = SystemConstants.MUSIC_FADE_TIME) -> void:
 	var old_player: AudioStreamPlayer = music_player
 	music_player = null
 	_fade_out_music(old_player, fade_time)
@@ -59,7 +59,7 @@ func _fade_out_music(player: AudioStreamPlayer, fade_time: float) -> void:
 		Log.debug(self, "No music to fade out")
 		return
 	var fade_out: Tween = create_tween()
-	fade_out.tween_property(player, "volume_db", Constants.SILENCE_DB, fade_time)
+	fade_out.tween_property(player, "volume_db", SystemConstants.SILENCE_DB, fade_time)
 	fade_out.tween_callback(func():
 		if is_instance_valid(player):
 			remove_child(player)

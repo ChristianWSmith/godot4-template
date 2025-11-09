@@ -94,12 +94,12 @@ func show_throbber(show: bool) -> void:
 		_throbber.play()
 		_throbber_tween.kill()
 		_throbber_tween = create_tween().set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_OUT)
-		_throbber_tween.tween_interval(Constants.UI_THROBBER_DELAY)
+		_throbber_tween.tween_interval(SystemConstants.UI_THROBBER_DELAY)
 		_throbber_tween.tween_property(
 			_throbber, 
 			"modulate:a", 
 			1.0, 
-			Constants.UI_THROBBER_FADE_TIME)
+			SystemConstants.UI_THROBBER_FADE_TIME)
 	elif _throbber_counter == 0 and _throbber_showing:
 		_throbber_showing = false
 		_throbber_tween.kill()
@@ -108,7 +108,7 @@ func show_throbber(show: bool) -> void:
 			_throbber, 
 			"modulate:a", 
 			0.0, 
-			Constants.UI_THROBBER_FADE_TIME)
+			SystemConstants.UI_THROBBER_FADE_TIME)
 		_throbber_tween.tween_callback(_throbber.stop)
 
 
@@ -128,7 +128,7 @@ func _deactivate_ui(ui_node: Control) -> void:
 func _setup_ui() -> void:
 	
 	var ui_layer: CanvasLayer = CanvasLayer.new()
-	ui_layer.layer = Constants.UI_LAYER_INDEX
+	ui_layer.layer = SystemConstants.UI_LAYER_INDEX
 	
 	var ui_scaler: Control = Control.new()
 	ui_scaler.set_anchors_preset(Control.PRESET_FULL_RECT)
@@ -145,8 +145,8 @@ func _setup_ui() -> void:
 	ui_layer.add_child(ui_scaler)
 	ui_scaler.add_child(_ui_root)
 	
-	for ui_name in Constants.UI_PRELOADS.keys():
-		var ui_instance: Control = Constants.UI_PRELOADS[ui_name].instantiate()
+	for ui_name in SystemConstants.UI_PRELOADS.keys():
+		var ui_instance: Control = SystemConstants.UI_PRELOADS[ui_name].instantiate()
 		_ui_root.add_child(ui_instance)
 		ui_instance.visible = false
 		_deactivate_ui(ui_instance)
@@ -159,54 +159,54 @@ func _setup_throbber() -> void:
 	var throbber_size: Vector2 = _throbber.sprite_frames.get_frame_texture(
 		_throbber.animation, _throbber.frame).get_size()
 	_throbber.scale = Vector2(
-		Constants.UI_THROBBER_SIZE_PX.x / throbber_size.x, 
-		Constants.UI_THROBBER_SIZE_PX.y / throbber_size.y)
+		SystemConstants.UI_THROBBER_SIZE_PX.x / throbber_size.x, 
+		SystemConstants.UI_THROBBER_SIZE_PX.y / throbber_size.y)
 		
-	match Constants.UI_THROBBER_ANCHOR:
+	match SystemConstants.UI_THROBBER_ANCHOR:
 		Control.PRESET_BOTTOM_LEFT: 
 			_throbber.position = Vector2(
-				Constants.UI_THROBBER_SIZE_PX.x / 2.0 + Constants.UI_THROBBER_OFFSET.x,
-				- Constants.UI_THROBBER_SIZE_PX.y / 2.0 - Constants.UI_THROBBER_OFFSET.y)
+				SystemConstants.UI_THROBBER_SIZE_PX.x / 2.0 + SystemConstants.UI_THROBBER_OFFSET.x,
+				- SystemConstants.UI_THROBBER_SIZE_PX.y / 2.0 - SystemConstants.UI_THROBBER_OFFSET.y)
 		Control.PRESET_BOTTOM_RIGHT: 
 			_throbber.position = Vector2(
-				- Constants.UI_THROBBER_SIZE_PX.x / 2.0 - Constants.UI_THROBBER_OFFSET.x,
-				- Constants.UI_THROBBER_SIZE_PX.y / 2.0 - Constants.UI_THROBBER_OFFSET.y)
+				- SystemConstants.UI_THROBBER_SIZE_PX.x / 2.0 - SystemConstants.UI_THROBBER_OFFSET.x,
+				- SystemConstants.UI_THROBBER_SIZE_PX.y / 2.0 - SystemConstants.UI_THROBBER_OFFSET.y)
 		Control.PRESET_TOP_LEFT: 
 			_throbber.position = Vector2(
-				Constants.UI_THROBBER_SIZE_PX.x / 2.0 + Constants.UI_THROBBER_OFFSET.x,
-				Constants.UI_THROBBER_SIZE_PX.y / 2.0 + Constants.UI_THROBBER_OFFSET.y)
+				SystemConstants.UI_THROBBER_SIZE_PX.x / 2.0 + SystemConstants.UI_THROBBER_OFFSET.x,
+				SystemConstants.UI_THROBBER_SIZE_PX.y / 2.0 + SystemConstants.UI_THROBBER_OFFSET.y)
 		Control.PRESET_TOP_RIGHT: 
 			_throbber.position = Vector2(
-				- Constants.UI_THROBBER_SIZE_PX.x / 2.0 - Constants.UI_THROBBER_OFFSET.x,
-				Constants.UI_THROBBER_SIZE_PX.y / 2.0 + Constants.UI_THROBBER_OFFSET.y)
+				- SystemConstants.UI_THROBBER_SIZE_PX.x / 2.0 - SystemConstants.UI_THROBBER_OFFSET.x,
+				SystemConstants.UI_THROBBER_SIZE_PX.y / 2.0 + SystemConstants.UI_THROBBER_OFFSET.y)
 		Control.PRESET_CENTER_TOP: 
 			_throbber.position = Vector2(
 				0.0,
-				Constants.UI_THROBBER_SIZE_PX.y / 2.0 + Constants.UI_THROBBER_OFFSET.y)
+				SystemConstants.UI_THROBBER_SIZE_PX.y / 2.0 + SystemConstants.UI_THROBBER_OFFSET.y)
 		Control.PRESET_CENTER_LEFT: 
 			_throbber.position = Vector2(
-				Constants.UI_THROBBER_SIZE_PX.x / 2.0 + Constants.UI_THROBBER_OFFSET.x,
+				SystemConstants.UI_THROBBER_SIZE_PX.x / 2.0 + SystemConstants.UI_THROBBER_OFFSET.x,
 				0.0)
 		Control.PRESET_CENTER_RIGHT: 
 			_throbber.position = Vector2(
-				- Constants.UI_THROBBER_SIZE_PX.x / 2.0 - Constants.UI_THROBBER_OFFSET.x,
+				- SystemConstants.UI_THROBBER_SIZE_PX.x / 2.0 - SystemConstants.UI_THROBBER_OFFSET.x,
 				0.0)
 		Control.PRESET_CENTER_BOTTOM: 
 			_throbber.position = Vector2(
 				0.0,
-				- Constants.UI_THROBBER_SIZE_PX.y / 2.0 - Constants.UI_THROBBER_OFFSET.y)
+				- SystemConstants.UI_THROBBER_SIZE_PX.y / 2.0 - SystemConstants.UI_THROBBER_OFFSET.y)
 		Control.PRESET_CENTER: 
 			_throbber.position = Vector2(
-				Constants.UI_THROBBER_SIZE_PX.x / 2.0 + Constants.UI_THROBBER_OFFSET.x,
-				Constants.UI_THROBBER_SIZE_PX.y / 2.0 + Constants.UI_THROBBER_OFFSET.y)
+				SystemConstants.UI_THROBBER_SIZE_PX.x / 2.0 + SystemConstants.UI_THROBBER_OFFSET.x,
+				SystemConstants.UI_THROBBER_SIZE_PX.y / 2.0 + SystemConstants.UI_THROBBER_OFFSET.y)
 		_: _throbber.position = Vector2.ZERO
 	
 	_throbber.modulate.a = 0.0
 	var throbber_container := Control.new()
-	throbber_container.set_anchors_preset(Constants.UI_THROBBER_ANCHOR)
+	throbber_container.set_anchors_preset(SystemConstants.UI_THROBBER_ANCHOR)
 	throbber_container.add_child(_throbber)
 	
 	var throbber_layer: CanvasLayer = CanvasLayer.new()
-	throbber_layer.layer = Constants.UI_THROBBER_LAYER
+	throbber_layer.layer = SystemConstants.UI_THROBBER_LAYER
 	throbber_layer.add_child(throbber_container)
 	add_child(throbber_layer)

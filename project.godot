@@ -28,7 +28,7 @@ buses/default_bus_layout="uid://cg80pw67uw7y1"
 
 [autoload]
 
-Constants="*res://scripts/autoload/Constants.gd"
+SystemConstants="*res://scripts/autoload/SystemConstants.gd"
 SettingsManager="*res://scripts/autoload/SettingsManager.gd"
 SaveManager="*res://scripts/autoload/SaveManager.gd"
 GameState="*res://scripts/autoload/GameState.gd"

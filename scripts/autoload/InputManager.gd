@@ -74,7 +74,7 @@ func _apply_bindings(bindings: Dictionary) -> void:
 func _save(bindings: Dictionary) -> void:
 	var serialized := {}
 	for action_name in bindings.keys():
-		if action_name in Constants.INPUT_BUILT_IN_ACTIONS:
+		if action_name in SystemConstants.INPUT_BUILT_IN_ACTIONS:
 			continue
 		var events := []
 		for ev in InputMap.action_get_events(action_name):
