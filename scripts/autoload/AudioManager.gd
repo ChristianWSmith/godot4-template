@@ -71,14 +71,14 @@ func _fade_out_music(player: AudioStreamPlayer, fade_time: float) -> void:
 func _on_settings_updated() -> void:
 	AudioServer.set_bus_volume_db(
 		AudioServer.get_bus_index("Music"), 
-		SettingsManager.get_value("audio", "music"))
+		lerpf(SystemConstants.SILENCE_DB, 0.0, SettingsManager.get_value("audio", "music")))
 	AudioServer.set_bus_volume_db(
 		AudioServer.get_bus_index("SFX"), 
-		SettingsManager.get_value("audio", "sfx"))
+		lerpf(SystemConstants.SILENCE_DB, 0.0, SettingsManager.get_value("audio", "sfx")))
 	AudioServer.set_bus_volume_db(
 		AudioServer.get_bus_index("UI"), 
-		SettingsManager.get_value("audio", "ui"))
+		lerpf(SystemConstants.SILENCE_DB, 0.0, SettingsManager.get_value("audio", "ui")))
 	AudioServer.set_bus_volume_db(
 		AudioServer.get_bus_index("Voice"), 
-		SettingsManager.get_value("audio", "voice"))
+		lerpf(SystemConstants.SILENCE_DB, 0.0, SettingsManager.get_value("audio", "voice")))
 	Log.info(self, "Updated from settings.")
