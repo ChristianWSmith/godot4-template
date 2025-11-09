@@ -9,6 +9,7 @@ func initialize() -> Error:
 	super()
 	Log.info(self, "Initializing...")
 	_current_scene = get_tree().current_scene
+	EventBus.emit("scene_changed", _current_scene.scene_file_path)
 	_setup_fader()
 	return OK
 
@@ -66,7 +67,7 @@ func _poll_async_load() -> void:
 		get_tree().current_scene = new_scene
 		var fade_out_tween: Tween = create_tween().set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_OUT)
 		fade_out_tween.tween_property(_fade_rect, "modulate:a", 0.0, SystemConstants.SCENE_FADE_TIME)
-		EventBus.emit("scene_changed", _next_scene_path)
+		EventBus.emit("scene_changed", _current_scene.scene_file_path)
 		)
 
 	Log.info(self, "Async scene load complete: %s" % _next_scene_path)
