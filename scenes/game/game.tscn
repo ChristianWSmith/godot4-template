@@ -49,24 +49,3 @@ script = SubResource("GDScript_ifgtf")
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
 unique_name_in_owner = true
 sprite_frames = SubResource("SpriteFrames_0sr1o")
-
-[node name="CanvasLayer" type="CanvasLayer" parent="."]
-
-[node name="PanelContainer" type="PanelContainer" parent="CanvasLayer"]
-anchors_preset = 7
-anchor_left = 0.5
-anchor_top = 1.0
-anchor_right = 0.5
-anchor_bottom = 1.0
-offset_left = -150.0
-offset_top = -132.0
-offset_right = 150.0
-offset_bottom = -32.0
-grow_horizontal = 2
-grow_vertical = 0
-
-[node name="Label" type="Label" parent="CanvasLayer/PanelContainer"]
-layout_mode = 2
-size_flags_horizontal = 4
-text = "- [some_action] to change color
-- [back] to go back"
