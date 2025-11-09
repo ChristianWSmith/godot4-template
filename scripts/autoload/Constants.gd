@@ -13,15 +13,17 @@ const UI_PRELOADS: Dictionary[String, PackedScene] = {
 	"main_menu": preload("res://scenes/ui/main_menu_ui.tscn"),
 	"settings_menu": preload("res://scenes/ui/settings_menu_ui.tscn"),
 }
+const UI_THROBBER_DELAY: float = 0.5
+const UI_THROBBER_FADE_TIME: float = 0.5
+const UI_THROBBER_SIZE_PX: Vector2 = Vector2(32.0, 32.0)
+const UI_THROBBER_ANCHOR: Control.LayoutPreset = Control.PRESET_TOP_RIGHT
+const UI_THROBBER_OFFSET: Vector2 = Vector2(16.0, 16.0)
+const UI_THROBBER_LAYER: int = RenderingServer.CANVAS_LAYER_MAX - 1
 
 # Scene
 const SCENE_FADE_TIME: float = 0.5
 const SCENE_FADE_COLOR: Color = Color.BLACK
-const SCENE_THROBBER_DELAY: float = 0.5
-const SCENE_THROBBER_FADE_TIME: float = 0.5
-const SCENE_THROBBER_SIZE_PX: Vector2 = Vector2(32.0, 32.0)
-const SCENE_THROBBER_ANCHOR: Control.LayoutPreset = Control.PRESET_TOP_RIGHT
-const SCENE_THROBBER_OFFSET: Vector2 = Vector2(16.0, 16.0)
+const SCENE_FADE_LAYER: int =  RenderingServer.CANVAS_LAYER_MAX
 
 # Debug
 const LOG_FILE_PATH: String = "user://debug.log"

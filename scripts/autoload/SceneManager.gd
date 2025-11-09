@@ -88,6 +88,6 @@ func _setup_fader() -> void:
 	_fade_rect.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	
 	var transition_layer: CanvasLayer = CanvasLayer.new()
-	transition_layer.layer = RenderingServer.CANVAS_LAYER_MAX
+	transition_layer.layer = Constants.SCENE_FADE_LAYER
 	transition_layer.add_child(_fade_rect)
 	add_child(transition_layer)
