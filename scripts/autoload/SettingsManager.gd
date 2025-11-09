@@ -53,8 +53,6 @@ func set_value(section: String, key: String, value: Variant, persist_immediately
 
 func set_values(section: String, keys: Array[String], values: Array[Variant], persist_immediately: bool = true) -> void:
 	if keys.size() != values.size():
-		print(keys.size(), keys)
-		print(values.size(), values)
 		Log.error(self, "Attempted to set multiple values, but keys.size() != values.size()")
 		return
 	if not _settings.has(section):

@@ -9,6 +9,7 @@ script/source = "extends Node2D
 @onready var animated_sprite_2d: AnimatedSprite2D = %AnimatedSprite2D
 
 func _ready() -> void:
+	EventBus.subscribe(InputManager._get_pressed_event(\"back\"), _exit)
 	animated_sprite_2d.modulate = Color.from_string(
 		GameState.get_scene_data(\"sprite_modulate\", \"\"), Color.WHITE)
 	EventBus.subscribe(
@@ -20,7 +21,11 @@ func _randomize_sprite_modulate() -> void:
 	animated_sprite_2d.modulate = Color(randf(), randf(), randf(), 1.0)
 	GameState.set_scene_data(\"sprite_modulate\", 
 		animated_sprite_2d.modulate.to_html())
+
+
+func _exit() -> void:
 	GameState.save_to_current_slot()
+	SceneManager.change_scene(\"res://scenes/main_menu.tscn\")
 "
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_7h61r"]

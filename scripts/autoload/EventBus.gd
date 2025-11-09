@@ -56,7 +56,7 @@ func emit(event_name: String, data: Variant = null) -> void:
 		var to_call: Array = _subscribers[event_name].duplicate()
 		for callable in to_call:
 			var obj = callable.get_object()
-			if obj == null or is_instance_valid(obj):
+			if obj != null and is_instance_valid(obj):
 				if data != null:
 					callable.call(data)
 				else:

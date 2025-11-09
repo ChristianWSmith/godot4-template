@@ -22,6 +22,8 @@ extends Control
 
 @onready var input_some_action_key_button: InputCaptorButton = %InputSomeActionKeyboardButton
 @onready var input_some_action_joypad_button: InputCaptorButton = %InputSomeActionJoypadButton
+@onready var input_back_key_button: InputCaptorButton = %InputBackKeyboardButton
+@onready var input_back_joypad_button: InputCaptorButton = %InputBackJoypadButton
 
 @onready var graphics_ui_scale_slider: Slider = %GraphicsUIScaleSlider
 @onready var graphics_ui_scale_spinbox: SpinBox = %GraphicsUIScaleSpinbox
@@ -34,6 +36,7 @@ func _ready() -> void:
 
 
 func _make_connections() -> void:
+	EventBus.subscribe(InputManager._get_pressed_event("back"), UIManager.close_specific.bind("settings_menu"))
 	close_button.pressed.connect(UIManager.close_ui)
 	apply_button.pressed.connect(_on_apply_pressed)
 	UIUtils.tether_values(audio_master_slider, audio_master_spinbox)
@@ -118,6 +121,7 @@ func _load_values() -> void:
 
 	var bindings: Dictionary = SettingsManager.get_value("input", "bindings")
 	_load_binding(bindings.get("some_action", []), input_some_action_key_button, input_some_action_joypad_button)
+	_load_binding(bindings.get("back", []), input_back_key_button, input_back_joypad_button)
 	
 	graphics_ui_scale_slider.value = SettingsManager.get_value("graphics", "ui_scale")
 
@@ -205,6 +209,11 @@ func _on_apply_pressed() -> void:
 	bindings["some_action"] = [
 		input_some_action_key_button.get_binding(),
 		input_some_action_joypad_button.get_binding(),
+	]
+	
+	bindings["back"] = [
+		input_back_key_button.get_binding(),
+		input_back_joypad_button.get_binding(),
 	]
 	
 	SettingsManager.set_value("input", "bindings", bindings, false)

@@ -40,8 +40,6 @@ func unload() -> void:
 
 func get_scene_data(path: String, default: Variant = null) -> Variant:
 	path = "scene_data/" + _get_current_scene_internal() + "/" + path
-	print(path)
-	print(_current_data)
 	if not _loaded:
 		Log.warn(self, "No state data is loaded, data may be invalid (get_scene_data): %s" % path)
 	return _current_data.get(path, default)
