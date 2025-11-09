@@ -9,34 +9,8 @@ var _throbber_tween: Tween = create_tween()
 func initialize() -> Error:
 	super()
 	Log.info(self, "Initializing...")
-	
 	_setup_throbber()
-	
-	var ui_layer: CanvasLayer = CanvasLayer.new()
-	ui_layer.layer = Constants.UI_LAYER_INDEX
-	
-	var ui_scaler: Control = Control.new()
-	ui_scaler.set_anchors_preset(Control.PRESET_FULL_RECT)
-	ui_scaler.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	ui_scaler.size_flags_vertical = Control.SIZE_EXPAND_FILL
-	
-	_ui_root.anchor_left = 0.5
-	_ui_root.anchor_top = 0.5
-	_ui_root.anchor_right = 0.5
-	_ui_root.anchor_bottom = 0.5
-	_ui_root.offset_left = -_ui_root.size.x / 2
-	_ui_root.offset_top = -_ui_root.size.y / 2
-	
-	ui_layer.add_child(ui_scaler)
-	ui_scaler.add_child(_ui_root)
-	
-	for ui_name in Constants.UI_PRELOADS.keys():
-		var ui_instance: Control = Constants.UI_PRELOADS[ui_name].instantiate()
-		_ui_root.add_child(ui_instance)
-		ui_instance.visible = false
-		_deactivate_ui(ui_instance)
-		_ui_nodes[ui_name] = ui_instance
-	add_child(ui_layer)
+	_setup_ui()
 	return OK
 
 
@@ -144,6 +118,35 @@ func _deactivate_ui(ui_node: Control) -> void:
 	ui_node.set_process(false)
 	ui_node.set_process_input(false)
 	ui_node.set_process_unhandled_input(false)
+
+
+func _setup_ui() -> void:
+	
+	var ui_layer: CanvasLayer = CanvasLayer.new()
+	ui_layer.layer = Constants.UI_LAYER_INDEX
+	
+	var ui_scaler: Control = Control.new()
+	ui_scaler.set_anchors_preset(Control.PRESET_FULL_RECT)
+	ui_scaler.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	ui_scaler.size_flags_vertical = Control.SIZE_EXPAND_FILL
+	
+	_ui_root.anchor_left = 0.5
+	_ui_root.anchor_top = 0.5
+	_ui_root.anchor_right = 0.5
+	_ui_root.anchor_bottom = 0.5
+	_ui_root.offset_left = -_ui_root.size.x / 2
+	_ui_root.offset_top = -_ui_root.size.y / 2
+	
+	ui_layer.add_child(ui_scaler)
+	ui_scaler.add_child(_ui_root)
+	
+	for ui_name in Constants.UI_PRELOADS.keys():
+		var ui_instance: Control = Constants.UI_PRELOADS[ui_name].instantiate()
+		_ui_root.add_child(ui_instance)
+		ui_instance.visible = false
+		_deactivate_ui(ui_instance)
+		_ui_nodes[ui_name] = ui_instance
+	add_child(ui_layer)
 
 
 func _setup_throbber() -> void:
