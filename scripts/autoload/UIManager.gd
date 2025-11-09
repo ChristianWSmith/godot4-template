@@ -5,6 +5,8 @@ var _ui_nodes: Dictionary[String, Control] = {}
 var _ui_root: Control = Control.new()
 var _throbber: AnimatedSprite2D = AnimatedSprite2D.new()
 var _throbber_tween: Tween = create_tween()
+var _throbber_counter: int = 0
+var _throbber_showing: bool = false
 
 func initialize() -> Error:
 	super()
@@ -86,7 +88,9 @@ func set_ui_scale(value: float) -> void:
 
 
 func show_throbber(show: bool) -> void:
-	if show:
+	_throbber_counter = max(0, _throbber_counter + (1 if show else -1))
+	if _throbber_counter > 0 and not _throbber_showing:
+		_throbber_showing = true
 		_throbber.play()
 		_throbber_tween.kill()
 		_throbber_tween = create_tween().set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_OUT)
@@ -96,7 +100,8 @@ func show_throbber(show: bool) -> void:
 			"modulate:a", 
 			1.0, 
 			Constants.SCENE_THROBBER_FADE_TIME)
-	else:
+	elif _throbber_counter == 0 and _throbber_showing:
+		_throbber_showing = false
 		_throbber_tween.kill()
 		_throbber_tween = create_tween().set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_OUT)
 		_throbber_tween.tween_property(
