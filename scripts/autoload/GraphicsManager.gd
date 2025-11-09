@@ -9,4 +9,4 @@ func initialize() -> Error:
 
 func _on_graphics_settings_updated() -> void:
 	var ui_scale: float = SettingsManager.get_value("graphics", "ui_scale")
-	get_tree().root.content_scale_factor = ui_scale
+	UIManager.set_ui_scale(ui_scale)
