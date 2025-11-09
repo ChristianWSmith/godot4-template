@@ -11,7 +11,12 @@ func initialize() -> Error:
 	return OK
 
 
-func play_music(stream: AudioStream, fade_time: float = SystemConstants.MUSIC_FADE_TIME) -> void:
+func play_music(
+		stream: AudioStream, 
+		fade_time: float = SystemConstants.MUSIC_FADE_TIME,
+		restart: bool = false) -> void:
+	if music_player and music_player.stream == stream and not restart:
+		return
 	var old_player: AudioStreamPlayer = music_player
 	
 	music_player = AudioStreamPlayer.new()
@@ -69,6 +74,9 @@ func _fade_out_music(player: AudioStreamPlayer, fade_time: float) -> void:
 
 
 func _on_settings_updated() -> void:
+	AudioServer.set_bus_volume_db(
+		AudioServer.get_bus_index("Master"), 
+		lerpf(SystemConstants.SILENCE_DB, 0.0, SettingsManager.get_value("audio", "master")))
 	AudioServer.set_bus_volume_db(
 		AudioServer.get_bus_index("Music"), 
 		lerpf(SystemConstants.SILENCE_DB, 0.0, SettingsManager.get_value("audio", "music")))
