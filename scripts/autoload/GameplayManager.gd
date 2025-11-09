@@ -24,7 +24,8 @@ func _on_slot_loaded() -> void:
 func _update_autosave() -> void:
 	if SettingsManager.get_value("gameplay", "autosave") and \
 		GameState.get_loaded():
-		_autosave_timer.timeout.connect(_autosave)
+		if not _autosave_timer.timeout.is_connected(_autosave):
+			_autosave_timer.timeout.connect(_autosave)
 		_autosave_timer.start(Constants.AUTOSAVE_INTERVAL)
 	else:
 		_autosave_timer.stop()

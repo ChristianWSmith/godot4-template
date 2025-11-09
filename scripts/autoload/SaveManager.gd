@@ -81,11 +81,11 @@ func _persist_slot(slot_name: String) -> Error:
 		return FAILED
 
 	var slot: Dictionary = _slots[slot_name]
-	var json_dict: Dictionary = {
+	var dict: Dictionary = {
 		"meta": slot.get("meta", {"version": Constants.SAVE_VERSION, "timestamp": Time.get_unix_time_from_system()}),
 		"data": slot.get("data", {})
 	}
-	var bytes: PackedByteArray = JSON.stringify(json_dict).to_utf8_buffer()
+	var bytes: PackedByteArray = var_to_bytes_with_objects(dict)
 
 	var local_file: String = "%s/%s.save" % [Constants.LOCAL_SAVE_PATH, slot_name]
 	var file: FileAccess = FileAccess.open(local_file, FileAccess.WRITE)
@@ -118,11 +118,10 @@ func _load_local_slots() -> void:
 	while file_name != "":
 		if file_name.ends_with(".save"):
 			var local_path: String = "%s/%s" % [Constants.LOCAL_SAVE_PATH, file_name]
-			var f: FileAccess = FileAccess.open(local_path, FileAccess.READ)
-			if f:
-				var content: String = f.get_buffer(f.get_length()).get_string_from_utf8()
-				f.close()
-				var parsed: Variant = JSON.parse_string(content)
+			var file: FileAccess = FileAccess.open(local_path, FileAccess.READ)
+			if file:
+				var parsed: Variant = bytes_to_var_with_objects(file.get_buffer(file.get_length()))
+				file.close()
 				if typeof(parsed) == TYPE_DICTIONARY:
 					var migrated := _migrate_slot(parsed)
 					var slot_name := file_name.replace(".save", "")
@@ -143,12 +142,12 @@ func _sync_steam_cloud() -> void:
 		if bytes.is_empty():
 			continue
 
-		var slot_json: Variant = JSON.parse_string(bytes.get_string_from_utf8())
-		if typeof(slot_json) != TYPE_DICTIONARY:
+		var slot_dict: Variant = bytes_to_var_with_objects(bytes)
+		if typeof(slot_dict) != TYPE_DICTIONARY:
 			Log.warn(self, "Failed to parse cloud slot %s, skipping" % cloud_file)
 			continue
 
-		var cloud_slot: Dictionary = _migrate_slot(slot_json)
+		var cloud_slot: Dictionary = _migrate_slot(slot_dict)
 		var cloud_ts: float = cloud_slot.get("meta", {}).get("timestamp", -1.0)
 		var local_ts: float = -1.0
 		if _slots.has(slot_name):
@@ -161,7 +160,7 @@ func _sync_steam_cloud() -> void:
 			var local_file := "%s/%s.save" % [Constants.LOCAL_SAVE_PATH, slot_name]
 			var file := FileAccess.open(local_file, FileAccess.WRITE)
 			if file:
-				file.store_string(JSON.stringify(cloud_slot))
+				file.store_buffer(var_to_bytes_with_objects(cloud_slot))
 				file.close()
 
 
