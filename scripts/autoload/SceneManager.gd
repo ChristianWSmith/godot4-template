@@ -4,14 +4,11 @@ var _current_scene: Node = null
 var _next_scene_path: String = ""
 var _is_loading: bool = false
 var _fade_rect: ColorRect = ColorRect.new()
-var _throbber: AnimatedSprite2D = AnimatedSprite2D.new()
-var _throbber_tween: Tween = create_tween()
 
 func initialize() -> Error:
 	super()
 	Log.info(self, "Initializing...")
-	_current_scene = get_tree().current_scene 
-	_setup_throbber()
+	_current_scene = get_tree().current_scene
 	_setup_fader()
 	return OK
 
@@ -32,28 +29,6 @@ func reload_scene() -> void:
 		Log.warn(self, "No scene to reload.")
 		return
 	change_scene(_current_scene.scene_file_path)
-
-
-func show_throbber(show: bool) -> void:
-	if show:
-		_throbber.play()
-		_throbber_tween.kill()
-		_throbber_tween = create_tween().set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_OUT)
-		_throbber_tween.tween_interval(Constants.SCENE_THROBBER_DELAY)
-		_throbber_tween.tween_property(
-			_throbber, 
-			"modulate:a", 
-			1.0, 
-			Constants.SCENE_THROBBER_FADE_TIME)
-	else:
-		_throbber_tween.kill()
-		_throbber_tween = create_tween().set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_OUT)
-		_throbber_tween.tween_property(
-			_throbber, 
-			"modulate:a", 
-			0.0, 
-			min(Constants.SCENE_THROBBER_FADE_TIME, Constants.SCENE_FADE_TIME))
-		_throbber_tween.tween_callback(_throbber.stop)
 
 
 func _do_change_scene() -> void:
@@ -100,65 +75,7 @@ func _poll_async_load() -> void:
 
 func _set_is_loading(value: float) -> void:
 	_is_loading = value
-	show_throbber(_is_loading)
-
-
-func _setup_throbber() -> void:
-	_throbber.sprite_frames = preload("res://assets/src/ui/throbber.tres")
-	var throbber_size: Vector2 = _throbber.sprite_frames.get_frame_texture(
-		_throbber.animation, _throbber.frame).get_size()
-	_throbber.scale = Vector2(
-		Constants.SCENE_THROBBER_SIZE_PX.x / throbber_size.x, 
-		Constants.SCENE_THROBBER_SIZE_PX.y / throbber_size.y)
-		
-	match Constants.SCENE_THROBBER_ANCHOR:
-		Control.PRESET_BOTTOM_LEFT: 
-			_throbber.position = Vector2(
-				Constants.SCENE_THROBBER_SIZE_PX.x / 2.0 + Constants.SCENE_THROBBER_OFFSET.x,
-				- Constants.SCENE_THROBBER_SIZE_PX.y / 2.0 - Constants.SCENE_THROBBER_OFFSET.y)
-		Control.PRESET_BOTTOM_RIGHT: 
-			_throbber.position = Vector2(
-				- Constants.SCENE_THROBBER_SIZE_PX.x / 2.0 - Constants.SCENE_THROBBER_OFFSET.x,
-				- Constants.SCENE_THROBBER_SIZE_PX.y / 2.0 - Constants.SCENE_THROBBER_OFFSET.y)
-		Control.PRESET_TOP_LEFT: 
-			_throbber.position = Vector2(
-				Constants.SCENE_THROBBER_SIZE_PX.x / 2.0 + Constants.SCENE_THROBBER_OFFSET.x,
-				Constants.SCENE_THROBBER_SIZE_PX.y / 2.0 + Constants.SCENE_THROBBER_OFFSET.y)
-		Control.PRESET_TOP_RIGHT: 
-			_throbber.position = Vector2(
-				- Constants.SCENE_THROBBER_SIZE_PX.x / 2.0 - Constants.SCENE_THROBBER_OFFSET.x,
-				Constants.SCENE_THROBBER_SIZE_PX.y / 2.0 + Constants.SCENE_THROBBER_OFFSET.y)
-		Control.PRESET_CENTER_TOP: 
-			_throbber.position = Vector2(
-				0.0,
-				Constants.SCENE_THROBBER_SIZE_PX.y / 2.0 + Constants.SCENE_THROBBER_OFFSET.y)
-		Control.PRESET_CENTER_LEFT: 
-			_throbber.position = Vector2(
-				Constants.SCENE_THROBBER_SIZE_PX.x / 2.0 + Constants.SCENE_THROBBER_OFFSET.x,
-				0.0)
-		Control.PRESET_CENTER_RIGHT: 
-			_throbber.position = Vector2(
-				- Constants.SCENE_THROBBER_SIZE_PX.x / 2.0 - Constants.SCENE_THROBBER_OFFSET.x,
-				0.0)
-		Control.PRESET_CENTER_BOTTOM: 
-			_throbber.position = Vector2(
-				0.0,
-				- Constants.SCENE_THROBBER_SIZE_PX.y / 2.0 - Constants.SCENE_THROBBER_OFFSET.y)
-		Control.PRESET_CENTER: 
-			_throbber.position = Vector2(
-				Constants.SCENE_THROBBER_SIZE_PX.x / 2.0 + Constants.SCENE_THROBBER_OFFSET.x,
-				Constants.SCENE_THROBBER_SIZE_PX.y / 2.0 + Constants.SCENE_THROBBER_OFFSET.y)
-		_: _throbber.position = Vector2.ZERO
-	
-	_throbber.modulate.a = 0.0
-	var throbber_container := Control.new()
-	throbber_container.set_anchors_preset(Constants.SCENE_THROBBER_ANCHOR)
-	throbber_container.add_child(_throbber)
-	
-	var throbber_layer: CanvasLayer = CanvasLayer.new()
-	throbber_layer.layer = RenderingServer.CANVAS_LAYER_MAX - 1
-	throbber_layer.add_child(throbber_container)
-	add_child(throbber_layer)
+	UIManager.show_throbber(_is_loading)
 
 
 func _setup_fader() -> void:

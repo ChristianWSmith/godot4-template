@@ -79,9 +79,9 @@ func _get_current_scene_external() -> String:
 
 
 func _save_to_slot_async(slot_name: String, data: Dictionary = {}) -> void:
-	SceneManager.show_throbber(true)
+	UIManager.show_throbber(true)
 	SaveManager.save_data(slot_name, data)
-	SceneManager.show_throbber(false)
+	UIManager.show_throbber(false)
 
 
 func _on_scene_change(scene_path: String) -> void:
