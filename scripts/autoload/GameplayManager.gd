@@ -33,6 +33,5 @@ func _update_autosave() -> void:
 
 
 func _autosave() -> void:
-	if GameState.get_loaded():
-		GameState.save_to_slot("Autosave %s" % Time.get_datetime_string_from_system())
+	GameState.save_to_slot("Autosave %s" % Time.get_datetime_string_from_system())
 	_autosave_timer.start(Constants.AUTOSAVE_INTERVAL)

@@ -1,0 +1,48 @@
+[gd_scene load_steps=5 format=3 uid="uid://dxjv7b1mnvw2i"]
+
+[ext_resource type="Texture2D" uid="uid://dbwp2mtk3ciqa" path="res://assets/bin/ui/throbber.png" id="1_sul5r"]
+
+[sub_resource type="GDScript" id="GDScript_ifgtf"]
+resource_name = "Game"
+script/source = "extends Node2D
+
+@onready var animated_sprite_2d: AnimatedSprite2D = %AnimatedSprite2D
+
+func _ready() -> void:
+	animated_sprite_2d.modulate = Color.from_string(
+		GameState.get_scene_data(\"sprite_modulate\", \"\"), Color.WHITE)
+	EventBus.subscribe(
+		InputManager._get_pressed_event(\"some_action\"), 
+		_randomize_sprite_modulate)
+
+
+func _randomize_sprite_modulate() -> void:
+	animated_sprite_2d.modulate = Color(randf(), randf(), randf(), 1.0)
+	GameState.set_scene_data(\"sprite_modulate\", 
+		animated_sprite_2d.modulate.to_html())
+	GameState.save_to_current_slot()
+"
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_7h61r"]
+atlas = ExtResource("1_sul5r")
+region = Rect2(1920, 0, 128, 128)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_0sr1o"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_7h61r")
+}],
+"loop": false,
+"name": &"default",
+"speed": 1.0
+}]
+
+[node name="Game" type="Node2D"]
+script = SubResource("GDScript_ifgtf")
+
+[node name="Camera2D" type="Camera2D" parent="."]
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
+unique_name_in_owner = true
+sprite_frames = SubResource("SpriteFrames_0sr1o")

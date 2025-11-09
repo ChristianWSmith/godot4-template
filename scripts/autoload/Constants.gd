@@ -44,7 +44,7 @@ const DEFAULT_SAVE: Dictionary = {
 		"timestamp": -1.0,
 	},
 	"data": {
-		"current_scene": "",
+		"current_scene": "res://scenes/game/game.tscn",
 		"global_data": {},
 		"scene_data": {},
 	}

@@ -10,6 +10,7 @@ var _throbber_tween: Tween = create_tween()
 func initialize() -> Error:
 	super()
 	Log.info(self, "Initializing...")
+	_current_scene = get_tree().current_scene 
 	_setup_throbber()
 	_setup_fader()
 	return OK
@@ -31,6 +32,28 @@ func reload_scene() -> void:
 		Log.warn(self, "No scene to reload.")
 		return
 	change_scene(_current_scene.scene_file_path)
+
+
+func show_throbber(show: bool) -> void:
+	if show:
+		_throbber.play()
+		_throbber_tween.kill()
+		_throbber_tween = create_tween().set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_OUT)
+		_throbber_tween.tween_interval(Constants.SCENE_THROBBER_DELAY)
+		_throbber_tween.tween_property(
+			_throbber, 
+			"modulate:a", 
+			1.0, 
+			Constants.SCENE_THROBBER_FADE_TIME)
+	else:
+		_throbber_tween.kill()
+		_throbber_tween = create_tween().set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_OUT)
+		_throbber_tween.tween_property(
+			_throbber, 
+			"modulate:a", 
+			0.0, 
+			min(Constants.SCENE_THROBBER_FADE_TIME, Constants.SCENE_FADE_TIME))
+		_throbber_tween.tween_callback(_throbber.stop)
 
 
 func _do_change_scene() -> void:
@@ -77,25 +100,7 @@ func _poll_async_load() -> void:
 
 func _set_is_loading(value: float) -> void:
 	_is_loading = value
-	if _is_loading:
-		_throbber.play()
-		_throbber_tween.kill()
-		_throbber_tween = create_tween().set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_OUT)
-		_throbber_tween.tween_interval(Constants.SCENE_THROBBER_DELAY)
-		_throbber_tween.tween_property(
-			_throbber, 
-			"modulate:a", 
-			1.0, 
-			Constants.SCENE_THROBBER_FADE_TIME)
-	else:
-		_throbber_tween.kill()
-		_throbber_tween = create_tween().set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_OUT)
-		_throbber_tween.tween_property(
-			_throbber, 
-			"modulate:a", 
-			0.0, 
-			min(Constants.SCENE_THROBBER_FADE_TIME, Constants.SCENE_FADE_TIME))
-		_throbber_tween.tween_callback(_throbber.stop)
+	show_throbber(_is_loading)
 
 
 func _setup_throbber() -> void:
