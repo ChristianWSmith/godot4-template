@@ -19,7 +19,6 @@ func _ready() -> void:
 func _randomize_sprite_modulate() -> void:
 	animated_sprite_2d.modulate = Color(randf(), randf(), randf(), 1.0)
 	GameState.set_scene_data(\"sprite_modulate\", animated_sprite_2d.modulate)
-	GameState.save_to_current_slot()
 
 
 func _exit() -> void:
