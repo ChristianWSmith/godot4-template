@@ -71,21 +71,21 @@ func set_global_data(path: String, value: Variant) -> Error:
 
 
 func _get_current_scene_internal() -> String:
-	return _current_data.get("current_scene", "")
+	return _current_data.get("current_scene_uid", "")
 
 
 func _get_current_scene_external() -> String:
-	return _current_data.get("current_scene", "").replace("|", "/")
+	return ResourceUID.uid_to_path("uid://" + _current_data.get("current_scene_uid", ""))
+
+
+func _on_scene_change(scene_path: String) -> void:
+	_current_data["current_scene_uid"] = ResourceUID.path_to_uid(scene_path).replace("uid://", "")
 
 
 func _save_to_slot_async(slot_name: String, data: Dictionary = {}) -> void:
 	UIManager.show_throbber(true)
 	SaveManager.save_data(slot_name, data)
 	UIManager.show_throbber(false)
-
-
-func _on_scene_change(scene_path: String) -> void:
-	_current_data["current_scene"] = scene_path.replace("/", "|")
 
 
 func _reset_state() -> void:

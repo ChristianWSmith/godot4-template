@@ -1,4 +1,4 @@
-extends BlipButton
+extends Button
 class_name InputCaptorButton
 
 @export var key_allowed: bool = true
@@ -16,7 +16,6 @@ var _capturing: bool = false
 
 
 func _ready() -> void:
-	super()
 	pressed.connect(_on_pressed)
 	text = _get_binding_text()
 

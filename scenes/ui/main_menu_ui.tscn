@@ -1,7 +1,6 @@
-[gd_scene load_steps=4 format=3 uid="uid://cmmqpkoko1wij"]
+[gd_scene load_steps=3 format=3 uid="uid://cmmqpkoko1wij"]
 
 [ext_resource type="Script" uid="uid://u6d5illgu8dp" path="res://scripts/ui/main_menu_ui.gd" id="1_eyy0p"]
-[ext_resource type="Script" uid="uid://cd00s4b32ytak" path="res://scripts/ui/components/blip_button.gd" id="2_3bauu"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_eyy0p"]
 bg_color = Color(0.24, 0.24, 0.24, 1)
@@ -46,16 +45,13 @@ layout_mode = 2
 unique_name_in_owner = true
 layout_mode = 2
 text = "Play"
-script = ExtResource("2_3bauu")
 
 [node name="SettingsButton" type="Button" parent="MarginContainer/MainMenuUI"]
 unique_name_in_owner = true
 layout_mode = 2
 text = "Settings"
-script = ExtResource("2_3bauu")
 
 [node name="QuitButton" type="Button" parent="MarginContainer/MainMenuUI"]
 unique_name_in_owner = true
 layout_mode = 2
 text = "Quit"
-script = ExtResource("2_3bauu")

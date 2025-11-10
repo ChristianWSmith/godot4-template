@@ -152,6 +152,7 @@ func _setup_ui() -> void:
 		_deactivate_ui(ui_instance)
 		_ui_nodes[ui_name] = ui_instance
 	add_child(ui_layer)
+	UIUtils.connect_ui_sounds(_ui_root)
 
 
 func _setup_throbber() -> void:
