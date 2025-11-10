@@ -25,12 +25,7 @@ func _ready() -> void:
 			Log.error(self, "Unknown process type '%s'" % process_type)
 	child_entered_tree.connect(_register_node)
 	child_exiting_tree.connect(_deregister_node)
-	if default_state:
-		_transition_state(default_state)
-	else:
-		set_process(false)
-		set_physics_process(false)
-		Log.error(self, "No default state")
+	_transition_state(default_state)
 
 
 func _process(delta: float) -> void:
@@ -68,6 +63,11 @@ func _deregister_state(child: StateMachineState) -> void:
 func _transition_state(
 		requested_state: StateMachineState,
 		state_chain: Array[StateMachineState] = []) -> void:
+	if requested_state == null:
+		set_process(false)
+		set_physics_process(false)
+		Log.error(self, "Requested null state, will not process")
+		return
 	if requested_state in state_chain or \
 		requested_state not in _states or \
 		 requested_state == _current_state:
