@@ -118,8 +118,8 @@ func _load_local_slots() -> void:
 				var parsed: Variant = bytes_to_var_with_objects(file.get_buffer(file.get_length()))
 				file.close()
 				if typeof(parsed) == TYPE_DICTIONARY:
-					var migrated := _migrate_slot(parsed)
-					var slot_name := file_name.replace(".save", "")
+					var migrated: Dictionary = _migrate_slot(parsed)
+					var slot_name: String = file_name.replace(".save", "")
 					_slots[slot_name] = migrated
 					Log.debug(self, "Loaded local save slot: %s" % slot_name)
 		file_name = dir.get_next()
@@ -152,8 +152,8 @@ func _sync_steam_cloud() -> void:
 			_slots[slot_name] = cloud_slot
 			Log.debug(self, "Updated local slot from Steam Cloud: %s" % slot_name)
 
-			var local_file := "%s/%s.save" % [SystemConstants.LOCAL_SAVE_PATH, slot_name]
-			var file := FileAccess.open(local_file, FileAccess.WRITE)
+			var local_file: String = "%s/%s.save" % [SystemConstants.LOCAL_SAVE_PATH, slot_name]
+			var file: FileAccess = FileAccess.open(local_file, FileAccess.WRITE)
 			if file:
 				file.store_buffer(var_to_bytes_with_objects(cloud_slot))
 				file.close()
@@ -161,7 +161,7 @@ func _sync_steam_cloud() -> void:
 
 func _migrate_slot(slot_data: Dictionary) -> Dictionary:
 	var result: Dictionary = slot_data.duplicate(true)
-	var did_migration := false
+	var did_migration: bool = false
 	
 	while result.get("meta", {}).get("version", -1) != SystemConstants.SAVE_VERSION:
 		var current_version: int = result.get("meta", {}).get("version", -1)

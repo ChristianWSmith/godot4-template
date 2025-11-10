@@ -85,9 +85,9 @@ func _log_internal(level: LogLevel, source: String, message: String) -> void:
 
 	var timestamp: float = Time.get_unix_time_from_system()
 	var timestr: String = Time.get_datetime_string_from_unix_time(int(timestamp), true)
-	var level_str := _get_level_name(level)
+	var level_str: String = _get_level_name(level)
 
-	var formatted := "[%s] [%s] (%s) %s" % [timestr, level_str, source, message]
+	var formatted: String = "[%s] [%s] (%s) %s" % [timestr, level_str, source, message]
 
 	match level:
 		LogLevel.TRACE:

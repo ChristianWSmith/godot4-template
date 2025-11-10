@@ -76,7 +76,7 @@ func emit(event_name: String, data: Variant = null) -> void:
 
 func wait_for(event_name: String) -> Variant:
 	var state = {"done": false, "result": null}
-	var resume_func := func(data):
+	var resume_func: Callable = func(data):
 		state.result = data
 		state.done = true
 

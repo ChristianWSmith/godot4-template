@@ -205,7 +205,7 @@ func _setup_throbber() -> void:
 		_: _throbber.position = Vector2.ZERO
 	
 	_throbber.modulate.a = 0.0
-	var throbber_container := Control.new()
+	var throbber_container: Control = Control.new()
 	throbber_container.set_anchors_preset(SystemConstants.UI_THROBBER_ANCHOR)
 	throbber_container.add_child(_throbber)
 	
