@@ -14,8 +14,7 @@ func initialize() -> Error:
 
 	_load_local_slots()
 
-	if SteamManager.is_cloud_available():
-		_sync_steam_cloud()
+	_sync_steam_cloud()
 
 	Log.info(self, "Initialized with slots: [%s]" % ", ".join(_slots.keys()))
 	return OK
@@ -64,13 +63,10 @@ func delete_slot(slot_name: String) -> Error:
 	else:
 		Log.warn(self, "Local slot file does not exist, cannot delete: %s" % local_file)
 
-	if SteamManager.is_cloud_available():
-		if SteamManager.cloud_delete("%s.save" % slot_name) == OK:
-			Log.debug(self, "Deleted Steam Cloud slot: %s" % slot_name)
-		else:
-			Log.warn(self, "Failed to delete Steam Cloud slot, will retry: %s" % slot_name)
+	if SteamManager.cloud_delete("%s.save" % slot_name) == OK:
+		Log.debug(self, "Deleted Steam Cloud slot: %s" % slot_name)
 	else:
-		Log.warn(self, "Steam Cloud not active, cannot delete, will retry: %s" % slot_name)
+		Log.warn(self, "Failed to delete Steam Cloud slot: %s" % slot_name)
 	
 	return result
 
@@ -97,12 +93,11 @@ func _persist_slot(slot_name: String) -> Error:
 	file.close()
 	Log.debug(self, "Saved slot locally: %s" % slot_name)
 
-	if SteamManager.is_cloud_available():
-		if SteamManager.cloud_write("%s.save" % slot_name, bytes) == OK:
-			Log.debug(self, "Saved slot to Steam Cloud: %s" % slot_name)
-		else:
-			Log.warn(self, "Failed to save slot to Steam Cloud: %s" % slot_name)
-
+	if SteamManager.cloud_write("%s.save" % slot_name, bytes) == OK:
+		Log.debug(self, "Saved slot to Steam Cloud: %s" % slot_name)
+	else:
+		Log.warn(self, "Failed to save slot to Steam Cloud: %s" % slot_name)
+	
 	return OK
 
 

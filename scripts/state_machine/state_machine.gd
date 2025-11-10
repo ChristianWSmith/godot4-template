@@ -6,7 +6,7 @@ enum ProcessType { RENDER, PHYSICS }
 @export var default_state: StateMachineState
 @export var process_type: ProcessType = ProcessType.RENDER
 
-var _states: Dictionary[StateMachineState, bool] = {}
+var _states: Set = Set.new(typeof(StateMachineState))
 var _current_state: StateMachineState = null
 
 func _ready() -> void:
@@ -51,7 +51,7 @@ func _deregister_node(node: Node) -> void:
 
 
 func _register_state(child: StateMachineState) -> void:
-	_states[child] = true
+	_states.add(child)
 
 
 func _deregister_state(child: StateMachineState) -> void:
@@ -69,12 +69,12 @@ func _transition_state(
 		Log.error(self, "Requested null state, will not process")
 		return
 	if requested_state in state_chain or \
-		requested_state not in _states or \
-		 requested_state == _current_state:
+		not _states.has(requested_state) or \
+		requested_state == _current_state:
 		return
 	if _current_state:
 		_current_state.exit()
-	Log.trace(self, "transition '%s' -> '%s'" % [_current_state.name, requested_state.name])
+		Log.trace(self, "transition '%s' -> '%s'" % [_current_state.name, requested_state.name])
 	_current_state = requested_state
 	_current_state.enter()
 	var result: StateMachineState = _current_state.process(0.0)

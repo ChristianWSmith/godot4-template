@@ -224,7 +224,6 @@ func _save_steam_settings() -> Error:
 			Log.warn(self, "Failed to open local settings file for upload.")
 	else:
 		Log.warn(self, "Steam cloud not available, skipping sync.")
-	Log.warn(self, "Failed to upload settings to Steam, will retry.")
 	return OK
 
 

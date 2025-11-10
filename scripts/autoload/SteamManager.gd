@@ -3,7 +3,7 @@ extends BaseManager
 var _reconciliation_timer: Timer = Timer.new()
 var _reconciliation_mutex: Mutex = Mutex.new()
 var _files_to_write: Dictionary[String, PackedByteArray] = {}
-var _files_to_delete: Dictionary[String, bool] = {}
+var _files_to_delete: Set = Set.new(TYPE_STRING)
 
 func initialize() -> Error:
 	super()
@@ -57,14 +57,14 @@ func cloud_write(filename: String, data: PackedByteArray) -> Error:
 		_dequeue_reconciliation(filename)
 		return OK
 	else:
-		Log.warn(self, "Failed to write Steam Cloud file: %s" % filename)
+		Log.warn(self, "Failed to write Steam Cloud file, will retry: %s" % filename)
 		_queue_write(filename, data)
 		return FAILED
 
 
 func cloud_read(filename: String) -> PackedByteArray:
 	if not is_cloud_available() or not Steam.fileExists(filename):
-		Log.warn(self, "Steam cloud not available, won't read file: %s" % filename)
+		Log.warn(self, "Steam cloud not available, cannot read file: %s" % filename)
 		return PackedByteArray()
 	return Steam.fileRead(filename, Steam.getFileSize(filename)).get("buf", PackedByteArray())
 
@@ -78,7 +78,7 @@ func cloud_delete(filename: String) -> Error:
 		_dequeue_reconciliation(filename)
 		return OK
 	else:
-		Log.warn(self, "Failed to delete Steam Cloud file: %s" % filename)
+		Log.warn(self, "Failed to delete Steam Cloud file, will retry: %s" % filename)
 		_queue_delete(filename)
 		return FAILED
 
@@ -109,7 +109,7 @@ func _queue_write(filename: String, data: PackedByteArray) -> void:
 func _queue_delete(filename: String) -> void:
 	_reconciliation_mutex.lock()
 	_files_to_write.erase(filename)
-	_files_to_delete[filename] = true
+	_files_to_delete.add(filename)
 	_reconciliation_mutex.unlock()
 
 
@@ -122,6 +122,7 @@ func _dequeue_reconciliation(filename: String) -> void:
 
 func _attempt_reconciliation() -> void:
 	if not is_cloud_available():
+		_reconciliation_timer.start(SystemConstants.STEAM_RECONCILIATION_INTERVAL)
 		return
 	_reconciliation_mutex.lock()
 	if not _files_to_delete.is_empty():
