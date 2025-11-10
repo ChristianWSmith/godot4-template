@@ -14,19 +14,25 @@ static func tether_values(node_a: Control, node_b: Control):
 
 
 static func connect_ui_sounds(node: Node):
+	var bound_click: Callable = AudioManager.play_ui.bind(preload("res://assets/bin/ui/click.wav"))
+	var bound_hover: Callable = AudioManager.play_ui.bind(preload("res://assets/bin/ui/hover.wav"))
+	var wrapped_click: Callable = func(_idx: int): AudioManager.play_ui(preload("res://assets/bin/ui/click.wav"))
+	var wrapped_hover: Callable = func(_idx: int): AudioManager.play_ui(preload("res://assets/bin/ui/hover.wav"))
 	for child in node.get_children():
-		if child is not Control:
-			continue
 		connect_ui_sounds(child)
-		if child.has_signal("tab_selected"):
-			child.tab_selected.connect(func(_idx: int):
-				AudioManager.play_ui(preload("res://assets/bin/ui/click.wav")))
-			if child.has_signal("tab_hovered"):
-				child.tab_hovered.connect(func(_idx: int):
-					AudioManager.play_ui(preload("res://assets/bin/ui/hover.wav")))
-		if child.has_signal("pressed"):
-			child.pressed.connect(
-				AudioManager.play_ui.bind(preload("res://assets/bin/ui/click.wav")))
-			if child.has_signal("mouse_entered"):
-				child.mouse_entered.connect(
-					AudioManager.play_ui.bind(preload("res://assets/bin/ui/hover.wav")))
+		if child is SpinBox:
+			child.value_changed.connect(wrapped_click)
+			child.mouse_entered.connect(bound_hover)
+		elif child is HSlider or child is VSlider:
+			child.drag_started.connect(bound_click)
+			child.drag_ended.connect(wrapped_click)
+			child.mouse_entered.connect(bound_hover)
+		elif child.has_signal("tab_selected") and child.has_signal("tab_hovered"): # TabBar
+			child.tab_selected.connect(wrapped_click)
+			child.tab_hovered.connect(wrapped_hover)
+		elif child is OptionButton:
+			child.toggled.connect(wrapped_click)
+			child.mouse_entered.connect(bound_hover)
+		elif child is Button:
+			child.pressed.connect(bound_click)
+			child.mouse_entered.connect(bound_hover)

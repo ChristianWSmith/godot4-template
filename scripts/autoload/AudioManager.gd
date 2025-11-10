@@ -56,7 +56,7 @@ func _play_sound(stream: AudioStream, bus: String) -> void:
 	player.finished.connect(player.queue_free)
 	add_child(player)
 	player.play()
-	Log.info(self, "Playing sound on bus: %s %s" % [bus, stream.resource_path])
+	Log.trace(self, "Playing sound on bus: %s %s" % [bus, stream.resource_path])
 
 
 func _fade_out_music(player: AudioStreamPlayer, fade_time: float) -> void:
@@ -70,7 +70,7 @@ func _fade_out_music(player: AudioStreamPlayer, fade_time: float) -> void:
 			remove_child(player)
 			player.queue_free()
 	)
-	Log.debug(self, "Fading out music: %s" % player.stream.resource_path)
+	Log.trace(self, "Fading out music: %s" % player.stream.resource_path)
 
 
 func _on_settings_updated() -> void:
