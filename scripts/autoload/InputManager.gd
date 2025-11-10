@@ -72,11 +72,11 @@ func _apply_bindings(bindings: Dictionary) -> void:
 
 
 func _save(bindings: Dictionary) -> void:
-	var serialized := {}
+	var serialized: Dictionary[String, Array] = {}
 	for action_name in bindings.keys():
 		if action_name in SystemConstants.INPUT_BUILT_IN_ACTIONS:
 			continue
-		var events := []
+		var events: Array[Dictionary] = []
 		for ev in InputMap.action_get_events(action_name):
 			events.append(_serialize_input_event(ev))
 		serialized[action_name] = events
@@ -168,7 +168,7 @@ func _serialize_input_event(ev: InputEvent) -> Dictionary:
 
 
 func _get_project_default_bindings() -> Dictionary:
-	var defaults := {}
+	var defaults: Dictionary = {}
 	for prop in ProjectSettings.get_property_list():
 		if not prop.has("name"):
 			continue
@@ -179,7 +179,7 @@ func _get_project_default_bindings() -> Dictionary:
 		var action_name: String = prop_name.get_slice("/", 1)
 		var action_data: Variant = ProjectSettings.get_setting(prop_name)
 		if typeof(action_data) == TYPE_DICTIONARY and action_data.has("events"):
-			var serialized := []
+			var serialized: Array[Dictionary] = []
 			for ev in action_data["events"]:
 				if ev is InputEvent:
 					serialized.append(_serialize_input_event(ev))
