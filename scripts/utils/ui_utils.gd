@@ -41,6 +41,21 @@ static func connect_ui_sounds(
 			"drag_ended": wrapped_click,
 			"mouse_entered": bound_hover
 		})
+	elif node is ScrollBar:
+		node.mouse_entered.connect(bound_hover)
+		node.set_meta("ui_sound_connections", {
+			"mouse_entered": bound_hover
+		})
+	elif node is TextEdit:
+		node.mouse_entered.connect(bound_hover)
+		node.set_meta("ui_sound_connections", {
+			"mouse_entered": bound_hover
+		})
+	elif node is LineEdit:
+		node.mouse_entered.connect(bound_hover)
+		node.set_meta("ui_sound_connections", {
+			"mouse_entered": bound_hover
+		})
 	elif node is TabContainer:
 		node.tab_selected.connect(wrapped_click)
 		node.tab_hovered.connect(wrapped_hover)
@@ -48,20 +63,21 @@ static func connect_ui_sounds(
 			"tab_selected": wrapped_click,
 			"tab_hovered": wrapped_hover
 		})
-	elif node is OptionButton:
-		node.toggled.connect(wrapped_click)
-		node.mouse_entered.connect(bound_hover)
-		node.set_meta("ui_sound_connections", {
-			"toggled": wrapped_click,
-			"mouse_entered": bound_hover
-		})
-	elif node is Button:
-		node.pressed.connect(bound_click)
-		node.mouse_entered.connect(bound_hover)
-		node.set_meta("ui_sound_connections", {
-			"pressed": bound_click,
-			"mouse_entered": bound_hover
-		})
+	elif node is BaseButton:
+		if node is OptionButton:
+			node.toggled.connect(wrapped_click)
+			node.mouse_entered.connect(bound_hover)
+			node.set_meta("ui_sound_connections", {
+				"toggled": wrapped_click,
+				"mouse_entered": bound_hover
+			})
+		else: # other Button type
+			node.pressed.connect(bound_click)
+			node.mouse_entered.connect(bound_hover)
+			node.set_meta("ui_sound_connections", {
+				"pressed": bound_click,
+				"mouse_entered": bound_hover
+			})
 
 
 static func clear_ui_sounds(node: Node, deep: bool = true):

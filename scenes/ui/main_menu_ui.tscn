@@ -21,10 +21,10 @@ offset_right = 58.5
 offset_bottom = 84.0
 grow_horizontal = 2
 grow_vertical = 2
-focus_neighbor_left = NodePath("MarginContainer/MainMenuUI/PlayButton")
-focus_neighbor_top = NodePath("MarginContainer/MainMenuUI/PlayButton")
-focus_neighbor_right = NodePath("MarginContainer/MainMenuUI/PlayButton")
-focus_neighbor_bottom = NodePath("MarginContainer/MainMenuUI/PlayButton")
+focus_neighbor_left = NodePath("MarginContainer/VBoxContainer/PlayButton")
+focus_neighbor_top = NodePath("MarginContainer/VBoxContainer/PlayButton")
+focus_neighbor_right = NodePath("MarginContainer/VBoxContainer/PlayButton")
+focus_neighbor_bottom = NodePath("MarginContainer/VBoxContainer/PlayButton")
 theme_override_styles/panel = SubResource("StyleBoxFlat_eyy0p")
 script = ExtResource("1_eyy0p")
 
@@ -35,31 +35,31 @@ theme_override_constants/margin_top = 16
 theme_override_constants/margin_right = 16
 theme_override_constants/margin_bottom = 16
 
-[node name="MainMenuUI" type="VBoxContainer" parent="MarginContainer"]
+[node name="VBoxContainer" type="VBoxContainer" parent="MarginContainer"]
 layout_mode = 2
 
-[node name="Label" type="Label" parent="MarginContainer/MainMenuUI"]
+[node name="Label" type="Label" parent="MarginContainer/VBoxContainer"]
 layout_mode = 2
 text = "Main Menu"
 
-[node name="HSeparator" type="HSeparator" parent="MarginContainer/MainMenuUI"]
+[node name="HSeparator" type="HSeparator" parent="MarginContainer/VBoxContainer"]
 layout_mode = 2
 
-[node name="PlayButton" type="Button" parent="MarginContainer/MainMenuUI"]
+[node name="PlayButton" type="Button" parent="MarginContainer/VBoxContainer"]
 unique_name_in_owner = true
 layout_mode = 2
 focus_neighbor_top = NodePath("../QuitButton")
 focus_neighbor_bottom = NodePath("../SettingsButton")
 text = "Play"
 
-[node name="SettingsButton" type="Button" parent="MarginContainer/MainMenuUI"]
+[node name="SettingsButton" type="Button" parent="MarginContainer/VBoxContainer"]
 unique_name_in_owner = true
 layout_mode = 2
 focus_neighbor_top = NodePath("../PlayButton")
 focus_neighbor_bottom = NodePath("../QuitButton")
 text = "Settings"
 
-[node name="QuitButton" type="Button" parent="MarginContainer/MainMenuUI"]
+[node name="QuitButton" type="Button" parent="MarginContainer/VBoxContainer"]
 unique_name_in_owner = true
 layout_mode = 2
 focus_neighbor_top = NodePath("../SettingsButton")
