@@ -23,11 +23,11 @@ static func connect_ui_sounds(node: Node):
 		if child is SpinBox:
 			child.value_changed.connect(wrapped_click)
 			child.mouse_entered.connect(bound_hover)
-		elif child is HSlider or child is VSlider:
+		elif child is Slider:
 			child.drag_started.connect(bound_click)
 			child.drag_ended.connect(wrapped_click)
 			child.mouse_entered.connect(bound_hover)
-		elif child.has_signal("tab_selected") and child.has_signal("tab_hovered"): # TabBar
+		elif child is TabContainer:
 			child.tab_selected.connect(wrapped_click)
 			child.tab_hovered.connect(wrapped_hover)
 		elif child is OptionButton:
