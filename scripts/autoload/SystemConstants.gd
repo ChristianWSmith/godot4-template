@@ -19,6 +19,8 @@ const UI_THROBBER_SIZE_PX: Vector2 = Vector2(32.0, 32.0)
 const UI_THROBBER_ANCHOR: Control.LayoutPreset = Control.PRESET_TOP_RIGHT
 const UI_THROBBER_OFFSET: Vector2 = Vector2(16.0, 16.0)
 const UI_THROBBER_LAYER: int = RenderingServer.CANVAS_LAYER_MAX - 1
+const UI_CLICK_STREAM: AudioStream = preload("res://assets/bin/ui/click.wav")
+const UI_HOVER_STREAM: AudioStream = preload("res://assets/bin/ui/hover.wav")
 
 # Scene
 const SCENE_FADE_TIME: float = 0.5

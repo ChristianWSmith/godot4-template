@@ -16,8 +16,8 @@ static func tether_values(node_a: Control, node_b: Control):
 static func connect_ui_sounds(
 		node: Node, 
 		deep: bool = true,
-		hover_stream: AudioStream = preload("res://assets/bin/ui/hover.wav"),
-		click_stream: AudioStream = preload("res://assets/bin/ui/click.wav")):
+		hover_stream: AudioStream = SystemConstants.UI_HOVER_STREAM,
+		click_stream: AudioStream = SystemConstants.UI_CLICK_STREAM):
 	var bound_click: Callable = AudioManager.play_ui.bind(click_stream)
 	var bound_hover: Callable = AudioManager.play_ui.bind(hover_stream)
 	var wrapped_click: Callable = func(_idx: int): AudioManager.play_ui(click_stream)

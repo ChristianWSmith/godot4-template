@@ -93,6 +93,7 @@ func _stop_capture() -> void:
 	_capturing = false
 	set_process_input(false)
 	text = _get_binding_text()
+	AudioManager.play_ui(SystemConstants.UI_CLICK_STREAM)
 
 
 func _get_binding_text() -> String:
