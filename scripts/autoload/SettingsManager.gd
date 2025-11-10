@@ -14,6 +14,7 @@ func initialize() -> Error:
 
 
 func emit_changed() -> void:
+	EventBus.emit(SystemConstants.SETTINGS_CHANGED_EVENT)
 	for section in _settings.keys():
 		emit_section_changed(section)
 
@@ -23,7 +24,7 @@ func emit_section_changed(section: String) -> void:
 
 
 func get_section_event(section: String) -> String:
-	return SystemConstants.SETTINGS_CHANGED_EVENT_PREFIX + "/" + section
+	return SystemConstants.SETTINGS_CHANGED_EVENT + "/" + section
 
 
 func get_value(section: String, key: String) -> Variant:
@@ -86,6 +87,7 @@ func save() -> Error:
 func reset_to_default() -> void:
 	Log.info(self, "Resetting settings to default.")
 	_settings = SystemConstants.DEFAULT_SETTINGS.duplicate(true)
+	emit_changed()
 	save()
 
 

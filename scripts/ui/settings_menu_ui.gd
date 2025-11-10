@@ -1,6 +1,7 @@
 extends Control
 
 @onready var close_button: Button = %CloseButton
+@onready var default_button: Button = %DefaultButton
 @onready var apply_button: Button = %ApplyButton
 
 @onready var audio_master_slider: Slider = %AudioMasterSlider
@@ -33,11 +34,13 @@ extends Control
 func _ready() -> void:
 	_make_connections()
 	visibility_changed.connect(_load_values)
+	EventBus.subscribe(SystemConstants.SETTINGS_CHANGED_EVENT, _load_values)
 
 
 func _make_connections() -> void:
 	EventBus.subscribe(InputManager._get_pressed_event("back"), UIManager.close_specific.bind("settings_menu"))
 	close_button.pressed.connect(UIManager.close_ui)
+	default_button.pressed.connect(_on_default_pressed)
 	apply_button.pressed.connect(_on_apply_pressed)
 	UIUtils.tether_values(audio_master_slider, audio_master_spinbox)
 	UIUtils.tether_values(audio_music_slider, audio_music_spinbox)
@@ -139,7 +142,12 @@ func _load_binding(
 			_: Log.warn(self, "Unsupported bind type: '%s'" % binding.get("type", ""))
 
 
+func _on_default_pressed() -> void:
+	SettingsManager.reset_to_default()
+
+
 func _on_apply_pressed() -> void:
+	EventBus.unsubscribe(SystemConstants.SETTINGS_CHANGED_EVENT, _load_values)
 	var audio_keys: Array[String] = ["master", "music", "sfx", "voice", "ui"]
 	var audio_values: Array = [
 		audio_master_slider.value / audio_master_slider.max_value,
@@ -225,3 +233,4 @@ func _on_apply_pressed() -> void:
 		gameplay_autosave_check_button.button_pressed, false)
 	
 	SettingsManager.save()
+	EventBus.subscribe(SystemConstants.SETTINGS_CHANGED_EVENT, _load_values)
