@@ -116,6 +116,7 @@ func _activate_ui(ui_node: Control) -> void:
 	ui_node.set_process(true)
 	ui_node.set_process_input(true)
 	ui_node.set_process_unhandled_input(true)
+	ui_node.grab_focus.call_deferred()
 	ui_node.visibility_layer = _menu_stack.size() + 1
 
 
@@ -149,6 +150,7 @@ func _setup_ui() -> void:
 		var ui_instance: Control = SystemConstants.UI_PRELOADS[ui_name].instantiate()
 		_ui_root.add_child(ui_instance)
 		ui_instance.visible = false
+		ui_instance.focus_mode = Control.FOCUS_ALL
 		_deactivate_ui(ui_instance)
 		_ui_nodes[ui_name] = ui_instance
 	add_child(ui_layer)

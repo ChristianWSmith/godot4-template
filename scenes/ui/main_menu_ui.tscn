@@ -21,6 +21,10 @@ offset_right = 58.5
 offset_bottom = 84.0
 grow_horizontal = 2
 grow_vertical = 2
+focus_neighbor_left = NodePath("MarginContainer/MainMenuUI/PlayButton")
+focus_neighbor_top = NodePath("MarginContainer/MainMenuUI/PlayButton")
+focus_neighbor_right = NodePath("MarginContainer/MainMenuUI/PlayButton")
+focus_neighbor_bottom = NodePath("MarginContainer/MainMenuUI/PlayButton")
 theme_override_styles/panel = SubResource("StyleBoxFlat_eyy0p")
 script = ExtResource("1_eyy0p")
 
@@ -44,14 +48,20 @@ layout_mode = 2
 [node name="PlayButton" type="Button" parent="MarginContainer/MainMenuUI"]
 unique_name_in_owner = true
 layout_mode = 2
+focus_neighbor_top = NodePath("../QuitButton")
+focus_neighbor_bottom = NodePath("../SettingsButton")
 text = "Play"
 
 [node name="SettingsButton" type="Button" parent="MarginContainer/MainMenuUI"]
 unique_name_in_owner = true
 layout_mode = 2
+focus_neighbor_top = NodePath("../PlayButton")
+focus_neighbor_bottom = NodePath("../QuitButton")
 text = "Settings"
 
 [node name="QuitButton" type="Button" parent="MarginContainer/MainMenuUI"]
 unique_name_in_owner = true
 layout_mode = 2
+focus_neighbor_top = NodePath("../SettingsButton")
+focus_neighbor_bottom = NodePath("../PlayButton")
 text = "Quit"
