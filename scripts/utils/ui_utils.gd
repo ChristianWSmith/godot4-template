@@ -23,16 +23,48 @@ static func connect_ui_sounds(node: Node):
 		if child is SpinBox:
 			child.value_changed.connect(wrapped_click)
 			child.mouse_entered.connect(bound_hover)
+			child.set_meta("ui_sound_connections", {
+				"value_changed": wrapped_click,
+				"mouse_entered": bound_hover
+			})
 		elif child is Slider:
 			child.drag_started.connect(bound_click)
 			child.drag_ended.connect(wrapped_click)
 			child.mouse_entered.connect(bound_hover)
+			child.set_meta("ui_sound_connections", {
+				"drag_started": bound_click,
+				"drag_ended": wrapped_click,
+				"mouse_entered": bound_hover
+			})
 		elif child is TabContainer:
 			child.tab_selected.connect(wrapped_click)
 			child.tab_hovered.connect(wrapped_hover)
+			child.set_meta("ui_sound_connections", {
+				"tab_selected": wrapped_click,
+				"tab_hovered": wrapped_hover
+			})
 		elif child is OptionButton:
 			child.toggled.connect(wrapped_click)
 			child.mouse_entered.connect(bound_hover)
+			child.set_meta("ui_sound_connections", {
+				"toggled": wrapped_click,
+				"mouse_entered": bound_hover
+			})
 		elif child is Button:
 			child.pressed.connect(bound_click)
 			child.mouse_entered.connect(bound_hover)
+			child.set_meta("ui_sound_connections", {
+				"pressed": bound_click,
+				"mouse_entered": bound_hover
+			})
+
+
+static func clear_ui_sounds(node: Node):
+	for child in node.get_children():
+		clear_ui_sounds(child)
+	if node.has_meta("ui_sound_connections"):
+		var data: Dictionary = node.get_meta("ui_sound_connections")
+		for sig in data.keys():
+			if node.is_connected(sig, data[sig]):
+				node.disconnect(sig, data[sig])
+		node.remove_meta("ui_sound_connections")
