@@ -84,9 +84,10 @@ static func clear_ui_sounds(node: Node, deep: bool = true):
 	if deep:
 		for child in node.get_children():
 			clear_ui_sounds(child, true)
-	if node.has_meta("ui_sound_connections"):
-		var data: Dictionary = node.get_meta("ui_sound_connections")
-		for sig in data.keys():
-			if node.is_connected(sig, data[sig]):
-				node.disconnect(sig, data[sig])
-		node.remove_meta("ui_sound_connections")
+	if not node.has_meta("ui_sound_connections"):
+		return
+	var data: Dictionary = node.get_meta("ui_sound_connections")
+	for sig in data.keys():
+		if node.is_connected(sig, data[sig]):
+			node.disconnect(sig, data[sig])
+	node.remove_meta("ui_sound_connections")

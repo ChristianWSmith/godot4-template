@@ -85,8 +85,8 @@ const INPUT_BUILT_IN_ACTIONS: Array[String] = [
 ]
 
 # Audio
-const MUSIC_FADE_TIME: float = 1.0
-@onready var SILENCE_DB: float = ProjectSettings.get_setting("audio/buses/channel_disable_threshold_db")
+const AUDIO_MUSIC_FADE_TIME: float = 1.0
+@onready var AUDIO_SILENCE_DB: float = ProjectSettings.get_setting("audio/buses/channel_disable_threshold_db")
 
 # Settings
 const SETTINGS_VERSION: int = 0

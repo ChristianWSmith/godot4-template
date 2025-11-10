@@ -13,7 +13,7 @@ func initialize() -> Error:
 
 func play_music(
 		stream: AudioStream, 
-		fade_time: float = SystemConstants.MUSIC_FADE_TIME,
+		fade_time: float = SystemConstants.AUDIO_MUSIC_FADE_TIME,
 		restart: bool = false) -> void:
 	if music_player and music_player.stream == stream and not restart:
 		return
@@ -22,7 +22,7 @@ func play_music(
 	music_player = AudioStreamPlayer.new()
 	music_player.stream = stream
 	music_player.bus = "Music"
-	music_player.volume_db = SystemConstants.SILENCE_DB
+	music_player.volume_db = SystemConstants.AUDIO_SILENCE_DB
 	add_child(music_player)
 	create_tween().tween_property(music_player, "volume_db", 0.0, fade_time)
 	music_player.play()
@@ -31,7 +31,7 @@ func play_music(
 	_fade_out_music(old_player, fade_time)
 
 
-func stop_music(fade_time: float = SystemConstants.MUSIC_FADE_TIME) -> void:
+func stop_music(fade_time: float = SystemConstants.AUDIO_MUSIC_FADE_TIME) -> void:
 	var old_player: AudioStreamPlayer = music_player
 	music_player = null
 	_fade_out_music(old_player, fade_time)
@@ -64,7 +64,7 @@ func _fade_out_music(player: AudioStreamPlayer, fade_time: float) -> void:
 		Log.debug(self, "No music to fade out")
 		return
 	var fade_out: Tween = create_tween()
-	fade_out.tween_property(player, "volume_db", SystemConstants.SILENCE_DB, fade_time)
+	fade_out.tween_property(player, "volume_db", SystemConstants.AUDIO_SILENCE_DB, fade_time)
 	fade_out.tween_callback(func():
 		if is_instance_valid(player):
 			remove_child(player)
@@ -76,17 +76,27 @@ func _fade_out_music(player: AudioStreamPlayer, fade_time: float) -> void:
 func _on_settings_updated() -> void:
 	AudioServer.set_bus_volume_db(
 		AudioServer.get_bus_index("Master"), 
-		lerpf(SystemConstants.SILENCE_DB, 0.0, SettingsManager.get_value("audio", "master")))
+		lerpf(SystemConstants.AUDIO_SILENCE_DB, 0.0, 
+			AudioUtils.percent_to_perceptual(
+				SettingsManager.get_value("audio", "master"))))
 	AudioServer.set_bus_volume_db(
 		AudioServer.get_bus_index("Music"), 
-		lerpf(SystemConstants.SILENCE_DB, 0.0, SettingsManager.get_value("audio", "music")))
+		lerpf(SystemConstants.AUDIO_SILENCE_DB, 0.0, 
+			AudioUtils.percent_to_perceptual(
+				SettingsManager.get_value("audio", "music"))))
 	AudioServer.set_bus_volume_db(
 		AudioServer.get_bus_index("SFX"), 
-		lerpf(SystemConstants.SILENCE_DB, 0.0, SettingsManager.get_value("audio", "sfx")))
+		lerpf(SystemConstants.AUDIO_SILENCE_DB, 0.0, 
+			AudioUtils.percent_to_perceptual(
+				SettingsManager.get_value("audio", "sfx"))))
 	AudioServer.set_bus_volume_db(
 		AudioServer.get_bus_index("UI"), 
-		lerpf(SystemConstants.SILENCE_DB, 0.0, SettingsManager.get_value("audio", "ui")))
+		lerpf(SystemConstants.AUDIO_SILENCE_DB, 0.0, 
+			AudioUtils.percent_to_perceptual(
+				SettingsManager.get_value("audio", "ui"))))
 	AudioServer.set_bus_volume_db(
 		AudioServer.get_bus_index("Voice"), 
-		lerpf(SystemConstants.SILENCE_DB, 0.0, SettingsManager.get_value("audio", "voice")))
+		lerpf(SystemConstants.AUDIO_SILENCE_DB, 0.0, 
+			AudioUtils.percent_to_perceptual(
+				SettingsManager.get_value("audio", "voice"))))
 	Log.info(self, "Updated from settings.")
