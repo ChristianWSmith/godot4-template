@@ -33,13 +33,39 @@ extends Control
 
 func _ready() -> void:
 	_make_connections()
-	visibility_changed.connect(_load_values)
-	EventBus.subscribe(SystemConstants.SETTINGS_CHANGED_EVENT, _load_values)
+
+
+func _on_visibility_changed() -> void:
+	if not visible:
+		return
+	SettingsManager.checkpoint()
+	_load_values()
+
+
+func _on_close_pressed() -> void:
+	SettingsManager.reinstate_checkpoint()
+	UIManager.close_specific("settings_menu")
+
+
+func _on_default_pressed() -> void:
+	SettingsManager.reset_to_default()
+	_load_values()
+
+
+func _on_apply_pressed() -> void:
+	SettingsManager.save()
+	UIManager.close_specific("settings_menu")
 
 
 func _make_connections() -> void:
-	EventBus.subscribe(InputManager._get_pressed_event("back"), UIManager.close_specific.bind("settings_menu"))
-	close_button.pressed.connect(UIManager.close_ui)
+	_make_ui_connections()
+	_make_settings_connections()
+
+
+func _make_ui_connections() -> void:
+	visibility_changed.connect(_on_visibility_changed)
+	InputManager.subscribe_pressed("back", _on_close_pressed)
+	close_button.pressed.connect(_on_close_pressed)
 	default_button.pressed.connect(_on_default_pressed)
 	apply_button.pressed.connect(_on_apply_pressed)
 	UIUtils.tether_values(audio_master_slider, audio_master_spinbox)
@@ -69,9 +95,87 @@ func _make_connections() -> void:
 		)
 
 
+func _make_settings_connections() -> void:
+	# Audio
+	audio_master_slider.value_changed.connect(func(value: float) -> void:
+		SettingsManager.set_value("audio", "master", 
+			value / audio_master_slider.max_value))
+	audio_music_slider.value_changed.connect(func(value: float) -> void:
+		SettingsManager.set_value("audio", "music", 
+			value / audio_music_slider.max_value))
+	audio_sfx_slider.value_changed.connect(func(value: float) -> void:
+		SettingsManager.set_value("audio", "sfx", 
+			value / audio_sfx_slider.max_value))
+	audio_ui_slider.value_changed.connect(func(value: float) -> void:
+		SettingsManager.set_value("audio", "ui", 
+			value / audio_ui_slider.max_value))
+	audio_voice_slider.value_changed.connect(func(value: float) -> void:
+		SettingsManager.set_value("audio", "voice", 
+			value / audio_voice_slider.max_value))
+	
+	# Video
+	video_vsync_check_button.pressed.connect(func() -> void:
+		SettingsManager.set_value("video", "vsync", 
+			video_vsync_check_button.button_pressed))
+	video_window_mode_option_button.item_selected.connect(func(idx: int) -> void:
+		match idx:
+			1: # Borderless
+				SettingsManager.set_value("video", "window_mode", SystemConstants.WindowMode.BORDERLESS)
+			2: # Fullscreen
+				SettingsManager.set_value("video", "window_mode", SystemConstants.WindowMode.FULLSCREEN)
+			_: # Windowed
+				SettingsManager.set_value("video", "window_mode", SystemConstants.WindowMode.WINDOWED)
+		)
+	video_max_fps_option_button.item_selected.connect(func(idx: int) -> void:
+		match idx:
+			0: SettingsManager.set_value("video", "max_fps", 30)
+			1: SettingsManager.set_value("video", "max_fps", 60)
+			2: SettingsManager.set_value("video", "max_fps", 120)
+			3: SettingsManager.set_value("video", "max_fps", 240)
+			_: SettingsManager.set_value("video", "max_fps", 0)
+		)
+	video_resolution_option_button.item_selected.connect(func(idx: int) -> void:		
+		match idx:
+			0: SettingsManager.set_value("video", "resolution", Vector2i(1280, 720))
+			1: SettingsManager.set_value("video", "resolution", Vector2i(1280, 800))
+			2: SettingsManager.set_value("video", "resolution", Vector2i(1280, 1024))
+			3: SettingsManager.set_value("video", "resolution", Vector2i(1360, 768))
+			4: SettingsManager.set_value("video", "resolution", Vector2i(1366, 768))
+			5: SettingsManager.set_value("video", "resolution", Vector2i(1440, 900))
+			6: SettingsManager.set_value("video", "resolution", Vector2i(1600, 900))
+			7: SettingsManager.set_value("video", "resolution", Vector2i(1600, 1200))
+			8: SettingsManager.set_value("video", "resolution", Vector2i(1680, 1050))
+			9: SettingsManager.set_value("video", "resolution", Vector2i(1920, 1080))
+			10: SettingsManager.set_value("video", "resolution", Vector2i(1920, 1200))
+			11: SettingsManager.set_value("video", "resolution", Vector2i(2560, 1080))
+			12: SettingsManager.set_value("video", "resolution", Vector2i(2560, 1440))
+			13: SettingsManager.set_value("video", "resolution", Vector2i(2560, 1600))
+			14: SettingsManager.set_value("video", "resolution", Vector2i(3440, 1440))
+			15: SettingsManager.set_value("video", "resolution", Vector2i(3840, 2180))
+			_: SettingsManager.set_value("video", "resolution", Vector2i(1280, 720))
+		)
+	
+	# Graphics
+	graphics_ui_scale_slider.drag_ended.connect(func(value_changed: bool) -> void:
+		if value_changed:
+			SettingsManager.set_value("graphics", "ui_scale",
+				graphics_ui_scale_slider.value)
+		)
+	
+	# Gameplay
+	gameplay_autosave_check_button.pressed.connect(func() -> void:
+		SettingsManager.set_value("gameplay", "autosave",
+			gameplay_autosave_check_button.button_pressed)
+		)
+	
+	# Input
+	input_back_joypad_button.binding_updated.connect(_set_bindings)
+	input_back_key_button.binding_updated.connect(_set_bindings)
+	input_some_action_joypad_button.binding_updated.connect(_set_bindings)
+	input_some_action_key_button.binding_updated.connect(_set_bindings)
+
+
 func _load_values() -> void:
-	if not visible:
-		return
 	audio_master_slider.value = SettingsManager.get_value("audio", "master") * \
 		audio_master_slider.max_value
 	audio_music_slider.value = SettingsManager.get_value("audio", "music") * \
@@ -143,88 +247,15 @@ func _load_binding(
 			_: Log.warn(self, "Unsupported bind type: '%s'" % binding.get("type", ""))
 
 
-func _on_default_pressed() -> void:
-	SettingsManager.reset_to_default()
-
-
-func _on_apply_pressed() -> void:
-	EventBus.unsubscribe(SystemConstants.SETTINGS_CHANGED_EVENT, _load_values)
-	var audio_keys: Array[String] = ["master", "music", "sfx", "voice", "ui"]
-	var audio_values: Array = [
-		audio_master_slider.value / audio_master_slider.max_value,
-		audio_music_slider.value / audio_music_slider.max_value,
-		audio_sfx_slider.value / audio_sfx_slider.max_value,
-		audio_voice_slider.value / audio_voice_slider.max_value,
-		audio_ui_slider.value / audio_ui_slider.max_value,
-	]
-	SettingsManager.set_values("audio", audio_keys, audio_values)
-	
-	var video_keys: Array[String] = []
-	var video_values: Array = []
-	
-	video_keys.append("vsync")
-	video_values.append(video_vsync_check_button.button_pressed)
-	
-	video_keys.append("window_mode")
-	match video_window_mode_option_button.selected:
-		1: # Borderless
-			video_values.append(SystemConstants.WindowMode.BORDERLESS)
-		2: # Fullscreen
-			video_values.append(SystemConstants.WindowMode.FULLSCREEN)
-		_: # Windowed
-			video_values.append(SystemConstants.WindowMode.WINDOWED)
-	
-	video_keys.append("max_fps")
-	match video_max_fps_option_button.selected:
-		0: video_values.append(30)
-		1: video_values.append(60)
-		2: video_values.append(120)
-		3: video_values.append(240)
-		4: video_values.append(0)
-		_: video_values.append(0)
-	
-	if not video_resolution_option_button.disabled:
-		video_keys.append("resolution")
-		match video_resolution_option_button.selected:
-			0: video_values.append(Vector2i(1280, 720))
-			1: video_values.append(Vector2i(1280, 800))
-			2: video_values.append(Vector2i(1280, 1024))
-			3: video_values.append(Vector2i(1360, 768))
-			4: video_values.append(Vector2i(1366, 768))
-			5: video_values.append(Vector2i(1440, 900))
-			6: video_values.append(Vector2i(1600, 900))
-			7: video_values.append(Vector2i(1600, 1200))
-			8: video_values.append(Vector2i(1680, 1050))
-			9: video_values.append(Vector2i(1920, 1080))
-			10: video_values.append(Vector2i(1920, 1200))
-			11: video_values.append(Vector2i(2560, 1080))
-			12: video_values.append(Vector2i(2560, 1440))
-			13: video_values.append(Vector2i(2560, 1600))
-			14: video_values.append(Vector2i(3440, 1440))
-			15: video_values.append(Vector2i(3840, 2180))
-			_: video_values.append(Vector2i(1280, 720))
-	
-	SettingsManager.set_values("video", video_keys, video_values)
-	
+func _set_bindings() -> void:
 	var bindings: Dictionary = {}
-	
 	bindings["some_action"] = [
 		input_some_action_key_button.get_binding(),
 		input_some_action_joypad_button.get_binding(),
 	]
-	
 	bindings["back"] = [
 		input_back_key_button.get_binding(),
 		input_back_joypad_button.get_binding(),
 	]
-	
 	SettingsManager.set_value("input", "bindings", bindings)
-
-	SettingsManager.set_value("graphics", "ui_scale", 
-		graphics_ui_scale_slider.value)
-
-	SettingsManager.set_value("gameplay", "autosave", 
-		gameplay_autosave_check_button.button_pressed)
 	
-	SettingsManager.save()
-	EventBus.subscribe(SystemConstants.SETTINGS_CHANGED_EVENT, _load_values)

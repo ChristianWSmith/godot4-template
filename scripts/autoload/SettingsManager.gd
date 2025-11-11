@@ -81,8 +81,7 @@ func save() -> Error:
 
 func reset_to_default() -> void:
 	Log.info(self, "Resetting settings to default.")
-	_settings = SystemConstants.DEFAULT_SETTINGS.duplicate(true)
-	emit_changed_all()
+	_overwrite_settings(SystemConstants.DEFAULT_SETTINGS)
 
 
 func checkpoint() -> void:
@@ -92,8 +91,15 @@ func checkpoint() -> void:
 
 func reinstate_checkpoint() -> void:
 	Log.info(self, "Reinstating checkpoint.")
-	_settings = _checkpoint.duplicate(true)
-	emit_changed_all()
+	_overwrite_settings(_checkpoint)
+
+
+func _overwrite_settings(new_settings: Dictionary) -> void:
+	var diff: Dictionary = DictUtils.diff(_settings, _checkpoint)
+	_settings = new_settings.duplicate(true)
+	for section in diff.keys():
+		for key in diff[section].keys():
+			emit_changed(section, key, _settings[section][key])
 
 
 func _load_settings() -> Error:

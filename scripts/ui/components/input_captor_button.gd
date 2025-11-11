@@ -6,6 +6,8 @@ class_name InputCaptorButton
 @export var joypad_button_allowed: bool = true
 @export var joypad_motion_allowed: bool = true
 
+signal binding_updated
+
 # Examples: 
 #   { "type": "Key", "alt": false, "ctrl": false, "keycode": 0, "meta": false, "physical_keycode": 32, "shift": false }
 #   { "type": "MouseButton", "button_index": 1 }
@@ -94,6 +96,7 @@ func _stop_capture() -> void:
 	set_process_input(false)
 	text = _get_binding_text()
 	AudioManager.play_ui(SystemConstants.UI_CLICK_STREAM)
+	binding_updated.emit()
 
 
 func _get_binding_text() -> String:

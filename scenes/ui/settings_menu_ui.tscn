@@ -570,7 +570,7 @@ text = "Cancel"
 [node name="DefaultButton" type="Button" parent="VBoxContainer/MarginContainer/VBoxContainer/HBoxContainer"]
 unique_name_in_owner = true
 layout_mode = 2
-text = "Apply Defaults"
+text = "Defaults"
 
 [node name="Control" type="Control" parent="VBoxContainer/MarginContainer/VBoxContainer/HBoxContainer"]
 layout_mode = 2
@@ -582,4 +582,4 @@ layout_mode = 2
 focus_neighbor_left = NodePath("../CloseButton")
 focus_neighbor_right = NodePath(".")
 focus_neighbor_bottom = NodePath(".")
-text = "Apply"
+text = "Confirm"
