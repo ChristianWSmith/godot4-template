@@ -37,14 +37,14 @@ func _ready() -> void:
 
 func _on_visibility_changed() -> void:
 	if not visible:
+		InputManager.unsubscribe_pressed("back", _on_close_pressed)
 		return
+	InputManager.subscribe_pressed("back", _on_close_pressed)
 	SettingsManager.checkpoint()
 	_load_values()
 
 
 func _on_close_pressed() -> void:
-	if not visible:
-		return
 	SettingsManager.reinstate_checkpoint()
 	UIManager.close_specific("settings_menu")
 
@@ -66,7 +66,6 @@ func _make_connections() -> void:
 
 func _make_ui_connections() -> void:
 	visibility_changed.connect(_on_visibility_changed)
-	InputManager.subscribe_pressed("back", _on_close_pressed)
 	close_button.pressed.connect(_on_close_pressed)
 	default_button.pressed.connect(_on_default_pressed)
 	apply_button.pressed.connect(_on_apply_pressed)
