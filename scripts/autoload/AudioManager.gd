@@ -67,6 +67,8 @@ func play_ui(stream: AudioStream) -> void:
 
 
 func _play_sound(stream: AudioStream, bus: String) -> void:
+	if AudioServer.is_bus_mute(AudioServer.get_bus_index(bus)):
+		return
 	var player: AudioStreamPlayer = AudioStreamPlayer.new()
 	player.stream = stream
 	player.bus = bus
@@ -111,8 +113,18 @@ func _on_voice_updated(value: float) -> void:
 
 
 func _set_bus_volume(bus_name: String, value: float):
-	AudioServer.set_bus_volume_db(
-		AudioServer.get_bus_index(bus_name), 
-		lerpf(SystemConstants.AUDIO_SILENCE_DB, 0.0, 
-			AudioUtils.percent_to_perceptual(value)))
-	Log.trace(self, "Set bus volume %s %s" % [bus_name, value])
+	var target: float = lerpf(
+			SystemConstants.AUDIO_SILENCE_DB, 
+			0.0, 
+			AudioUtils.percent_to_perceptual(value))
+	var bus_idx: int = AudioServer.get_bus_index(bus_name)
+	if target <= SystemConstants.AUDIO_SILENCE_DB:
+		AudioServer.set_bus_mute(bus_idx, true)
+		Log.trace(self, "Muted bus %s" % bus_name)
+	else:
+		if AudioServer.is_bus_mute(bus_idx):
+			AudioServer.set_bus_mute(bus_idx, false)
+		AudioServer.set_bus_volume_db(
+			AudioServer.get_bus_index(bus_name), 
+			target)
+		Log.trace(self, "Set bus volume %s %s" % [bus_name, value])

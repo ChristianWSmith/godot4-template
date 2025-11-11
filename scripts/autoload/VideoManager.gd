@@ -36,15 +36,8 @@ func _on_window_mode_updated(mode: SystemConstants.WindowMode) -> void:
 				DisplayServer.WINDOW_FLAG_BORDERLESS, true)
 		_: # SystemConstants.WindowMode.WINDOWED:
 			var resolution: Vector2i = SettingsManager.get_value("video", "resolution")
-			var was_fullscreen_type: bool = DisplayServer.window_get_mode() in [
-				DisplayServer.WINDOW_MODE_EXCLUSIVE_FULLSCREEN,
-				DisplayServer.WINDOW_MODE_FULLSCREEN
-			]
 			DisplayServer.window_set_mode(DisplayServer.WINDOW_MODE_WINDOWED)
 			DisplayServer.window_set_flag(DisplayServer.WINDOW_FLAG_BORDERLESS, false)
-			if not was_fullscreen_type:
-				var offset: Vector2i = DisplayServer.window_get_size() - resolution
-				DisplayServer.window_set_position(DisplayServer.window_get_position() + offset / 2)
 			DisplayServer.window_set_size.call_deferred(resolution)
 			Log.trace(self, "Settings resolution to %s" % resolution)
 	Log.trace(self, "Window mode set to %s" % mode)
