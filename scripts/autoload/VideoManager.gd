@@ -64,3 +64,4 @@ func _on_resolution_updated(value: Vector2i) -> void:
 	var offset: Vector2i = DisplayServer.window_get_size() - value
 	DisplayServer.window_set_position(DisplayServer.window_get_position() + offset / 2)
 	DisplayServer.window_set_size.call_deferred(value)
+	Log.trace(self, "Resolution set to %s" % value)

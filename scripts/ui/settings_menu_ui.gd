@@ -43,6 +43,8 @@ func _on_visibility_changed() -> void:
 
 
 func _on_close_pressed() -> void:
+	if not visible:
+		return
 	SettingsManager.reinstate_checkpoint()
 	UIManager.close_specific("settings_menu")
 
@@ -244,7 +246,7 @@ func _load_binding(
 		match binding.get("type", ""):
 			"Key": key_button.set_binding(binding)
 			"JoypadButton": joypad_button.set_binding(binding)
-			_: Log.warn(self, "Unsupported bind type: '%s'" % binding.get("type", ""))
+			_: Log.warn(self, "Bind type not used in this demo: '%s'" % binding.get("type", ""))
 
 
 func _set_bindings() -> void:

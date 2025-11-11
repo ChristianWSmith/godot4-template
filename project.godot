@@ -15,7 +15,7 @@ config/name_localized={
 "en_US": "English (US)"
 }
 config/version="0.1.0"
-run/main_scene="res://scenes/entrypoint.tscn"
+run/main_scene="uid://bdwua0scesiy2"
 config/features=PackedStringArray("4.5", "Forward Plus")
 boot_splash/image="uid://devtlii0et7ux"
 config/icon="uid://hiiecducsyte"

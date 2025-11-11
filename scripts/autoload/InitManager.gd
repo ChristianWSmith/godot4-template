@@ -1,5 +1,18 @@
 extends BaseManager
 
+func _ready() -> void:
+	if ResourceUID.path_to_uid(get_tree().current_scene.scene_file_path) != \
+		ProjectSettings.get("application/run/main_scene"):
+		
+		print("[%s] Starting initialization..." % name)
+
+		if initialize() == OK:
+			Log.info(self, "Systems initialized successfully.")
+			SceneManager.reload_scene()
+		else:
+			print("[%s] Initialization failed." % name)
+
+
 func initialize() -> Error:
 	super()
 	var result: Error
