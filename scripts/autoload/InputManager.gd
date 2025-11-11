@@ -16,17 +16,11 @@ var _bindings: Dictionary = {}
 func initialize() -> Error:
 	super()
 	Log.info(self, "Initializing InputManager...")
-	EventBus.subscribe(SettingsManager.get_section_event("input"), _on_input_settings_updated)
+	EventBus.subscribe(
+		SettingsManager.get_event("input", "bindings"),
+		_on_bindings_updated
+	)
 	return OK
-
-
-func apply_and_save(bindings: Dictionary) -> void:
-	_apply_bindings(bindings)
-	_save(bindings)
-
-
-func dump_bindings() -> Dictionary:
-	return _bindings.duplicate(true)
 
 
 func subscribe_pressed(action: String, callable: Callable) -> void:
@@ -53,11 +47,7 @@ func once_released(action: String, callable: Callable) -> void:
 	EventBus.once(_get_released_event(action), callable)
 
 
-func _on_input_settings_updated() -> void:
-	_apply_bindings(SettingsManager.get_value("input", "bindings") as Dictionary)
-
-
-func _apply_bindings(bindings: Dictionary) -> void:
+func _on_bindings_updated(bindings: Dictionary) -> void:
 	_bindings = bindings
 
 	if not _bindings or _bindings.is_empty():

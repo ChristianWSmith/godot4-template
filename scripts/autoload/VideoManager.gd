@@ -3,40 +3,56 @@ extends BaseManager
 func initialize() -> Error:
 	super()
 	Log.info(self, "Initializing...")
-	EventBus.subscribe(SettingsManager.get_section_event("video"), _on_video_settings_updated)
+	EventBus.subscribe(
+		SettingsManager.get_event("video", "window_mode"),
+		_on_window_mode_updated
+	)
+	EventBus.subscribe(
+		SettingsManager.get_event("video", "vsync"),
+		_on_vsync_updated
+	)
+	EventBus.subscribe(
+		SettingsManager.get_event("video", "max_fps"),
+		_on_max_fps_updated
+	)
 	return OK
 
 
-func _on_video_settings_updated() -> void:
-	var fullscreen: bool = SettingsManager.get_value("video", "fullscreen")
-	var borderless: bool = SettingsManager.get_value("video", "borderless")
-	var vsync: bool = SettingsManager.get_value("video", "vsync")
-	var resolution: Vector2i = SettingsManager.get_value("video", "resolution")
-	var max_fps: int = SettingsManager.get_value("video", "max_fps")
-	
-	var was_fullscreen_type: bool = DisplayServer.window_get_mode() in [
-		DisplayServer.WINDOW_MODE_EXCLUSIVE_FULLSCREEN,
-		DisplayServer.WINDOW_MODE_FULLSCREEN
-		]
-	
-	Engine.max_fps = max_fps
-	if fullscreen:
-		DisplayServer.window_set_mode(DisplayServer.WINDOW_MODE_EXCLUSIVE_FULLSCREEN)
-		DisplayServer.window_set_flag(DisplayServer.WINDOW_FLAG_BORDERLESS, true)
-	elif borderless:
-		DisplayServer.window_set_mode(DisplayServer.WINDOW_MODE_FULLSCREEN)
-		DisplayServer.window_set_flag(DisplayServer.WINDOW_FLAG_BORDERLESS, true)
-	else:
-		DisplayServer.window_set_mode(DisplayServer.WINDOW_MODE_WINDOWED)
-		DisplayServer.window_set_flag(DisplayServer.WINDOW_FLAG_BORDERLESS, false)
-		if not was_fullscreen_type:
-			var offset: Vector2i = DisplayServer.window_get_size() - resolution
-			DisplayServer.window_set_position(DisplayServer.window_get_position() + offset / 2)
-		DisplayServer.window_set_size.call_deferred(resolution)
-	
+func _on_window_mode_updated(mode: SystemConstants.WindowMode) -> void:
+	match mode:
+		SystemConstants.WindowMode.BORDERLESS:
+			DisplayServer.window_set_mode(
+				DisplayServer.WINDOW_MODE_FULLSCREEN)
+			DisplayServer.window_set_flag(
+				DisplayServer.WINDOW_FLAG_BORDERLESS, true)
+		SystemConstants.WindowMode.FULLSCREEN:
+			DisplayServer.window_set_mode(
+				DisplayServer.WINDOW_MODE_EXCLUSIVE_FULLSCREEN)
+			DisplayServer.window_set_flag(
+				DisplayServer.WINDOW_FLAG_BORDERLESS, true)
+		_: # SystemConstants.WindowMode.WINDOWED:
+			var resolution: Vector2i = SettingsManager.get_value("video", "resolution")
+			var was_fullscreen_type: bool = DisplayServer.window_get_mode() in [
+				DisplayServer.WINDOW_MODE_EXCLUSIVE_FULLSCREEN,
+				DisplayServer.WINDOW_MODE_FULLSCREEN
+			]
+			DisplayServer.window_set_mode(DisplayServer.WINDOW_MODE_WINDOWED)
+			DisplayServer.window_set_flag(DisplayServer.WINDOW_FLAG_BORDERLESS, false)
+			if not was_fullscreen_type:
+				var offset: Vector2i = DisplayServer.window_get_size() - resolution
+				DisplayServer.window_set_position(DisplayServer.window_get_position() + offset / 2)
+			DisplayServer.window_set_size.call_deferred(resolution)
+			Log.trace(self, "Settings resolution to %s" % resolution)
+	Log.trace(self, "Window mode set to %s" % mode)
+
+
+func _on_vsync_updated(value: bool) -> void:
 	DisplayServer.window_set_vsync_mode(
-		DisplayServer.VSYNC_ENABLED if vsync else DisplayServer.VSYNC_DISABLED
+		DisplayServer.VSYNC_ENABLED if value else DisplayServer.VSYNC_DISABLED
 	)
-	
-	Log.info(self, "Display settings applied (mode=%s, res=%s)" %
-		[DisplayServer.window_get_mode(), resolution])
+	Log.trace(self, "Vsync set to %s" % value)
+
+
+func _on_max_fps_updated(value: int) -> void:
+	Engine.max_fps = value
+	Log.trace(self, "Max FPS set to %s" % value)

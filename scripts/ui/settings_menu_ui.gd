@@ -102,15 +102,16 @@ func _load_values() -> void:
 		Vector2i(3840, 2180): video_resolution_option_button.select(15)
 		_: video_resolution_option_button.select(0)
 	
-	if SettingsManager.get_value("video", "fullscreen"):
-		video_window_mode_option_button.select(2) # Fullscreen
-		video_window_mode_option_button.item_selected.emit(2)
-	elif SettingsManager.get_value("video", "borderless"):
-		video_window_mode_option_button.select(1) # Borderless
-		video_window_mode_option_button.item_selected.emit(1)
-	else:
-		video_window_mode_option_button.select(0) # Windowed
-		video_window_mode_option_button.item_selected.emit(0)
+	match SettingsManager.get_value("video", "window_mode"):
+		SystemConstants.WindowMode.BORDERLESS:
+			video_window_mode_option_button.select(1) # Borderless
+			video_window_mode_option_button.item_selected.emit(1)
+		SystemConstants.WindowMode.FULLSCREEN:
+			video_window_mode_option_button.select(2) # Fullscreen
+			video_window_mode_option_button.item_selected.emit(2)
+		_:
+			video_window_mode_option_button.select(0) # Windowed
+			video_window_mode_option_button.item_selected.emit(0)
 	
 	match SettingsManager.get_value("video", "max_fps"):
 		30: video_max_fps_option_button.select(0)
@@ -156,7 +157,7 @@ func _on_apply_pressed() -> void:
 		audio_voice_slider.value / audio_voice_slider.max_value,
 		audio_ui_slider.value / audio_ui_slider.max_value,
 	]
-	SettingsManager.set_values("audio", audio_keys, audio_values, false)
+	SettingsManager.set_values("audio", audio_keys, audio_values)
 	
 	var video_keys: Array[String] = []
 	var video_values: Array = []
@@ -164,21 +165,14 @@ func _on_apply_pressed() -> void:
 	video_keys.append("vsync")
 	video_values.append(video_vsync_check_button.button_pressed)
 	
-	video_keys.append("borderless")
-	video_keys.append("fullscreen")
+	video_keys.append("window_mode")
 	match video_window_mode_option_button.selected:
-		0: # Windowed
-			video_values.append(false)
-			video_values.append(false)
 		1: # Borderless
-			video_values.append(true)
-			video_values.append(true)
+			video_values.append(SystemConstants.WindowMode.BORDERLESS)
 		2: # Fullscreen
-			video_values.append(false)
-			video_values.append(true)
-		_: # Default
-			video_values.append(false)
-			video_values.append(false)
+			video_values.append(SystemConstants.WindowMode.FULLSCREEN)
+		_: # Windowed
+			video_values.append(SystemConstants.WindowMode.WINDOWED)
 	
 	video_keys.append("max_fps")
 	match video_max_fps_option_button.selected:
@@ -210,7 +204,7 @@ func _on_apply_pressed() -> void:
 			15: video_values.append(Vector2i(3840, 2180))
 			_: video_values.append(Vector2i(1280, 720))
 	
-	SettingsManager.set_values("video", video_keys, video_values, false)
+	SettingsManager.set_values("video", video_keys, video_values)
 	
 	var bindings: Dictionary = {}
 	
@@ -224,13 +218,13 @@ func _on_apply_pressed() -> void:
 		input_back_joypad_button.get_binding(),
 	]
 	
-	SettingsManager.set_value("input", "bindings", bindings, false)
+	SettingsManager.set_value("input", "bindings", bindings)
 
 	SettingsManager.set_value("graphics", "ui_scale", 
-		graphics_ui_scale_slider.value, false)
+		graphics_ui_scale_slider.value)
 
 	SettingsManager.set_value("gameplay", "autosave", 
-		gameplay_autosave_check_button.button_pressed, false)
+		gameplay_autosave_check_button.button_pressed)
 	
 	SettingsManager.save()
 	EventBus.subscribe(SystemConstants.SETTINGS_CHANGED_EVENT, _load_values)

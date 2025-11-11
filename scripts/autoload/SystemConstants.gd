@@ -88,6 +88,9 @@ const INPUT_BUILT_IN_ACTIONS: Array[String] = [
 const AUDIO_MUSIC_FADE_TIME: float = 1.0
 @onready var AUDIO_SILENCE_DB: float = ProjectSettings.get_setting("audio/buses/channel_disable_threshold_db")
 
+# Video
+enum WindowMode { WINDOWED, BORDERLESS, FULLSCREEN }
+
 # Settings
 const SETTINGS_VERSION: int = 0
 const SETTINGS_CHANGED_EVENT: String = "settings_changed"
@@ -100,8 +103,7 @@ const DEFAULT_SETTINGS: Dictionary = {
 		"timestamp": -1.0
 	},
 	"video": {
-		"fullscreen": false,
-		"borderless": false,
+		"window_mode": WindowMode.WINDOWED,
 		"vsync": true,
 		"resolution": Vector2i(1280, 720),
 		"max_fps": 0,

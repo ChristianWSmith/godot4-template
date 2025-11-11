@@ -1,5 +1,6 @@
 extends BaseManager
 
+var _checkpoint: Dictionary = {}
 var _settings: Dictionary = {}
 
 func initialize() -> Error:
@@ -7,24 +8,24 @@ func initialize() -> Error:
 	Log.info(self, "Initializing...")
 	if _load_settings() == OK:
 		Log.info(self, "Successfully initialized settings.")
-		emit_changed()
+		emit_changed_all()
 		return OK
 	Log.error(self, "Failed to initialize settings.")
 	return FAILED
 
 
-func emit_changed() -> void:
-	EventBus.emit(SystemConstants.SETTINGS_CHANGED_EVENT)
+func emit_changed_all() -> void:
 	for section in _settings.keys():
-		emit_section_changed(section)
+		for key in _settings[section].keys():
+			emit_changed(section, key, _settings[section][key])
 
 
-func emit_section_changed(section: String) -> void:
-	EventBus.emit(get_section_event(section))
+func emit_changed(section: String, key: String, value: Variant) -> void:
+	EventBus.emit(get_event(section, key), value)
 
 
-func get_section_event(section: String) -> String:
-	return SystemConstants.SETTINGS_CHANGED_EVENT + "/" + section
+func get_event(section: String, key: String) -> String:
+	return SystemConstants.SETTINGS_CHANGED_EVENT + "/" + section + "/" + key
 
 
 func get_value(section: String, key: String) -> Variant:
@@ -40,19 +41,16 @@ func get_value(section: String, key: String) -> Variant:
 	return null
 
 
-func set_value(section: String, key: String, value: Variant, persist_immediately: bool = true) -> void:
+func set_value(section: String, key: String, value: Variant) -> void:
 	if not _settings.has(section):
 		_settings[section] = {}
 	_settings[section][key] = value
 
 	Log.debug(self, "Set %s/%s = %s" % [section, key, str(value)])
-	emit_section_changed(section)
-
-	if persist_immediately:
-		save()
+	emit_changed(section, key, value)
 
 
-func set_values(section: String, keys: Array[String], values: Array[Variant], persist_immediately: bool = true) -> void:
+func set_values(section: String, keys: Array[String], values: Array[Variant]) -> void:
 	if keys.size() != values.size():
 		Log.error(self, "Attempted to set multiple values, but keys.size() != values.size()")
 		return
@@ -61,12 +59,9 @@ func set_values(section: String, keys: Array[String], values: Array[Variant], pe
 	
 	for i in range(keys.size()):
 		_settings[section][keys[i]] = values[i]
+		emit_changed(section, keys[i], values[i])
 
 	Log.debug(self, "Set values for section %s - %s = %s" % [section, keys, values])
-	emit_section_changed(section)
-
-	if persist_immediately:
-		save()
 
 
 func save() -> Error:
@@ -87,12 +82,18 @@ func save() -> Error:
 func reset_to_default() -> void:
 	Log.info(self, "Resetting settings to default.")
 	_settings = SystemConstants.DEFAULT_SETTINGS.duplicate(true)
-	emit_changed()
-	save()
+	emit_changed_all()
 
 
-func get_section(section: String) -> Dictionary:
-	return _settings.get(section, {})
+func checkpoint() -> void:
+	Log.info(self, "Checkpointing.")
+	_checkpoint = _settings.duplicate(true)
+
+
+func reinstate_checkpoint() -> void:
+	Log.info(self, "Reinstating checkpoint.")
+	_settings = _checkpoint.duplicate(true)
+	emit_changed_all()
 
 
 func _load_settings() -> Error:

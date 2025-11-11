@@ -6,8 +6,25 @@ func initialize() -> Error:
 	super()
 	Log.info(self, "Initializing...")
 	EventBus.subscribe(
-		SettingsManager.get_section_event("audio"), 
-		_on_settings_updated)
+		SettingsManager.get_event("audio", "master"),
+		_on_master_updated
+	)
+	EventBus.subscribe(
+		SettingsManager.get_event("audio", "music"),
+		_on_music_updated
+	)
+	EventBus.subscribe(
+		SettingsManager.get_event("audio", "sfx"),
+		_on_sfx_updated
+	)
+	EventBus.subscribe(
+		SettingsManager.get_event("audio", "ui"),
+		_on_ui_updated
+	)
+	EventBus.subscribe(
+		SettingsManager.get_event("audio", "voice"),
+		_on_voice_updated
+	)
 	return OK
 
 
@@ -73,30 +90,29 @@ func _fade_out_music(player: AudioStreamPlayer, fade_time: float) -> void:
 	Log.trace(self, "Fading out music: %s" % player.stream.resource_path)
 
 
-func _on_settings_updated() -> void:
+func _on_master_updated(value: float) -> void:
+	_set_bus_volume("Master", value)
+
+
+func _on_music_updated(value: float) -> void:
+	_set_bus_volume("Music", value)
+
+
+func _on_sfx_updated(value: float) -> void:
+	_set_bus_volume("SFX", value)
+
+
+func _on_ui_updated(value: float) -> void:
+	_set_bus_volume("UI", value)
+
+
+func _on_voice_updated(value: float) -> void:
+	_set_bus_volume("Voice", value)
+
+
+func _set_bus_volume(bus_name: String, value: float):
 	AudioServer.set_bus_volume_db(
-		AudioServer.get_bus_index("Master"), 
+		AudioServer.get_bus_index(bus_name), 
 		lerpf(SystemConstants.AUDIO_SILENCE_DB, 0.0, 
-			AudioUtils.percent_to_perceptual(
-				SettingsManager.get_value("audio", "master"))))
-	AudioServer.set_bus_volume_db(
-		AudioServer.get_bus_index("Music"), 
-		lerpf(SystemConstants.AUDIO_SILENCE_DB, 0.0, 
-			AudioUtils.percent_to_perceptual(
-				SettingsManager.get_value("audio", "music"))))
-	AudioServer.set_bus_volume_db(
-		AudioServer.get_bus_index("SFX"), 
-		lerpf(SystemConstants.AUDIO_SILENCE_DB, 0.0, 
-			AudioUtils.percent_to_perceptual(
-				SettingsManager.get_value("audio", "sfx"))))
-	AudioServer.set_bus_volume_db(
-		AudioServer.get_bus_index("UI"), 
-		lerpf(SystemConstants.AUDIO_SILENCE_DB, 0.0, 
-			AudioUtils.percent_to_perceptual(
-				SettingsManager.get_value("audio", "ui"))))
-	AudioServer.set_bus_volume_db(
-		AudioServer.get_bus_index("Voice"), 
-		lerpf(SystemConstants.AUDIO_SILENCE_DB, 0.0, 
-			AudioUtils.percent_to_perceptual(
-				SettingsManager.get_value("audio", "voice"))))
-	Log.info(self, "Updated from settings.")
+			AudioUtils.percent_to_perceptual(value)))
+	Log.trace(self, "Set bus volume %s %s" % [bus_name, value])
