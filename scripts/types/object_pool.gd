@@ -14,6 +14,7 @@ func get_instance() -> Node:
 	var obj: Node
 	if _available.is_empty():
 		obj = _scene.instantiate()
+		add_child(obj)
 	else:
 		obj = _available.pop_back()
 	_in_use.append(obj)

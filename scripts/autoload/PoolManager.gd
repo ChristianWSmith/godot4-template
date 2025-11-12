@@ -11,6 +11,7 @@ func initialize() -> Error:
 func get_instance(scene: PackedScene) -> Node:
 	if not _pools.has(scene):
 		_pools[scene] = ObjectPool.new(scene)
+		add_child(_pools[scene])
 	return _pools[scene].get_instance()
 
 
