@@ -12,6 +12,7 @@ func initialize() -> Error:
 	_current_scene = get_tree().current_scene
 	EventBus.emit("scene_changed", _current_scene.scene_file_path)
 	_setup_fader()
+	_loading_screen_timer.one_shot = true
 	add_child(_loading_screen_timer)
 	return OK
 
@@ -53,11 +54,14 @@ func _poll_async_load(scene_path: String) -> void:
 	var progress: Array = [0]
 	while status == ResourceLoader.THREAD_LOAD_IN_PROGRESS:
 		status = ResourceLoader.load_threaded_get_status(scene_path, progress)
-		_loading_screen.set_progress(progress[0])
+		_loading_screen.set_progress(min(
+			progress[0],
+			_get_loading_timer_progress()))
 		await get_tree().process_frame
 	
-	if not _loading_screen_timer.is_stopped():
-		await _loading_screen_timer.timeout
+	while not _loading_screen_timer.is_stopped():
+		_loading_screen.set_progress(_get_loading_timer_progress())
+		await get_tree().process_frame
 
 	if status != ResourceLoader.THREAD_LOAD_LOADED:
 		Log.fatal(self, "Async scene load failed for %s (status=%s)" % [scene_path, status])
@@ -83,6 +87,10 @@ func _poll_async_load(scene_path: String) -> void:
 
 	Log.info(self, "Async scene load complete: %s" % scene_path)
 	_set_is_loading(false)
+
+
+func _get_loading_timer_progress() -> float:
+	return 1.0 - (_loading_screen_timer.time_left / SystemConstants.SCENE_LOAD_SCREEN_MINIMUM_TIME)
 
 
 func _set_is_loading(value: float) -> void:
