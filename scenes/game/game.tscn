@@ -7,11 +7,28 @@ resource_name = "Game"
 script/source = "extends Node2D
 
 @onready var animated_sprite_2d: AnimatedSprite2D = %AnimatedSprite2D
+@onready var camera2d: Camera2D = %Camera2D
+@onready var flasher_scene: PackedScene = preload(\"res://scenes/game/flasher.tscn\")
+
+var spawn_flashers: bool = false
 
 func _ready() -> void:
 	EventBus.subscribe(InputManager._get_pressed_event(\"back\"), _exit)
 	animated_sprite_2d.modulate = GameState.get_scene_data(\"sprite_modulate\", Color.WHITE)
 	InputManager.subscribe_pressed(\"some_action\", _randomize_sprite_modulate)
+	InputManager.subscribe_pressed(\"some_action\", set.bind(\"spawn_flashers\", true))
+	InputManager.subscribe_released(\"some_action\", set.bind(\"spawn_flashers\", false))
+
+
+func _process(_delta: float) -> void:
+	if not spawn_flashers:
+		return
+	var flasher: Node2D = PoolManager.get_instance(flasher_scene)
+	flasher.global_position = _get_random_visible_position()
+	SignalUtils.safe_connect(
+		flasher.done,
+		PoolManager.release.bind(flasher_scene, flasher))
+	NodeUtils.safe_add_child(self, flasher)
 
 
 func _randomize_sprite_modulate() -> void:
@@ -23,6 +40,14 @@ func _randomize_sprite_modulate() -> void:
 func _exit() -> void:
 	GameState.save_to_current_slot()
 	SceneManager.change_scene(\"res://scenes/main_menu.tscn\")
+
+
+func _get_random_visible_position() -> Vector2:
+	var visible_rect: Rect2 = camera2d.get_viewport_rect()
+	return Vector2(
+		randf_range(visible_rect.position.x - visible_rect.size.x / 2.0, visible_rect.position.x + visible_rect.size.x / 2.0),
+		randf_range(visible_rect.position.y - visible_rect.size.y / 2.0, visible_rect.position.y + visible_rect.size.y / 2.0)
+		)
 "
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_7h61r"]
@@ -44,6 +69,7 @@ animations = [{
 script = SubResource("GDScript_ifgtf")
 
 [node name="Camera2D" type="Camera2D" parent="."]
+unique_name_in_owner = true
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
 unique_name_in_owner = true

@@ -1,0 +1,150 @@
+[gd_scene load_steps=9 format=3 uid="uid://dqtn4qkojqu"]
+
+[ext_resource type="Texture2D" uid="uid://dbwp2mtk3ciqa" path="res://assets/bin/ui/throbber.png" id="1_eedo2"]
+[ext_resource type="Script" uid="uid://bpqa8jf420ttd" path="res://scripts/state_machine/state_machine.gd" id="2_8gwgb"]
+
+[sub_resource type="GDScript" id="GDScript_igjhb"]
+resource_name = "Flasher"
+script/source = "extends Node2D
+class_name Flasher
+
+signal done
+
+@export var duration: float = 1.0
+
+func _ready() -> void:
+	%StateC.request_change.connect(func() -> void:
+		$AnimatedSprite2D.modulate = Color.CYAN)
+	%StateM.request_change.connect(func() -> void:
+		$AnimatedSprite2D.modulate = Color.MAGENTA)
+	%StateY.request_change.connect(func() -> void:
+		$AnimatedSprite2D.modulate = Color.YELLOW)
+	%Timer.timeout.connect(done.emit)
+	%Timer.start(duration)
+"
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_7h61r"]
+atlas = ExtResource("1_eedo2")
+region = Rect2(1920, 0, 128, 128)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_8gwgb"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_7h61r")
+}],
+"loop": false,
+"name": &"default",
+"speed": 1.0
+}]
+
+[sub_resource type="GDScript" id="GDScript_8gwgb"]
+resource_name = "StateC"
+script/source = "extends StateMachineState
+class_name StateC
+
+signal request_change
+
+@export var duration: float = 0.1
+
+var timer: float = 0.0
+
+func enter() -> void:
+	timer = 0.0
+	request_change.emit()
+
+
+func exit() -> void:
+	pass
+
+
+func process(delta: float) -> StateMachineState:
+	timer += delta
+	if timer >= duration:
+		return %StateM
+	return self
+"
+
+[sub_resource type="GDScript" id="GDScript_wsfjb"]
+resource_name = "StateM"
+script/source = "extends StateMachineState
+class_name StateM
+
+signal request_change
+
+@export var duration: float = 0.1
+
+var timer: float = 0.0
+
+func enter() -> void:
+	timer = 0.0
+	request_change.emit()
+
+
+func exit() -> void:
+	pass
+
+
+func process(delta: float) -> StateMachineState:
+	timer += delta
+	if timer >= duration:
+		return %StateY
+	return self
+"
+
+[sub_resource type="GDScript" id="GDScript_t1gpf"]
+resource_name = "StateY"
+script/source = "extends StateMachineState
+class_name StateY
+
+signal request_change
+
+@export var duration: float = 0.1
+
+var timer: float = 0.0
+
+func enter() -> void:
+	timer = 0.0
+	request_change.emit()
+
+
+func exit() -> void:
+	pass
+
+
+func process(delta: float) -> StateMachineState:
+	timer += delta
+	if timer >= duration:
+		return %StateC
+	return self
+"
+
+[node name="Flasher" type="Node2D"]
+script = SubResource("GDScript_igjhb")
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
+unique_name_in_owner = true
+z_index = 3
+z_as_relative = false
+position = Vector2(-2.9802322e-08, -5.9604645e-08)
+scale = Vector2(0.03125, 0.03125)
+sprite_frames = SubResource("SpriteFrames_8gwgb")
+
+[node name="StateMachine" type="Node" parent="." node_paths=PackedStringArray("default_state")]
+script = ExtResource("2_8gwgb")
+default_state = NodePath("StateC")
+
+[node name="StateC" type="Node" parent="StateMachine"]
+unique_name_in_owner = true
+script = SubResource("GDScript_8gwgb")
+
+[node name="StateM" type="Node" parent="StateMachine"]
+unique_name_in_owner = true
+script = SubResource("GDScript_wsfjb")
+
+[node name="StateY" type="Node" parent="StateMachine"]
+unique_name_in_owner = true
+script = SubResource("GDScript_t1gpf")
+
+[node name="Timer" type="Timer" parent="."]
+unique_name_in_owner = true

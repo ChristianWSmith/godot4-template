@@ -43,6 +43,7 @@ VideoManager="*res://scripts/autoload/VideoManager.gd"
 UIManager="*res://scripts/autoload/UIManager.gd"
 GameplayManager="*res://scripts/autoload/GameplayManager.gd"
 GraphicsManager="*res://scripts/autoload/GraphicsManager.gd"
+PoolManager="*res://scripts/autoload/PoolManager.gd"
 InitManager="*res://scripts/autoload/InitManager.gd"
 
 [debug]
@@ -60,7 +61,7 @@ window/per_pixel_transparency/allowed=true
 
 [editor]
 
-run/main_run_args="--log-level=TRACE"
+run/main_run_args="--log-level=DEBUG"
 export/convert_text_resources_to_binary=false
 
 [editor_plugins]

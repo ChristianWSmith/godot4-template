@@ -37,28 +37,28 @@ func set_log_to_file(enabled: bool, path: String = SystemConstants.LOG_FILE_PATH
 	_log_internal(LogLevel.INFO, name, "File logging %s (%s)" % ["enabled" if enabled else "disabled", _file_path])
 
 
-func trace(source: Node, message: String) -> void:
+func trace(source: Node, message: Variant) -> void:
 	if not _initialized:
 		return
-	_log_internal(LogLevel.TRACE, source.name, message)
+	_log_internal(LogLevel.TRACE, source.name, str(message))
 
 
-func debug(source: Node, message: String) -> void:
+func debug(source: Node, message: Variant) -> void:
 	if not _initialized:
 		return
-	_log_internal(LogLevel.DEBUG, source.name, message)
+	_log_internal(LogLevel.DEBUG, source.name, str(message))
 
 
-func info(source: Node, message: String) -> void:
+func info(source: Node, message: Variant) -> void:
 	if not _initialized:
 		return
-	_log_internal(LogLevel.INFO, source.name, message)
+	_log_internal(LogLevel.INFO, source.name, str(message))
 
 
-func warn(source: Node, message: String) -> void:
+func warn(source: Node, message: Variant) -> void:
 	if not _initialized:
 		return
-	_log_internal(LogLevel.WARN, source.name, message)
+	_log_internal(LogLevel.WARN, source.name, str(message))
 
 
 func error(source: Node, message: String) -> void:
