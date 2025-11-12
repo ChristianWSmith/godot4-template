@@ -1,7 +1,7 @@
 extends BaseManager
 
+var _loading_screen: LoadingScreen = preload("res://scenes/loading_screen.tscn").instantiate()
 var _current_scene: Node = null
-var _next_scene_path: String = ""
 var _is_loading: bool = false
 var _fade_rect: ColorRect = ColorRect.new()
 
@@ -18,40 +18,49 @@ func change_scene(scene_path: String) -> void:
 	if _is_loading:
 		Log.warn(self, "Scene change already in progress; ignoring request.")
 		return
-	
+	_swap_scene(_loading_screen)
+	change_scene_async(scene_path)
+	EventBus.once("scene_changed", func(_i: Variant) -> void:
+		_loading_screen = preload("res://scenes/loading_screen.tscn").instantiate())
+
+
+func change_scene_async(scene_path: String) -> void:
+	if _is_loading:
+		Log.warn(self, "Scene change already in progress; ignoring request.")
+		return
 	_set_is_loading(true)
-	_next_scene_path = scene_path
-	
-	_do_change_scene()
+	_do_change_scene_async(scene_path)
 
 
-func reload_scene() -> void:
+func reload_scene_async() -> void:
 	if not _current_scene:
 		Log.warn(self, "No scene to reload.")
 		return
-	change_scene(_current_scene.scene_file_path)
+	change_scene_async(_current_scene.scene_file_path)
 
 
-func _do_change_scene() -> void:
-	Log.info(self, "Starting async scene load for %s" % _next_scene_path)
-	ResourceLoader.load_threaded_request(_next_scene_path)
-	await _poll_async_load()
+func _do_change_scene_async(scene_path: String) -> void:
+	Log.info(self, "Starting async scene load for %s" % scene_path)
+	ResourceLoader.load_threaded_request(scene_path)
+	await _poll_async_load(scene_path)
 
 
-func _poll_async_load() -> void:
-	var status: ResourceLoader.ThreadLoadStatus = ResourceLoader.load_threaded_get_status(_next_scene_path)
+func _poll_async_load(scene_path: String) -> void:
+	var status: ResourceLoader.ThreadLoadStatus = ResourceLoader.load_threaded_get_status(scene_path)
+	var progress: Array = [0]
 	while status == ResourceLoader.THREAD_LOAD_IN_PROGRESS:
+		status = ResourceLoader.load_threaded_get_status(scene_path, progress)
+		_loading_screen.set_progress(progress[0])
 		await get_tree().process_frame
-		status = ResourceLoader.load_threaded_get_status(_next_scene_path)
 
 	if status != ResourceLoader.THREAD_LOAD_LOADED:
-		Log.fatal(self, "Async scene load failed for %s (status=%s)" % [_next_scene_path, status])
+		Log.fatal(self, "Async scene load failed for %s (status=%s)" % [scene_path, status])
 		_set_is_loading(false)
 		return
 
-	var res: PackedScene = ResourceLoader.load_threaded_get(_next_scene_path)
+	var res: PackedScene = ResourceLoader.load_threaded_get(scene_path)
 	if not res:
-		Log.fatal(self, "Threaded load returned null: %s" % _next_scene_path)
+		Log.fatal(self, "Threaded load returned null: %s" % scene_path)
 		_set_is_loading(false)
 		return
 
@@ -60,23 +69,27 @@ func _poll_async_load() -> void:
 	var fade_in_tween: Tween = create_tween().set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_OUT)
 	fade_in_tween.tween_property(_fade_rect, "modulate:a", 1.0, SystemConstants.SCENE_FADE_TIME)
 	fade_in_tween.tween_callback(func():
-		if _current_scene:
-			_current_scene.queue_free()
-		get_tree().root.add_child(new_scene)
-		_current_scene = new_scene
-		get_tree().current_scene = new_scene
+		_swap_scene(new_scene)
 		var fade_out_tween: Tween = create_tween().set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_OUT)
 		fade_out_tween.tween_property(_fade_rect, "modulate:a", 0.0, SystemConstants.SCENE_FADE_TIME)
 		EventBus.emit("scene_changed", _current_scene.scene_file_path)
 		)
 
-	Log.info(self, "Async scene load complete: %s" % _next_scene_path)
+	Log.info(self, "Async scene load complete: %s" % scene_path)
 	_set_is_loading(false)
 
 
 func _set_is_loading(value: float) -> void:
 	_is_loading = value
 	UIManager.show_throbber(_is_loading)
+
+
+func _swap_scene(new_scene: Node) -> void:
+	if _current_scene:
+		_current_scene.queue_free()
+	get_tree().root.add_child(new_scene)
+	_current_scene = new_scene
+	get_tree().current_scene = new_scene
 
 
 func _setup_fader() -> void:

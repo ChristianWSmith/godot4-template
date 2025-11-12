@@ -91,7 +91,10 @@ func wait_for(event_name: String) -> Variant:
 
 func _once_wrapper(data: Variant, event_name: String, callable: Callable) -> void:
 	if callable != null and (callable.get_object() == null or is_instance_valid(callable.get_object())):
-		callable.call(data)
+		if data != null:
+			callable.call(data)
+		else:
+			callable.call()
 
 	unsubscribe(event_name, Callable(self, "_once_wrapper").bind(event_name, callable))
 

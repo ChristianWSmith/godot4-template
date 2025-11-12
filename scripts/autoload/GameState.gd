@@ -23,7 +23,7 @@ func load_from_slot(slot_name: String) -> void:
 	_current_slot = slot_name
 	_loaded = true
 	EventBus.emit("slot_loaded")
-	SceneManager.change_scene(_get_current_scene_external())
+	SceneManager.change_scene_async(_get_current_scene_external())
 
 
 func save_to_current_slot() -> void:

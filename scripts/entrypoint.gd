@@ -5,6 +5,6 @@ func _ready() -> void:
 
 	if InitManager.initialize() == OK:
 		Log.info(self, "Systems initialized successfully.")
-		SceneManager.change_scene("res://scenes/main_menu.tscn")
+		SceneManager.change_scene_async("res://scenes/main_menu.tscn")
 	else:
 		print("[%s] Initialization failed." % name)

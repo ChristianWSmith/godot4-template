@@ -8,7 +8,7 @@ func _ready() -> void:
 
 		if initialize() == OK:
 			Log.info(self, "Systems initialized successfully.")
-			SceneManager.reload_scene()
+			SceneManager.reload_scene_async()
 		else:
 			print("[%s] Initialization failed." % name)
 
