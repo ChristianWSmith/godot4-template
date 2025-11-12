@@ -4,7 +4,7 @@ var _menu_stack: Array[String] = []
 var _ui_nodes: Dictionary[String, Control] = {}
 var _ui_root: Control = Control.new()
 var _throbber: AnimatedSprite2D = AnimatedSprite2D.new()
-var _throbber_tween: Tween = create_tween()
+var _throbber_tween: Tween
 var _throbber_counter: int = 0
 var _throbber_showing: bool = false
 
@@ -92,7 +92,8 @@ func show_throbber(show: bool) -> void:
 	if _throbber_counter > 0 and not _throbber_showing:
 		_throbber_showing = true
 		_throbber.play()
-		_throbber_tween.kill()
+		if _throbber_tween:
+			_throbber_tween.kill()
 		_throbber_tween = create_tween().set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_OUT)
 		_throbber_tween.tween_interval(SystemConstants.UI_THROBBER_DELAY)
 		_throbber_tween.tween_property(
@@ -102,7 +103,8 @@ func show_throbber(show: bool) -> void:
 			SystemConstants.UI_THROBBER_FADE_TIME)
 	elif _throbber_counter == 0 and _throbber_showing:
 		_throbber_showing = false
-		_throbber_tween.kill()
+		if _throbber_tween:
+			_throbber_tween.kill()
 		_throbber_tween = create_tween().set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_OUT)
 		_throbber_tween.tween_property(
 			_throbber, 
