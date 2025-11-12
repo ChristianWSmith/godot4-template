@@ -1,4 +1,3 @@
-# Pool.gd
 extends Node
 class_name ObjectPool
 
@@ -28,6 +27,16 @@ func release(obj: Node) -> void:
 		_deactivate(obj)
 		_available.append(obj)
 
+
+func clear() -> void:
+	for obj in _in_use:
+		_in_use.erase(obj)
+		remove_child(obj)
+		obj.queue_free()
+	for obj in _available:
+		_available.erase(obj)
+		remove_child(obj)
+		obj.queue_free()
 
 static func _activate(obj: Node) -> void:
 	_set_activation(obj, true)

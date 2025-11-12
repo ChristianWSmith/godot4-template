@@ -16,6 +16,22 @@ func get_instance(scene: PackedScene) -> Node:
 
 
 func release(scene: PackedScene, obj: Node) -> void:
-	if not _pools.has(scene):
+	if _pools.has(scene):
+		_pools[scene].release(obj)
+
+
+func clear() -> void:
+	for scene in _pools:
+		_pools[scene].clear()
+		remove_child(_pools[scene])
+		_pools[scene].queue_free()
+	_pools = {}
+
+
+func clear_pool(scene: PackedScene) -> void:
+	if scene not in _pools:
 		return
-	_pools[scene].release(obj)
+	_pools[scene].clear()
+	remove_child(_pools[scene])
+	_pools[scene].queue_free()
+	_pools.erase(scene)

@@ -37,6 +37,7 @@ func _randomize_sprite_modulate() -> void:
 
 
 func _exit() -> void:
+	PoolManager.clear()
 	GameState.save_to_current_slot()
 	SceneManager.change_scene(\"res://scenes/main_menu.tscn\")
 
