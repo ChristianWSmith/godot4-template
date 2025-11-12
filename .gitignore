@@ -2,6 +2,9 @@
 .editor/
 build
 
+# GDMaim Source maps
+addons/gdmaim/source_maps/*
+
 # Godot 4+ specific ignores
 .godot/
 .nomedia
@@ -18,3 +21,4 @@ export_credentials.cfg
 .mono/
 data_*/
 mono_crash.*.json
+
