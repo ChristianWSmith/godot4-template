@@ -11,9 +11,7 @@ script/source = "extends Node2D
 func _ready() -> void:
 	EventBus.subscribe(InputManager._get_pressed_event(\"back\"), _exit)
 	animated_sprite_2d.modulate = GameState.get_scene_data(\"sprite_modulate\", Color.WHITE)
-	EventBus.subscribe(
-		InputManager._get_pressed_event(\"some_action\"), 
-		_randomize_sprite_modulate)
+	InputManager.subscribe_pressed(\"some_action\", _randomize_sprite_modulate)
 
 
 func _randomize_sprite_modulate() -> void:
