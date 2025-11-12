@@ -4,6 +4,7 @@ var _loading_screen: LoadingScreen = preload("res://scenes/loading_screen.tscn")
 var _current_scene: Node = null
 var _is_loading: bool = false
 var _fade_rect: ColorRect = ColorRect.new()
+var _loading_screen_timer: Timer = Timer.new()
 
 func initialize() -> Error:
 	super()
@@ -11,6 +12,7 @@ func initialize() -> Error:
 	_current_scene = get_tree().current_scene
 	EventBus.emit("scene_changed", _current_scene.scene_file_path)
 	_setup_fader()
+	add_child(_loading_screen_timer)
 	return OK
 
 
@@ -18,6 +20,7 @@ func change_scene(scene_path: String) -> void:
 	if _is_loading:
 		Log.warn(self, "Scene change already in progress; ignoring request.")
 		return
+	_loading_screen_timer.start(SystemConstants.SCENE_LOAD_SCREEN_MINIMUM_TIME)
 	_swap_scene(_loading_screen)
 	change_scene_async(scene_path)
 	EventBus.once("scene_changed", func(_i: Variant) -> void:
@@ -52,6 +55,9 @@ func _poll_async_load(scene_path: String) -> void:
 		status = ResourceLoader.load_threaded_get_status(scene_path, progress)
 		_loading_screen.set_progress(progress[0])
 		await get_tree().process_frame
+	
+	if not _loading_screen_timer.is_stopped():
+		await _loading_screen_timer.timeout
 
 	if status != ResourceLoader.THREAD_LOAD_LOADED:
 		Log.fatal(self, "Async scene load failed for %s (status=%s)" % [scene_path, status])

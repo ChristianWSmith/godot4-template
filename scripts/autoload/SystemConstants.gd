@@ -26,6 +26,7 @@ const UI_HOVER_STREAM: AudioStream = preload("res://assets/bin/ui/hover.wav")
 const SCENE_FADE_TIME: float = 0.5
 const SCENE_FADE_COLOR: Color = Color.BLACK
 const SCENE_FADE_LAYER: int =  RenderingServer.CANVAS_LAYER_MAX
+const SCENE_LOAD_SCREEN_MINIMUM_TIME: float = 1.0
 
 # Debug
 const LOG_FILE_PATH: String = "user://debug.log"

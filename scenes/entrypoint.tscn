@@ -37,3 +37,6 @@ grow_vertical = 0
 show_percentage = false
 indeterminate = true
 editor_preview_indeterminate = false
+
+[node name="Timer" type="Timer" parent="."]
+unique_name_in_owner = true
