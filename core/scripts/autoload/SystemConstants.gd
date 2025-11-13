@@ -99,9 +99,9 @@ enum WindowMode { WINDOWED, BORDERLESS, FULLSCREEN }
 
 # Pool Manager
 const POOL_CLEAR_IGNORE_LIST: Array[String] = [
-	"uid://be8c1x346tbot", # res://scenes/poolable/PoolableAudioStreamPlayer2D.tscn
-	"uid://bxfki0dgc6ikd", # res://scenes/poolable/PoolableAudioStreamPlayer3D.tscn
-	"uid://dgojaexipkhfy", # res://scenes/poolable/PoolableAudioStreamPlayer.tscn
+	"uid://be8c1x346tbot", # res://core/scenes/poolable/PoolableAudioStreamPlayer2D.tscn
+	"uid://bxfki0dgc6ikd", # res://core/scenes/poolable/PoolableAudioStreamPlayer3D.tscn
+	"uid://dgojaexipkhfy", # res://core/scenes/poolable/PoolableAudioStreamPlayer.tscn
 	]
 
 # Settings
