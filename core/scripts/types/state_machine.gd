@@ -6,7 +6,7 @@ enum ProcessType { RENDER, PHYSICS }
 @export var default_state: StateMachineState
 @export var process_type: ProcessType = ProcessType.RENDER
 
-var _states: Set = Set.new(typeof(StateMachineState))
+var _states: Set = Set.new()
 var _current_state: StateMachineState = null
 
 func _ready() -> void:

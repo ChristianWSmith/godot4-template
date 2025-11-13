@@ -31,6 +31,25 @@ extends Control
 
 @onready var gameplay_autosave_check_button: CheckButton = %GameplayAutosaveCheckButton
 
+var resolution_index_bimap: BijectiveMap = BijectiveMap.from_dict({
+	Vector2i(1280, 720): 0,
+	Vector2i(1280, 800): 1,
+	Vector2i(1280, 1024): 2,
+	Vector2i(1360, 768): 3,
+	Vector2i(1366, 768): 4,
+	Vector2i(1440, 900): 5,
+	Vector2i(1600, 900): 6,
+	Vector2i(1600, 1200): 7,
+	Vector2i(1680, 1050): 8,
+	Vector2i(1920, 1080): 9,
+	Vector2i(1920, 1200): 10,
+	Vector2i(2560, 1080): 11,
+	Vector2i(2560, 1440): 12,
+	Vector2i(2560, 1600): 13,
+	Vector2i(3440, 1440): 14,
+	Vector2i(3840, 2180): 15,
+})
+
 func _ready() -> void:
 	_make_connections()
 
@@ -136,24 +155,10 @@ func _make_settings_connections() -> void:
 			_: SettingsManager.set_value("video", "max_fps", 0)
 		)
 	video_resolution_option_button.item_selected.connect(func(idx: int) -> void:		
-		match idx:
-			0: SettingsManager.set_value("video", "resolution", Vector2i(1280, 720))
-			1: SettingsManager.set_value("video", "resolution", Vector2i(1280, 800))
-			2: SettingsManager.set_value("video", "resolution", Vector2i(1280, 1024))
-			3: SettingsManager.set_value("video", "resolution", Vector2i(1360, 768))
-			4: SettingsManager.set_value("video", "resolution", Vector2i(1366, 768))
-			5: SettingsManager.set_value("video", "resolution", Vector2i(1440, 900))
-			6: SettingsManager.set_value("video", "resolution", Vector2i(1600, 900))
-			7: SettingsManager.set_value("video", "resolution", Vector2i(1600, 1200))
-			8: SettingsManager.set_value("video", "resolution", Vector2i(1680, 1050))
-			9: SettingsManager.set_value("video", "resolution", Vector2i(1920, 1080))
-			10: SettingsManager.set_value("video", "resolution", Vector2i(1920, 1200))
-			11: SettingsManager.set_value("video", "resolution", Vector2i(2560, 1080))
-			12: SettingsManager.set_value("video", "resolution", Vector2i(2560, 1440))
-			13: SettingsManager.set_value("video", "resolution", Vector2i(2560, 1600))
-			14: SettingsManager.set_value("video", "resolution", Vector2i(3440, 1440))
-			15: SettingsManager.set_value("video", "resolution", Vector2i(3840, 2180))
-			_: SettingsManager.set_value("video", "resolution", Vector2i(1280, 720))
+		SettingsManager.set_value(
+			"video", 
+			"resolution", 
+			resolution_index_bimap.get_by_value(idx, Vector2i(1280, 720)))
 		)
 	
 	# Graphics
@@ -188,24 +193,11 @@ func _load_values() -> void:
 	audio_ui_slider.value = SettingsManager.get_value("audio", "ui") * \
 		audio_ui_slider.max_value
 	
-	match SettingsManager.get_value("video", "resolution"):
-		Vector2i(1280, 720): video_resolution_option_button.select(0)
-		Vector2i(1280, 800): video_resolution_option_button.select(1)
-		Vector2i(1280, 1024): video_resolution_option_button.select(2)
-		Vector2i(1360, 768): video_resolution_option_button.select(3)
-		Vector2i(1366, 768): video_resolution_option_button.select(4)
-		Vector2i(1440, 900): video_resolution_option_button.select(5)
-		Vector2i(1600, 900): video_resolution_option_button.select(6)
-		Vector2i(1600, 1200): video_resolution_option_button.select(7)
-		Vector2i(1680, 1050): video_resolution_option_button.select(8)
-		Vector2i(1920, 1080): video_resolution_option_button.select(9)
-		Vector2i(1920, 1200): video_resolution_option_button.select(10)
-		Vector2i(2560, 1080): video_resolution_option_button.select(11)
-		Vector2i(2560, 1440): video_resolution_option_button.select(12)
-		Vector2i(2560, 1600): video_resolution_option_button.select(13)
-		Vector2i(3440, 1440): video_resolution_option_button.select(14)
-		Vector2i(3840, 2180): video_resolution_option_button.select(15)
-		_: video_resolution_option_button.select(0)
+	video_resolution_option_button.select(
+		resolution_index_bimap.get_by_key(
+			SettingsManager.get_value("video", "resolution"), 0
+		)
+	)
 	
 	match SettingsManager.get_value("video", "window_mode"):
 		SystemConstants.WindowMode.BORDERLESS:
@@ -259,4 +251,3 @@ func _set_bindings() -> void:
 		input_back_joypad_button.get_binding(),
 	]
 	SettingsManager.set_value("input", "bindings", bindings)
-	

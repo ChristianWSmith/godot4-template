@@ -1,13 +1,7 @@
-extends Node
+extends RefCounted
 class_name Set
 
-var _type_constraint: Variant.Type
 var _items: Dictionary[Variant, bool] = {}
-
-func _init(type_constraint: Variant.Type) -> void:
-	_type_constraint = type_constraint
-	name = "Set[%s]" % type_string(_type_constraint)
-
 
 func _iter_init(iter: Array) -> bool:
 	iter[0] = {
@@ -27,16 +21,12 @@ func _iter_get(iter: Variant) -> Variant:
 
 
 func add(item: Variant) -> bool:
-	if typeof(item) == _type_constraint:
-		_items.set(item, true)
-		return true
-	Log.error(self, "Failed to add item to set '%s'" % item)
-	return false
+	return _items.set(item, true)
 
 
 func add_many(items: Array[Variant]) -> bool:
 	return items.all(func(item: Variant) -> bool:
-		return self.add(item))
+		return add(item))
 
 
 func erase(item: Variant) -> bool:
@@ -45,7 +35,7 @@ func erase(item: Variant) -> bool:
 
 func erase_many(items: Array[Variant]) -> bool:
 	return items.all(func(item: Variant) -> bool:
-		return self.erase(item))
+		return erase(item))
 
 
 func has(item: Variant) -> bool:
@@ -57,10 +47,7 @@ func is_empty() -> bool:
 
 
 func union(other: Set) -> Set:
-	var out: Set = Set.new(_type_constraint)
-	if _type_constraint != other._type_constraint:
-		Log.error(self, "Failed to union with set '%s'" % other.name)
-		return out
+	var out: Set = Set.new()
 	for item in self:
 		out.add(item)
 	for item in other:
@@ -69,10 +56,7 @@ func union(other: Set) -> Set:
 
 
 func intersect(other: Set) -> Set:
-	var out: Set = Set.new(_type_constraint)
-	if _type_constraint != other._type_constraint:
-		Log.error(self, "Failed to intersect with set '%s'" % other.name)
-		return out
+	var out: Set = Set.new()
 	for item in self:
 		if other.has(item):
 			out.add(item)
@@ -80,10 +64,7 @@ func intersect(other: Set) -> Set:
 
 
 func diff(other: Set) -> Set:
-	var out: Set = Set.new(_type_constraint)
-	if _type_constraint != other._type_constraint:
-		Log.error(self, "Failed to diff with set '%s'" % other.name)
-		return out
+	var out: Set = Set.new()
 	for item in self:
 		if not other.has(item):
 			out.add(item)
@@ -95,7 +76,4 @@ func sym_diff(other: Set) -> Set:
 
 
 func as_list() -> Array:
-	var out: Array = []
-	for item in self:
-		out.append(item)
-	return out
+	return _items.keys()

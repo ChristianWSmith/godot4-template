@@ -3,7 +3,7 @@ extends BaseManager
 var _reconciliation_timer: Timer = Timer.new()
 var _reconciliation_mutex: Mutex = Mutex.new()
 var _files_to_write: Dictionary[String, PackedByteArray] = {}
-var _files_to_delete: Set = Set.new(TYPE_STRING)
+var _files_to_delete: Set = Set.new()
 
 func initialize() -> Error:
 	super()
