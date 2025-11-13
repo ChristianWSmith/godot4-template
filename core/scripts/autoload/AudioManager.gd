@@ -1,9 +1,5 @@
 extends BaseManager
 
-@onready var _stream_player_scene: PackedScene = preload("res://core/scenes/poolable/PoolableAudioStreamPlayer.tscn")
-@onready var _stream_player_2d_scene: PackedScene = preload("res://core/scenes/poolable/PoolableAudioStreamPlayer2D.tscn")
-@onready var _stream_player_3d_scene: PackedScene = preload("res://core/scenes/poolable/PoolableAudioStreamPlayer3D.tscn")
-
 var _global_music_player: AudioStreamPlayer
 
 func initialize() -> Error:
@@ -39,7 +35,7 @@ func play_global_music(
 	if _global_music_player and _global_music_player.stream == stream and not restart:
 		return
 	_fade_out_music(_global_music_player, fade_time)
-	_global_music_player = _play_sound(stream, SystemConstants.AUDIO_BUS_MUSIC, _stream_player_scene)
+	_global_music_player = _play_sound(stream, SystemConstants.AUDIO_BUS_MUSIC, SystemConstants.AUDIO_POOLABLE_PLAYER)
 	_global_music_player.volume_db = SystemConstants.AUDIO_SILENCE_DB
 	create_tween().tween_property(_global_music_player, "volume_db", 0.0, fade_time)
 	Log.info(self, "Playing music: %s" % _global_music_player.stream.resource_path)
@@ -51,15 +47,15 @@ func stop_global_music(fade_time: float = SystemConstants.AUDIO_MUSIC_FADE_TIME)
 
 
 func play_global_sfx(stream: AudioStream) -> void:
-	_play_sound(stream, SystemConstants.AUDIO_BUS_SFX, _stream_player_scene)
+	_play_sound(stream, SystemConstants.AUDIO_BUS_SFX, SystemConstants.AUDIO_POOLABLE_PLAYER)
 
 
 func play_global_voice(stream: AudioStream) -> void:
-	_play_sound(stream, SystemConstants.AUDIO_BUS_VOICE, _stream_player_scene)
+	_play_sound(stream, SystemConstants.AUDIO_BUS_VOICE, SystemConstants.AUDIO_POOLABLE_PLAYER)
 
 
 func play_global_ui(stream: AudioStream) -> void:
-	_play_sound(stream, SystemConstants.AUDIO_BUS_UI, _stream_player_scene)
+	_play_sound(stream, SystemConstants.AUDIO_BUS_UI, SystemConstants.AUDIO_POOLABLE_PLAYER)
 
 
 func play_music_2d(stream: AudioStream, position: Vector2) -> void:
@@ -95,12 +91,12 @@ func play_voice_3d(stream: AudioStream, position: Vector3) -> void:
 
 
 func _play_sound_2d(stream: AudioStream, bus: String, position: Vector2):
-	var player: AudioStreamPlayer2D = _play_sound(stream, bus, _stream_player_2d_scene)
+	var player: AudioStreamPlayer2D = _play_sound(stream, bus, SystemConstants.AUDIO_POOLABLE_PLAYER_2D)
 	player.global_position = position
 
 
 func _play_sound_3d(stream: AudioStream, bus: String, position: Vector3):
-	var player: AudioStreamPlayer3D = _play_sound(stream, bus, _stream_player_3d_scene)
+	var player: AudioStreamPlayer3D = _play_sound(stream, bus, SystemConstants.AUDIO_POOLABLE_PLAYER_3D)
 	player.global_position = position
 	
 
@@ -110,7 +106,7 @@ func _play_sound(stream: AudioStream, bus: String, scene: PackedScene) -> Varian
 	player.bus = bus
 	SignalUtils.safe_connect(
 		player.finished,
-		PoolManager.release.bind(_stream_player_scene, player))
+		PoolManager.release.bind(SystemConstants.AUDIO_POOLABLE_PLAYER, player))
 	player.play.call_deferred()
 	Log.trace(self, "Playing sound on bus: %s %s" % [bus, stream.resource_path])
 	return player
@@ -123,7 +119,7 @@ func _fade_out_music(player: AudioStreamPlayer, fade_time: float) -> void:
 	var fade_out: Tween = create_tween()
 	fade_out.tween_property(player, "volume_db", SystemConstants.AUDIO_SILENCE_DB, fade_time)
 	fade_out.tween_callback(
-			PoolManager.release.bind(_stream_player_scene, player))
+			PoolManager.release.bind(SystemConstants.AUDIO_POOLABLE_PLAYER, player))
 	Log.trace(self, "Fading out music: %s" % player.stream.resource_path)
 
 

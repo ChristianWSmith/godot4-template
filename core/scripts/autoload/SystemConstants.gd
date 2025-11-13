@@ -19,6 +19,7 @@ const UI_THROBBER_SIZE_PX: Vector2 = Vector2(32.0, 32.0)
 const UI_THROBBER_ANCHOR: Control.LayoutPreset = Control.PRESET_TOP_RIGHT
 const UI_THROBBER_OFFSET: Vector2 = Vector2(16.0, 16.0)
 const UI_THROBBER_LAYER: int = RenderingServer.CANVAS_LAYER_MAX - 1
+const UI_THROBBER_SPRITE_FRAMES: SpriteFrames = preload("res://assets/src/ui/throbber.tres")
 const UI_CLICK_STREAM: AudioStream = preload("res://assets/bin/ui/click.wav")
 const UI_HOVER_STREAM: AudioStream = preload("res://assets/bin/ui/hover.wav")
 
@@ -27,6 +28,7 @@ const SCENE_FADE_TIME: float = 0.5
 const SCENE_FADE_COLOR: Color = Color.BLACK
 const SCENE_FADE_LAYER: int =  RenderingServer.CANVAS_LAYER_MAX
 const SCENE_LOAD_SCREEN_MINIMUM_TIME: float = 1.0
+const SCENE_LOADING_SCREEN: PackedScene = preload("res://scenes/loading_screen.tscn")
 
 # Debug
 const LOG_FILE_PATH: String = "user://debug.log"
@@ -93,6 +95,9 @@ const AUDIO_BUS_SFX: String = "SFX"
 const AUDIO_BUS_UI: String = "UI"
 const AUDIO_BUS_VOICE: String = "Voice"
 @onready var AUDIO_SILENCE_DB: float = ProjectSettings.get_setting("audio/buses/channel_disable_threshold_db")
+const AUDIO_POOLABLE_PLAYER: PackedScene = preload("res://core/scenes/poolable/PoolableAudioStreamPlayer.tscn")
+const AUDIO_POOLABLE_PLAYER_2D: PackedScene = preload("res://core/scenes/poolable/PoolableAudioStreamPlayer2D.tscn")
+const AUDIO_POOLABLE_PLAYER_3D: PackedScene = preload("res://core/scenes/poolable/PoolableAudioStreamPlayer3D.tscn")
 
 # Video
 enum WindowMode { WINDOWED, BORDERLESS, FULLSCREEN }

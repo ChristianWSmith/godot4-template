@@ -1,6 +1,6 @@
 extends BaseManager
 
-var _loading_screen: LoadingScreen = preload("res://scenes/loading_screen.tscn").instantiate()
+var _loading_screen: LoadingScreen = SystemConstants.SCENE_LOADING_SCREEN.instantiate()
 var _current_scene: Node = null
 var _is_loading: bool = false
 var _fade_rect: ColorRect = ColorRect.new()
@@ -25,7 +25,7 @@ func change_scene(scene_path: String) -> void:
 	_swap_scene(_loading_screen)
 	change_scene_async(scene_path)
 	EventBus.once("scene_changed", func(_i: Variant) -> void:
-		_loading_screen = preload("res://scenes/loading_screen.tscn").instantiate())
+		_loading_screen = SystemConstants.SCENE_LOADING_SCREEN.instantiate())
 
 
 func change_scene_async(scene_path: String) -> void:

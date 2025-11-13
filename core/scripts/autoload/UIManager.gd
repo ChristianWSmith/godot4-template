@@ -160,7 +160,7 @@ func _setup_ui() -> void:
 
 
 func _setup_throbber() -> void:
-	_throbber.sprite_frames = preload("res://assets/src/ui/throbber.tres")
+	_throbber.sprite_frames = SystemConstants.UI_THROBBER_SPRITE_FRAMES
 	var throbber_size: Vector2 = _throbber.sprite_frames.get_frame_texture(
 		_throbber.animation, _throbber.frame).get_size()
 	_throbber.scale = Vector2(
