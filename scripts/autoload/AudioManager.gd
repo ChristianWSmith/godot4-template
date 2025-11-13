@@ -1,6 +1,8 @@
 extends BaseManager
 
-var music_player: AudioStreamPlayer
+@onready var _stream_player_scene: PackedScene = preload("res://scenes/poolable/PoolableAudioStreamPlayer.tscn")
+
+var _music_player: AudioStreamPlayer
 
 func initialize() -> Error:
 	super()
@@ -32,25 +34,24 @@ func play_music(
 		stream: AudioStream, 
 		fade_time: float = SystemConstants.AUDIO_MUSIC_FADE_TIME,
 		restart: bool = false) -> void:
-	if music_player and music_player.stream == stream and not restart:
+	if _music_player and _music_player.stream == stream and not restart:
 		return
-	var old_player: AudioStreamPlayer = music_player
+	var old_player: AudioStreamPlayer = _music_player
 	
-	music_player = AudioStreamPlayer.new()
-	music_player.stream = stream
-	music_player.bus = "Music"
-	music_player.volume_db = SystemConstants.AUDIO_SILENCE_DB
-	add_child(music_player)
-	create_tween().tween_property(music_player, "volume_db", 0.0, fade_time)
-	music_player.play()
-	Log.info(self, "Playing music: %s" % music_player.stream.resource_path)
+	_music_player = PoolManager.get_instance(_stream_player_scene)
+	_music_player.stream = stream
+	_music_player.bus = "Music"
+	_music_player.volume_db = SystemConstants.AUDIO_SILENCE_DB
+	create_tween().tween_property(_music_player, "volume_db", 0.0, fade_time)
+	_music_player.play()
+	Log.info(self, "Playing music: %s" % _music_player.stream.resource_path)
 	
 	_fade_out_music(old_player, fade_time)
 
 
 func stop_music(fade_time: float = SystemConstants.AUDIO_MUSIC_FADE_TIME) -> void:
-	var old_player: AudioStreamPlayer = music_player
-	music_player = null
+	var old_player: AudioStreamPlayer = _music_player
+	_music_player = null
 	_fade_out_music(old_player, fade_time)
 
 
@@ -69,11 +70,12 @@ func play_ui(stream: AudioStream) -> void:
 func _play_sound(stream: AudioStream, bus: String) -> void:
 	if AudioServer.is_bus_mute(AudioServer.get_bus_index(bus)):
 		return
-	var player: AudioStreamPlayer = AudioStreamPlayer.new()
+	var player: AudioStreamPlayer = PoolManager.get_instance(_stream_player_scene)
 	player.stream = stream
 	player.bus = bus
-	player.finished.connect(player.queue_free)
-	add_child(player)
+	SignalUtils.safe_connect(
+		player.finished,
+		PoolManager.release.bind(_stream_player_scene, player))
 	player.play()
 	Log.trace(self, "Playing sound on bus: %s %s" % [bus, stream.resource_path])
 
@@ -87,7 +89,7 @@ func _fade_out_music(player: AudioStreamPlayer, fade_time: float) -> void:
 	fade_out.tween_callback(func():
 		if is_instance_valid(player):
 			remove_child(player)
-			player.queue_free()
+			PoolManager.release(_stream_player_scene, player)
 	)
 	Log.trace(self, "Fading out music: %s" % player.stream.resource_path)
 

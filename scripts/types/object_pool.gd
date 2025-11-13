@@ -4,9 +4,15 @@ class_name ObjectPool
 var _scene: PackedScene
 var _available: Array[Node] = []
 var _in_use: Array[Node] = []
+var _has_visible: bool = false
 
 func _init(scene: PackedScene) -> void:
 	_scene = scene
+	var obj: Node = _scene.instantiate()
+	_has_visible = obj is CanvasItem
+	name = "ObjectPool[%s]" % obj.name
+	_available.append(obj)
+	add_child(obj)
 
 
 func get_instance() -> Node:
@@ -39,7 +45,8 @@ func clear() -> void:
 		obj.queue_free()
 
 
-static func _set_active(obj: Node, value: bool) -> void:
-	obj.visible = value
+func _set_active(obj: Node, value: bool) -> void:
+	if _has_visible:
+		obj.visible = value
 	obj.set_process(value)
 	obj.set_physics_process(value)
