@@ -38,14 +38,12 @@ func play_global_music(
 		restart: bool = false) -> void:
 	if _global_music_player and _global_music_player.stream == stream and not restart:
 		return
-	var old_player: AudioStreamPlayer
 	if _global_music_player:
-		old_player = _global_music_player
+		_fade_out_music(_global_music_player, fade_time)
 	_global_music_player = _play_sound(stream, SystemConstants.AUDIO_BUS_MUSIC, _stream_player_scene)
+	_global_music_player.volume_db = SystemConstants.AUDIO_SILENCE_DB
 	create_tween().tween_property(_global_music_player, "volume_db", 0.0, fade_time)
 	Log.info(self, "Playing music: %s" % _global_music_player.stream.resource_path)
-	if old_player:
-		_fade_out_music(old_player, fade_time)
 
 
 func stop_global_music(fade_time: float = SystemConstants.AUDIO_MUSIC_FADE_TIME) -> void:
