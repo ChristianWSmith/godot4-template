@@ -45,7 +45,7 @@ size_flags_vertical = 6
 layout_mode = 2
 size_flags_horizontal = 4
 size_flags_vertical = 6
-text = "Initialization failure occurred"
+text = "Fatal error occurred"
 label_settings = SubResource("LabelSettings_m38vt")
 
 [node name="HSeparator" type="HSeparator" parent="ScrollContainer/VBoxContainer"]
