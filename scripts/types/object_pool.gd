@@ -29,7 +29,6 @@ func get_instance() -> Node:
 
 func release(obj: Node) -> void:
 	if obj in _in_use:
-		Log.debug(self, "Release: %s" % obj)
 		_in_use.erase(obj)
 		_set_active(obj, false)
 		_available.append(obj)
