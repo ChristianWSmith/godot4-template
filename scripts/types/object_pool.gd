@@ -38,6 +38,7 @@ func clear() -> void:
 		remove_child(obj)
 		obj.queue_free()
 
+
 static func _activate(obj: Node) -> void:
 	_set_activation(obj, true)
 

@@ -6,11 +6,15 @@
 resource_name = "Game"
 script/source = "extends Node2D
 
+@export var flasher_spawn_rate: float = 1000.0
+
 @onready var animated_sprite_2d: AnimatedSprite2D = %AnimatedSprite2D
 @onready var camera2d: Camera2D = %Camera2D
 @onready var flasher_scene: PackedScene = preload(\"res://scenes/game/flasher.tscn\")
 
 var spawn_flashers: bool = false
+var remainder: float = 0.0
+var flasher_discrete_meter: DiscreteMeter = DiscreteMeter.new(flasher_spawn_rate)
 
 func _ready() -> void:
 	EventBus.subscribe(InputManager._get_pressed_event(\"back\"), _exit)
@@ -20,14 +24,15 @@ func _ready() -> void:
 	InputManager.subscribe_released(\"some_action\", set.bind(\"spawn_flashers\", false))
 
 
-func _process(_delta: float) -> void:
+func _process(delta: float) -> void:
 	if not spawn_flashers:
 		return
-	var flasher: Node2D = PoolManager.get_instance(flasher_scene)
-	flasher.global_position = _get_random_visible_position()
-	SignalUtils.safe_connect(
-		flasher.done,
-		PoolManager.release.bind(flasher_scene, flasher))
+	for i in range(flasher_discrete_meter.get_discrete(delta)):
+		var flasher: Node2D = PoolManager.get_instance(flasher_scene)
+		flasher.global_position = _get_random_visible_position()
+		SignalUtils.safe_connect(
+			flasher.done,
+			PoolManager.release.bind(flasher_scene, flasher))
 
 
 func _randomize_sprite_modulate() -> void:
