@@ -38,8 +38,7 @@ func play_global_music(
 		restart: bool = false) -> void:
 	if _global_music_player and _global_music_player.stream == stream and not restart:
 		return
-	if _global_music_player:
-		_fade_out_music(_global_music_player, fade_time)
+	_fade_out_music(_global_music_player, fade_time)
 	_global_music_player = _play_sound(stream, SystemConstants.AUDIO_BUS_MUSIC, _stream_player_scene)
 	_global_music_player.volume_db = SystemConstants.AUDIO_SILENCE_DB
 	create_tween().tween_property(_global_music_player, "volume_db", 0.0, fade_time)
@@ -47,9 +46,8 @@ func play_global_music(
 
 
 func stop_global_music(fade_time: float = SystemConstants.AUDIO_MUSIC_FADE_TIME) -> void:
-	var old_player: AudioStreamPlayer = _global_music_player
+	_fade_out_music(_global_music_player, fade_time)
 	_global_music_player = null
-	_fade_out_music(old_player, fade_time)
 
 
 func play_global_sfx(stream: AudioStream) -> void:
@@ -119,15 +117,13 @@ func _play_sound(stream: AudioStream, bus: String, scene: PackedScene) -> Varian
 
 
 func _fade_out_music(player: AudioStreamPlayer, fade_time: float) -> void:
-	if player == null or not is_instance_valid(player):
-		Log.debug(self, "No music to fade out")
+	if not player:
+		Log.debug(self, "No music to fade out.")
 		return
 	var fade_out: Tween = create_tween()
 	fade_out.tween_property(player, "volume_db", SystemConstants.AUDIO_SILENCE_DB, fade_time)
-	fade_out.tween_callback(func():
-		if is_instance_valid(player):
-			PoolManager.release(_stream_player_scene, player)
-	)
+	fade_out.tween_callback(
+			PoolManager.release.bind(_stream_player_scene, player))
 	Log.trace(self, "Fading out music: %s" % player.stream.resource_path)
 
 
