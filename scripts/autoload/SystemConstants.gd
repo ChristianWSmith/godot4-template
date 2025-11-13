@@ -49,7 +49,7 @@ const DEFAULT_SAVE: Dictionary = {
 		"timestamp": -1.0,
 	},
 	"data": {
-		"current_scene_uid": "dxjv7b1mnvw2i",
+		"current_scene_uid": "dxjv7b1mnvw2i", # res://scenes/game/game.tscn
 		"global_data": {},
 		"scene_data": {},
 	}
@@ -96,6 +96,13 @@ const AUDIO_BUS_VOICE: String = "Voice"
 
 # Video
 enum WindowMode { WINDOWED, BORDERLESS, FULLSCREEN }
+
+# Pool Manager
+const POOL_CLEAR_IGNORE_LIST: Array[String] = [
+	"uid://be8c1x346tbot", # res://scenes/poolable/PoolableAudioStreamPlayer2D.tscn
+	"uid://bxfki0dgc6ikd", # res://scenes/poolable/PoolableAudioStreamPlayer3D.tscn
+	"uid://dgojaexipkhfy", # res://scenes/poolable/PoolableAudioStreamPlayer.tscn
+	]
 
 # Settings
 const SETTINGS_VERSION: int = 0
