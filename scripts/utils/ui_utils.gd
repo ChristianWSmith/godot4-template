@@ -18,10 +18,10 @@ static func connect_ui_sounds(
 		deep: bool = true,
 		hover_stream: AudioStream = SystemConstants.UI_HOVER_STREAM,
 		click_stream: AudioStream = SystemConstants.UI_CLICK_STREAM):
-	var bound_click: Callable = AudioManager.play_ui.bind(click_stream)
-	var bound_hover: Callable = AudioManager.play_ui.bind(hover_stream)
-	var wrapped_click: Callable = func(_idx: int): AudioManager.play_ui(click_stream)
-	var wrapped_hover: Callable = func(_idx: int): AudioManager.play_ui(hover_stream)
+	var bound_click: Callable = AudioManager.play_global_ui.bind(click_stream)
+	var bound_hover: Callable = AudioManager.play_global_ui.bind(hover_stream)
+	var wrapped_click: Callable = func(_idx: int): AudioManager.play_global_ui(click_stream)
+	var wrapped_hover: Callable = func(_idx: int): AudioManager.play_global_ui(hover_stream)
 	if deep:
 		for child in node.get_children():
 			connect_ui_sounds(child, deep, hover_stream, click_stream)

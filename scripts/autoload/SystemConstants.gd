@@ -87,6 +87,11 @@ const INPUT_BUILT_IN_ACTIONS: Array[String] = [
 
 # Audio
 const AUDIO_MUSIC_FADE_TIME: float = 1.0
+const AUDIO_BUS_MASTER: String = "Master"
+const AUDIO_BUS_MUSIC: String = "Music"
+const AUDIO_BUS_SFX: String = "SFX"
+const AUDIO_BUS_UI: String = "UI"
+const AUDIO_BUS_VOICE: String = "Voice"
 @onready var AUDIO_SILENCE_DB: float = ProjectSettings.get_setting("audio/buses/channel_disable_threshold_db")
 
 # Video

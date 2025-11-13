@@ -1,8 +1,10 @@
 extends BaseManager
 
 @onready var _stream_player_scene: PackedScene = preload("res://scenes/poolable/PoolableAudioStreamPlayer.tscn")
+@onready var _stream_player_2d_scene: PackedScene = preload("res://scenes/poolable/PoolableAudioStreamPlayer2D.tscn")
+@onready var _stream_player_3d_scene: PackedScene = preload("res://scenes/poolable/PoolableAudioStreamPlayer3D.tscn")
 
-var _music_player: AudioStreamPlayer
+var _global_music_player: AudioStreamPlayer
 
 func initialize() -> Error:
 	super()
@@ -30,54 +32,92 @@ func initialize() -> Error:
 	return OK
 
 
-func play_music(
+func play_global_music(
 		stream: AudioStream, 
 		fade_time: float = SystemConstants.AUDIO_MUSIC_FADE_TIME,
 		restart: bool = false) -> void:
-	if _music_player and _music_player.stream == stream and not restart:
+	if _global_music_player and _global_music_player.stream == stream and not restart:
 		return
-	var old_player: AudioStreamPlayer = _music_player
-	
-	_music_player = PoolManager.get_instance(_stream_player_scene)
-	_music_player.stream = stream
-	_music_player.bus = "Music"
-	_music_player.volume_db = SystemConstants.AUDIO_SILENCE_DB
-	create_tween().tween_property(_music_player, "volume_db", 0.0, fade_time)
-	_music_player.play()
-	Log.info(self, "Playing music: %s" % _music_player.stream.resource_path)
-	
+	var old_player: AudioStreamPlayer
+	if _global_music_player:
+		old_player = _global_music_player
+	_global_music_player = _play_sound(stream, SystemConstants.AUDIO_BUS_MUSIC, _stream_player_scene)
+	create_tween().tween_property(_global_music_player, "volume_db", 0.0, fade_time)
+	Log.info(self, "Playing music: %s" % _global_music_player.stream.resource_path)
+	if old_player:
+		_fade_out_music(old_player, fade_time)
+
+
+func stop_global_music(fade_time: float = SystemConstants.AUDIO_MUSIC_FADE_TIME) -> void:
+	var old_player: AudioStreamPlayer = _global_music_player
+	_global_music_player = null
 	_fade_out_music(old_player, fade_time)
 
 
-func stop_music(fade_time: float = SystemConstants.AUDIO_MUSIC_FADE_TIME) -> void:
-	var old_player: AudioStreamPlayer = _music_player
-	_music_player = null
-	_fade_out_music(old_player, fade_time)
+func play_global_sfx(stream: AudioStream) -> void:
+	_play_sound(stream, SystemConstants.AUDIO_BUS_SFX, _stream_player_scene)
 
 
-func play_sfx(stream: AudioStream) -> void:
-	_play_sound(stream, "SFX")
+func play_global_voice(stream: AudioStream) -> void:
+	_play_sound(stream, SystemConstants.AUDIO_BUS_VOICE, _stream_player_scene)
 
 
-func play_voice(stream: AudioStream) -> void:
-	_play_sound(stream, "Voice")
+func play_global_ui(stream: AudioStream) -> void:
+	_play_sound(stream, SystemConstants.AUDIO_BUS_UI, _stream_player_scene)
 
 
-func play_ui(stream: AudioStream) -> void:
-	_play_sound(stream, "UI")
+func play_music_2d(stream: AudioStream, position: Vector2) -> void:
+	_play_sound_2d(stream, SystemConstants.AUDIO_BUS_MUSIC, position)
 
 
-func _play_sound(stream: AudioStream, bus: String) -> void:
-	if AudioServer.is_bus_mute(AudioServer.get_bus_index(bus)):
-		return
-	var player: AudioStreamPlayer = PoolManager.get_instance(_stream_player_scene)
+func play_sfx_2d(stream: AudioStream, position: Vector2) -> void:
+	_play_sound_2d(stream, SystemConstants.AUDIO_BUS_SFX, position)
+
+
+func play_ui_2d(stream: AudioStream, position: Vector2) -> void:
+	_play_sound_2d(stream, SystemConstants.AUDIO_BUS_UI, position)
+
+
+func play_voice_2d(stream: AudioStream, position: Vector2) -> void:
+	_play_sound_2d(stream, SystemConstants.AUDIO_BUS_MUSIC, position)
+
+
+func play_music_3d(stream: AudioStream, position: Vector3) -> void:
+	_play_sound_3d(stream, SystemConstants.AUDIO_BUS_MUSIC, position)
+
+
+func play_sfx_3d(stream: AudioStream, position: Vector3) -> void:
+	_play_sound_3d(stream, SystemConstants.AUDIO_BUS_SFX, position)
+
+
+func play_ui_3d(stream: AudioStream, position: Vector3) -> void:
+	_play_sound_3d(stream, SystemConstants.AUDIO_BUS_UI, position)
+
+
+func play_voice_3d(stream: AudioStream, position: Vector3) -> void:
+	_play_sound_3d(stream, SystemConstants.AUDIO_BUS_MUSIC, position)
+
+
+func _play_sound_2d(stream: AudioStream, bus: String, position: Vector2):
+	var player: AudioStreamPlayer2D = _play_sound(stream, bus, _stream_player_2d_scene)
+	player.global_position = position
+
+
+func _play_sound_3d(stream: AudioStream, bus: String, position: Vector3):
+	var player: AudioStreamPlayer3D = _play_sound(stream, bus, _stream_player_3d_scene)
+	player.global_position = position
+	
+
+func _play_sound(stream: AudioStream, bus: String, scene: PackedScene) -> Variant:
+	var player: Variant = PoolManager.get_instance(scene)
 	player.stream = stream
 	player.bus = bus
 	SignalUtils.safe_connect(
 		player.finished,
 		PoolManager.release.bind(_stream_player_scene, player))
-	player.play()
+	player.play.call_deferred()
 	Log.trace(self, "Playing sound on bus: %s %s" % [bus, stream.resource_path])
+	return player
 
 
 func _fade_out_music(player: AudioStreamPlayer, fade_time: float) -> void:
@@ -88,30 +128,29 @@ func _fade_out_music(player: AudioStreamPlayer, fade_time: float) -> void:
 	fade_out.tween_property(player, "volume_db", SystemConstants.AUDIO_SILENCE_DB, fade_time)
 	fade_out.tween_callback(func():
 		if is_instance_valid(player):
-			remove_child(player)
 			PoolManager.release(_stream_player_scene, player)
 	)
 	Log.trace(self, "Fading out music: %s" % player.stream.resource_path)
 
 
 func _on_master_updated(value: float) -> void:
-	_set_bus_volume("Master", value)
+	_set_bus_volume(SystemConstants.AUDIO_BUS_MASTER, value)
 
 
 func _on_music_updated(value: float) -> void:
-	_set_bus_volume("Music", value)
+	_set_bus_volume(SystemConstants.AUDIO_BUS_MUSIC, value)
 
 
 func _on_sfx_updated(value: float) -> void:
-	_set_bus_volume("SFX", value)
+	_set_bus_volume(SystemConstants.AUDIO_BUS_SFX, value)
 
 
 func _on_ui_updated(value: float) -> void:
-	_set_bus_volume("UI", value)
+	_set_bus_volume(SystemConstants.AUDIO_BUS_UI, value)
 
 
 func _on_voice_updated(value: float) -> void:
-	_set_bus_volume("Voice", value)
+	_set_bus_volume(SystemConstants.AUDIO_BUS_VOICE, value)
 
 
 func _set_bus_volume(bus_name: String, value: float):

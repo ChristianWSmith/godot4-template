@@ -36,13 +36,13 @@ func _process(delta: float) -> void:
 
 
 func _randomize_sprite_modulate() -> void:
-	AudioManager.play_sfx(preload(\"res://assets/bin/sfx/sound.wav\"))
+	AudioManager.play_global_sfx(preload(\"res://assets/bin/sfx/sound.wav\"))
 	animated_sprite_2d.modulate = Color(randf(), randf(), randf(), 1.0)
 	GameState.set_scene_data(\"sprite_modulate\", animated_sprite_2d.modulate)
 
 
 func _exit() -> void:
-	PoolManager.clear()
+	PoolManager.clear_pool(flasher_scene)
 	GameState.save_to_current_slot()
 	SceneManager.change_scene(\"res://scenes/main_menu.tscn\")
 
