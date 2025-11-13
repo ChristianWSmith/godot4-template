@@ -17,14 +17,14 @@ func get_instance() -> Node:
 	else:
 		obj = _available.pop_back()
 	_in_use.append(obj)
-	_activate(obj)
+	_set_active(obj, true)
 	return obj
 
 
 func release(obj: Node) -> void:
 	if obj in _in_use:
 		_in_use.erase(obj)
-		_deactivate(obj)
+		_set_active(obj, false)
 		_available.append(obj)
 
 
@@ -39,15 +39,7 @@ func clear() -> void:
 		obj.queue_free()
 
 
-static func _activate(obj: Node) -> void:
-	_set_activation(obj, true)
-
-
-static func _deactivate(obj: Node) -> void:
-	_set_activation(obj, false)
-
-
-static func _set_activation(obj: Node, value: bool) -> void:
+static func _set_active(obj: Node, value: bool) -> void:
 	obj.visible = value
 	obj.set_process(value)
 	obj.set_physics_process(value)
