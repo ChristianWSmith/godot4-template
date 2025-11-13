@@ -1,8 +1,8 @@
 extends BaseManager
 
-@onready var _stream_player_scene: PackedScene = preload("res://scenes/poolable/PoolableAudioStreamPlayer.tscn")
-@onready var _stream_player_2d_scene: PackedScene = preload("res://scenes/poolable/PoolableAudioStreamPlayer2D.tscn")
-@onready var _stream_player_3d_scene: PackedScene = preload("res://scenes/poolable/PoolableAudioStreamPlayer3D.tscn")
+@onready var _stream_player_scene: PackedScene = preload("res://core/scenes/poolable/PoolableAudioStreamPlayer.tscn")
+@onready var _stream_player_2d_scene: PackedScene = preload("res://core/scenes/poolable/PoolableAudioStreamPlayer2D.tscn")
+@onready var _stream_player_3d_scene: PackedScene = preload("res://core/scenes/poolable/PoolableAudioStreamPlayer3D.tscn")
 
 var _global_music_player: AudioStreamPlayer
 

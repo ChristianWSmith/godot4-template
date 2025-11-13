@@ -1,6 +1,6 @@
 [gd_scene load_steps=5 format=3 uid="uid://dw3sbtkgcrlkf"]
 
-[ext_resource type="Script" uid="uid://bn7tqx38f0b46" path="res://scripts/crash.gd" id="1_ypw0c"]
+[ext_resource type="Script" uid="uid://bn7tqx38f0b46" path="res://core/scripts/crash.gd" id="1_ypw0c"]
 [ext_resource type="Texture2D" uid="uid://k3sbi7al068r" path="res://assets/bin/ui/crash_bg.png" id="2_y7ohw"]
 
 [sub_resource type="LabelSettings" id="LabelSettings_m38vt"]
