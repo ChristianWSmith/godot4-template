@@ -1,6 +1,7 @@
 extends Node
 
 # General
+const LAUNCH_SCENE_UID: String = "uid://dbe5a57nm44hm" # res://scenes/main_menu.tscn
 const INT_MAX: int = int(INF) - 1
 const INT_MIN: int = int(INF)
 

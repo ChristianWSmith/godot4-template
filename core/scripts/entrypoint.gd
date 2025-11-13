@@ -11,6 +11,8 @@ func _ready() -> void:
 		Log.info(self, "Systems initialized successfully.")
 		if not timer.is_stopped():
 			await timer.timeout
-		SceneManager.change_scene_async("res://scenes/main_menu.tscn")
+		SceneManager.change_scene_async(
+			ResourceUID.uid_to_path(SystemConstants.LAUNCH_SCENE_UID)
+		)
 	else:
 		print("[%s] Initialization failed." % name)
