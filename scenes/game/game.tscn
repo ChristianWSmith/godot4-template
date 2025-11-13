@@ -14,7 +14,7 @@ script/source = "extends Node2D
 
 var spawn_flashers: bool = false
 var remainder: float = 0.0
-var flasher_discrete_meter: DiscreteMeter = DiscreteMeter.new(flasher_spawn_rate)
+var flasher_quantized_rate: QuantizedRate = QuantizedRate.new(flasher_spawn_rate)
 
 func _ready() -> void:
 	EventBus.subscribe(InputManager._get_pressed_event(\"back\"), _exit)
@@ -27,7 +27,7 @@ func _ready() -> void:
 func _process(delta: float) -> void:
 	if not spawn_flashers:
 		return
-	for i in range(flasher_discrete_meter.get_discrete(delta)):
+	for i in range(flasher_quantized_rate.get_discrete(delta)):
 		var flasher: Node2D = PoolManager.get_instance(flasher_scene)
 		flasher.global_position = _get_random_visible_position()
 		SignalUtils.safe_connect(

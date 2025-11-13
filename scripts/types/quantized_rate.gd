@@ -1,5 +1,5 @@
 extends Node
-class_name DiscreteMeter
+class_name QuantizedRate
 
 @export var rate: float = 0.0
 var _remainder: float = 0.0
