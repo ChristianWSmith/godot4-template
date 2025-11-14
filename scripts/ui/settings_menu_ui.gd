@@ -31,27 +31,29 @@ extends Control
 
 @onready var gameplay_autosave_check_button: CheckButton = %GameplayAutosaveCheckButton
 
-var resolution_index_bimap: BijectiveMap = BijectiveMap.from_dict({
-	Vector2i(1280, 720): 0,
-	Vector2i(1280, 800): 1,
-	Vector2i(1280, 1024): 2,
-	Vector2i(1360, 768): 3,
-	Vector2i(1366, 768): 4,
-	Vector2i(1440, 900): 5,
-	Vector2i(1600, 900): 6,
-	Vector2i(1600, 1200): 7,
-	Vector2i(1680, 1050): 8,
-	Vector2i(1920, 1080): 9,
-	Vector2i(1920, 1200): 10,
-	Vector2i(2560, 1080): 11,
-	Vector2i(2560, 1440): 12,
-	Vector2i(2560, 1600): 13,
-	Vector2i(3440, 1440): 14,
-	Vector2i(3840, 2180): 15,
-})
+var resolutions: Array[Vector2i] = [
+	Vector2i(1280, 720),
+	Vector2i(1280, 800),
+	Vector2i(1280, 1024),
+	Vector2i(1360, 768),
+	Vector2i(1366, 768),
+	Vector2i(1440, 900),
+	Vector2i(1600, 900),
+	Vector2i(1600, 1200),
+	Vector2i(1680, 1050),
+	Vector2i(1920, 1080),
+	Vector2i(1920, 1200),
+	Vector2i(2560, 1080),
+	Vector2i(2560, 1440),
+	Vector2i(2560, 1600),
+	Vector2i(3440, 1440),
+	Vector2i(3840, 2180),
+]
+var resolution_index_bimap: BijectiveMap = BijectiveMap.new()
 
 func _ready() -> void:
 	_make_connections()
+	_setup_resolutions()
 
 
 func _on_visibility_changed() -> void:
@@ -251,3 +253,11 @@ func _set_bindings() -> void:
 		input_back_joypad_button.get_binding(),
 	]
 	SettingsManager.set_value("input", "bindings", bindings)
+
+
+func _setup_resolutions() -> void:
+	for res_idx in range(resolutions.size()):
+		video_resolution_option_button.add_item(
+			"%sx%s" % [resolutions[res_idx].x, resolutions[res_idx].y],
+			res_idx)
+		resolution_index_bimap.put(resolutions[res_idx], res_idx)
