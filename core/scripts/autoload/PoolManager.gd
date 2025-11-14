@@ -10,14 +10,25 @@ func initialize() -> Error:
 
 func get_instance(scene: PackedScene) -> Node:
 	if not _pools.has(scene):
-		_pools[scene] = ObjectPool.new(scene)
-		add_child(_pools[scene])
+		_add_pool(scene)
 	return _pools[scene].get_instance()
 
 
 func release(scene: PackedScene, obj: Node) -> void:
 	if _pools.has(scene):
 		_pools[scene].release(obj)
+
+
+func set_pool_upper_bound(scene: PackedScene, upper_bound: int) -> void:
+	if not _pools.has(scene):
+		_add_pool(scene)
+	_pools[scene].set_upper_bound(upper_bound)
+
+
+func set_pool_lower_bound(scene: PackedScene, lower_bound: int) -> void:
+	if not _pools.has(scene):
+		_add_pool(scene)
+	_pools[scene].set_lower_bound(lower_bound)
 
 
 func clear(ignore_list: Array[String] = SystemConstants.POOL_CLEAR_IGNORE_LIST) -> void:
@@ -40,3 +51,8 @@ func clear_pool(scene: PackedScene) -> void:
 	remove_child(_pools[scene])
 	_pools[scene].queue_free()
 	_pools.erase(scene)
+
+
+func _add_pool(scene: PackedScene) -> void:
+	_pools[scene] = ObjectPool.new(scene)
+	add_child(_pools[scene])

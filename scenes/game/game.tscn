@@ -17,6 +17,8 @@ var remainder: float = 0.0
 var flasher_quantized_rate: QuantizedRate = QuantizedRate.new(flasher_spawn_rate)
 
 func _ready() -> void:
+	PoolManager.set_pool_lower_bound(flasher_scene, 200)
+	PoolManager.set_pool_upper_bound(flasher_scene, 800)
 	EventBus.subscribe(InputManager._get_pressed_event(\"back\"), _exit)
 	animated_sprite_2d.modulate = GameState.get_scene_data(\"sprite_modulate\", Color.WHITE)
 	InputManager.subscribe_pressed(\"some_action\", _randomize_sprite_modulate)

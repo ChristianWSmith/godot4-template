@@ -6,7 +6,7 @@ const INT_MAX: int = int(INF) - 1
 const INT_MIN: int = int(INF)
 
 # Layers
-const UI_DEBUG_LAYER: int = RenderingServer.CANVAS_LAYER_MAX
+const UI_DEBUG_LAYER: int = RenderingServer.CANVAS_LAYER_MAX # TODO
 const SCENE_FADE_LAYER: int =  RenderingServer.CANVAS_LAYER_MAX - 1
 const UI_THROBBER_LAYER: int = RenderingServer.CANVAS_LAYER_MAX - 2
 const UI_LAYER: int = RenderingServer.CANVAS_LAYER_MAX - 3
