@@ -43,7 +43,6 @@ VideoManager="*res://core/scripts/autoload/VideoManager.gd"
 UIManager="*res://core/scripts/autoload/UIManager.gd"
 GameplayManager="*res://core/scripts/autoload/GameplayManager.gd"
 GraphicsManager="*res://core/scripts/autoload/GraphicsManager.gd"
-PoolManager="*res://core/scripts/autoload/PoolManager.gd"
 InitManager="*res://core/scripts/autoload/InitManager.gd"
 
 [debug]

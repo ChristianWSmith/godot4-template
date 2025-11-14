@@ -39,7 +39,6 @@ func _systems() -> Array[BaseManager]:
 		UIManager,
 		GameplayManager,
 		GraphicsManager,
-		PoolManager,
 		SettingsManager
 	]
 	

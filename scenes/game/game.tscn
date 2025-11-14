@@ -1,14 +1,14 @@
-[gd_scene load_steps=5 format=3 uid="uid://dxjv7b1mnvw2i"]
+[gd_scene load_steps=4 format=3 uid="uid://dxjv7b1mnvw2i"]
 
-[ext_resource type="Texture2D" uid="uid://dbwp2mtk3ciqa" path="res://assets/bin/ui/throbber.png" id="1_sul5r"]
+[ext_resource type="Texture2D" uid="uid://hiiecducsyte" path="res://assets/src/application/icon.svg" id="1_sul5r"]
 
 [sub_resource type="GDScript" id="GDScript_ifgtf"]
 resource_name = "Game"
 script/source = "extends Node2D
 
-@export var flasher_spawn_rate: float = 1000.0
+@export var flasher_spawn_rate: float = 500.0
 
-@onready var animated_sprite_2d: AnimatedSprite2D = %AnimatedSprite2D
+@onready var sprite_2d: Sprite2D = %Sprite2D
 @onready var camera2d: Camera2D = %Camera2D
 @onready var flasher_scene: PackedScene = preload(\"res://scenes/game/flasher.tscn\")
 
@@ -17,10 +17,8 @@ var remainder: float = 0.0
 var flasher_quantized_rate: QuantizedRate = QuantizedRate.new(flasher_spawn_rate)
 
 func _ready() -> void:
-	PoolManager.set_pool_lower_bound(flasher_scene, 200)
-	PoolManager.set_pool_upper_bound(flasher_scene, 800)
 	EventBus.subscribe(InputManager._get_pressed_event(\"back\"), _exit)
-	animated_sprite_2d.modulate = GameState.get_scene_data(\"sprite_modulate\", Color.WHITE)
+	sprite_2d.modulate = GameState.get_scene_data(\"sprite_modulate\", Color.WHITE)
 	InputManager.subscribe_pressed(\"some_action\", _randomize_sprite_modulate)
 	InputManager.subscribe_pressed(\"some_action\", set.bind(\"spawn_flashers\", true))
 	InputManager.subscribe_released(\"some_action\", set.bind(\"spawn_flashers\", false))
@@ -30,21 +28,21 @@ func _process(delta: float) -> void:
 	if not spawn_flashers:
 		return
 	for i in range(flasher_quantized_rate.get_discrete(delta)):
-		var flasher: Node2D = PoolManager.get_instance(flasher_scene)
+		var flasher: Node2D = flasher_scene.instantiate()
 		flasher.global_position = _get_random_visible_position()
-		SignalUtils.safe_connect(
-			flasher.done,
-			PoolManager.release.bind(flasher_scene, flasher))
+		add_child(flasher)
+		flasher.done.connect(func() -> void:
+			remove_child(flasher)
+			flasher.queue_free())
 
 
 func _randomize_sprite_modulate() -> void:
 	AudioManager.play_global_sfx(preload(\"res://assets/bin/sfx/sound.wav\"))
-	animated_sprite_2d.modulate = Color(randf(), randf(), randf(), 1.0)
-	GameState.set_scene_data(\"sprite_modulate\", animated_sprite_2d.modulate)
+	sprite_2d.modulate = Color(randf(), randf(), randf(), 1.0)
+	GameState.set_scene_data(\"sprite_modulate\", sprite_2d.modulate)
 
 
 func _exit() -> void:
-	PoolManager.clear()
 	GameState.save_to_current_slot()
 	SceneManager.change_scene(\"res://scenes/main_menu.tscn\")
 
@@ -57,20 +55,8 @@ func _get_random_visible_position() -> Vector2:
 		)
 "
 
-[sub_resource type="AtlasTexture" id="AtlasTexture_7h61r"]
-atlas = ExtResource("1_sul5r")
-region = Rect2(1920, 0, 128, 128)
-
-[sub_resource type="SpriteFrames" id="SpriteFrames_0sr1o"]
-animations = [{
-"frames": [{
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_7h61r")
-}],
-"loop": false,
-"name": &"default",
-"speed": 1.0
-}]
+[sub_resource type="CircleShape2D" id="CircleShape2D_sul5r"]
+radius = 41.01219
 
 [node name="Game" type="Node2D"]
 script = SubResource("GDScript_ifgtf")
@@ -78,6 +64,12 @@ script = SubResource("GDScript_ifgtf")
 [node name="Camera2D" type="Camera2D" parent="."]
 unique_name_in_owner = true
 
-[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
+[node name="Sprite2D" type="Sprite2D" parent="."]
 unique_name_in_owner = true
-sprite_frames = SubResource("SpriteFrames_0sr1o")
+scale = Vector2(0.1, 0.1)
+texture = ExtResource("1_sul5r")
+
+[node name="StaticBody2D" type="StaticBody2D" parent="."]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="StaticBody2D"]
+shape = SubResource("CircleShape2D_sul5r")

@@ -99,9 +99,9 @@ const AUDIO_BUS_SFX: String = "SFX"
 const AUDIO_BUS_UI: String = "UI"
 const AUDIO_BUS_VOICE: String = "Voice"
 @onready var AUDIO_SILENCE_DB: float = ProjectSettings.get_setting("audio/buses/channel_disable_threshold_db")
-const AUDIO_POOLABLE_PLAYER: PackedScene = preload("res://core/scenes/poolable/PoolableAudioStreamPlayer.tscn")
-const AUDIO_POOLABLE_PLAYER_2D: PackedScene = preload("res://core/scenes/poolable/PoolableAudioStreamPlayer2D.tscn")
-const AUDIO_POOLABLE_PLAYER_3D: PackedScene = preload("res://core/scenes/poolable/PoolableAudioStreamPlayer3D.tscn")
+const AUDIO_WRAPPED_PLAYER: PackedScene = preload("res://core/scenes/wrappers/AudioStreamPlayer.tscn")
+const AUDIO_WRAPPED_PLAYER_2D: PackedScene = preload("res://core/scenes/wrappers/AudioStreamPlayer2D.tscn")
+const AUDIO_WRAPPED_PLAYER_3D: PackedScene = preload("res://core/scenes/wrappers/AudioStreamPlayer3D.tscn")
 
 # Video
 enum WindowMode { WINDOWED, BORDERLESS, FULLSCREEN }
@@ -123,13 +123,6 @@ const VIDEO_SUPPORTED_RESOLUTIONS: Array[Vector2i] = [
 	Vector2i(3440, 1440),
 	Vector2i(3840, 2180),
 ]
-
-# Pool Manager
-const POOL_CLEAR_IGNORE_LIST: Array[String] = [
-	"uid://be8c1x346tbot", # res://core/scenes/poolable/PoolableAudioStreamPlayer2D.tscn
-	"uid://bxfki0dgc6ikd", # res://core/scenes/poolable/PoolableAudioStreamPlayer3D.tscn
-	"uid://dgojaexipkhfy", # res://core/scenes/poolable/PoolableAudioStreamPlayer.tscn
-	]
 
 # Settings
 const SETTINGS_VERSION: int = 0
