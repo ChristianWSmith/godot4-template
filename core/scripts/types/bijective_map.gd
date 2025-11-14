@@ -28,6 +28,13 @@ static func from_dict(dict: Dictionary) -> BijectiveMap:
 	return out
 
 
+static func from_array(arr: Array) -> BijectiveMap:
+	var out: BijectiveMap = BijectiveMap.new()
+	for idx in range(arr.size()):
+		out.put(idx, arr[idx])
+	return out
+
+
 func put(key: Variant, value: Variant) -> void:
 	if _k2v.has(key) and _k2v[key] == value:
 		return

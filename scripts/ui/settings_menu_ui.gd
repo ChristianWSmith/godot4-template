@@ -31,7 +31,7 @@ extends Control
 
 @onready var gameplay_autosave_check_button: CheckButton = %GameplayAutosaveCheckButton
 
-var resolutions: Array[Vector2i] = [
+var resolution_bimap: BijectiveMap = BijectiveMap.from_array([
 	Vector2i(1280, 720),
 	Vector2i(1280, 800),
 	Vector2i(1280, 1024),
@@ -48,8 +48,7 @@ var resolutions: Array[Vector2i] = [
 	Vector2i(2560, 1600),
 	Vector2i(3440, 1440),
 	Vector2i(3840, 2180),
-]
-var resolution_index_bimap: BijectiveMap = BijectiveMap.new()
+])
 
 func _ready() -> void:
 	_make_connections()
@@ -98,19 +97,19 @@ func _make_ui_connections() -> void:
 	UIUtils.tether_values(graphics_ui_scale_slider, graphics_ui_scale_spinbox)
 	video_window_mode_option_button.item_selected.connect(func(idx: int):
 		match idx:
-			0: 
+			0: # Windowed
 				video_resolution_option_button.disabled = false
 				video_resolution_label.visible = true
 				video_resolution_option_button.visible = true
-			1: 
+			1: # Borderless
 				video_resolution_option_button.disabled = true
 				video_resolution_label.visible = false
 				video_resolution_option_button.visible = false
-			2: 
+			2: # Fullscreen
 				video_resolution_option_button.disabled = true
 				video_resolution_label.visible = false
 				video_resolution_option_button.visible = false
-			_: 
+			_: # Default to windowed
 				video_resolution_option_button.disabled = true
 				video_resolution_label.visible = false
 				video_resolution_option_button.visible = false
@@ -160,7 +159,7 @@ func _make_settings_connections() -> void:
 		SettingsManager.set_value(
 			"video", 
 			"resolution", 
-			resolution_index_bimap.get_by_value(idx, Vector2i(1280, 720)))
+			resolution_bimap.get_by_key(idx, Vector2i(1280, 720)))
 		)
 	
 	# Graphics
@@ -196,7 +195,7 @@ func _load_values() -> void:
 		audio_ui_slider.max_value
 	
 	video_resolution_option_button.select(
-		resolution_index_bimap.get_by_key(
+		resolution_bimap.get_by_value(
 			SettingsManager.get_value("video", "resolution"), 0
 		)
 	)
@@ -256,8 +255,9 @@ func _set_bindings() -> void:
 
 
 func _setup_resolutions() -> void:
-	for res_idx in range(resolutions.size()):
+	for res_idx in resolution_bimap:
 		video_resolution_option_button.add_item(
-			"%sx%s" % [resolutions[res_idx].x, resolutions[res_idx].y],
+			"%sx%s" % [
+				resolution_bimap.get_by_key(res_idx).x, 
+				resolution_bimap.get_by_key(res_idx).y],
 			res_idx)
-		resolution_index_bimap.put(resolutions[res_idx], res_idx)
