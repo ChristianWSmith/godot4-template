@@ -149,7 +149,7 @@ func _set_bus_volume(bus_name: String, value: float):
 	var target: float = lerpf(
 			SystemConstants.AUDIO_SILENCE_DB, 
 			0.0, 
-			AudioUtils.percent_to_perceptual(value))
+			percent_to_perceptual(value))
 	var bus_idx: int = AudioServer.get_bus_index(bus_name)
 	if target <= SystemConstants.AUDIO_SILENCE_DB:
 		AudioServer.set_bus_mute(bus_idx, true)
@@ -161,3 +161,7 @@ func _set_bus_volume(bus_name: String, value: float):
 			AudioServer.get_bus_index(bus_name), 
 			target)
 		Log.trace(self, "Set bus volume %s %s" % [bus_name, value])
+
+
+static func percent_to_perceptual(percent: float) -> float:
+	return pow(percent, 0.25)
