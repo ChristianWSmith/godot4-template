@@ -6,7 +6,7 @@ const INT_MAX: int = int(INF) - 1
 const INT_MIN: int = int(INF)
 
 # Layers
-const UI_DEBUG_LAYER: int = RenderingServer.CANVAS_LAYER_MAX # TODO
+const GRAPHICS_DEBUG_LAYER: int = RenderingServer.CANVAS_LAYER_MAX # TODO
 const SCENE_FADE_LAYER: int =  RenderingServer.CANVAS_LAYER_MAX - 1
 const UI_THROBBER_LAYER: int = RenderingServer.CANVAS_LAYER_MAX - 2
 const UI_LAYER: int = RenderingServer.CANVAS_LAYER_MAX - 3
@@ -140,7 +140,7 @@ const DEFAULT_INPUT_BINDINGS_SETTINGS: Dictionary = {} # overrides project input
 const DEFAULT_SETTINGS: Dictionary = {
 	"meta": {
 		"version": SETTINGS_VERSION,
-		"timestamp": -1.0
+		"timestamp": -1.0,
 	},
 	"video": {
 		"window_mode": WindowMode.WINDOWED,
@@ -156,12 +156,13 @@ const DEFAULT_SETTINGS: Dictionary = {
 		"ui": 1.0,
 	},
 	"input": {
-		"bindings": DEFAULT_INPUT_BINDINGS_SETTINGS
+		"bindings": DEFAULT_INPUT_BINDINGS_SETTINGS,
 	},
 	"gameplay": {
-		"autosave": true
+		"autosave": true,
 	},
 	"graphics": {
 		"ui_scale": 1.0,
+		"show_fps": false,
 	},
 }

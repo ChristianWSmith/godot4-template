@@ -57,7 +57,7 @@ layout_mode = 2
 [node name="TabContainer" type="TabContainer" parent="VBoxContainer/MarginContainer/VBoxContainer"]
 layout_mode = 2
 size_flags_vertical = 3
-current_tab = 1
+current_tab = 3
 
 [node name="Audio" type="TabBar" parent="VBoxContainer/MarginContainer/VBoxContainer/TabContainer"]
 visible = false
@@ -204,6 +204,7 @@ focus_neighbor_right = NodePath(".")
 focus_neighbor_bottom = NodePath("../../../../../../HBoxContainer/ApplyButton")
 
 [node name="Video" type="TabBar" parent="VBoxContainer/MarginContainer/VBoxContainer/TabContainer"]
+visible = false
 layout_mode = 2
 focus_neighbor_left = NodePath("../Audio")
 focus_neighbor_right = NodePath("../Input")
@@ -413,7 +414,6 @@ mouse_button_allowed = false
 joypad_motion_allowed = false
 
 [node name="Graphics" type="TabBar" parent="VBoxContainer/MarginContainer/VBoxContainer/TabContainer"]
-visible = false
 layout_mode = 2
 focus_neighbor_left = NodePath("../Input")
 focus_neighbor_right = NodePath("../Gameplay")
@@ -458,7 +458,7 @@ size_flags_vertical = 4
 focus_neighbor_left = NodePath(".")
 focus_neighbor_top = NodePath("../../../../..")
 focus_neighbor_right = NodePath("../GraphicsUIScaleSpinbox")
-focus_neighbor_bottom = NodePath("../../../../../../../HBoxContainer/ApplyButton")
+focus_neighbor_bottom = NodePath("../../VideoShowFPSCheckButton")
 min_value = 0.5
 max_value = 1.5
 step = 0.1
@@ -475,6 +475,20 @@ min_value = 0.5
 max_value = 1.5
 step = 0.1
 value = 0.5
+
+[node name="VideoShowFPSLabel" type="Label" parent="VBoxContainer/MarginContainer/VBoxContainer/TabContainer/Graphics/MarginContainer/ScrollContainer/GridContainer"]
+layout_mode = 2
+size_flags_horizontal = 8
+text = "Show FPS"
+
+[node name="VideoShowFPSCheckButton" type="CheckButton" parent="VBoxContainer/MarginContainer/VBoxContainer/TabContainer/Graphics/MarginContainer/ScrollContainer/GridContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 0
+focus_neighbor_left = NodePath(".")
+focus_neighbor_top = NodePath("../HBoxContainer/GraphicsUIScaleSlider")
+focus_neighbor_right = NodePath(".")
+focus_neighbor_bottom = NodePath("../../../../../../HBoxContainer/ApplyButton")
 
 [node name="Gameplay" type="TabBar" parent="VBoxContainer/MarginContainer/VBoxContainer/TabContainer"]
 visible = false

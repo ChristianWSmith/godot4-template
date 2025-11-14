@@ -28,6 +28,7 @@ extends Control
 
 @onready var graphics_ui_scale_slider: Slider = %GraphicsUIScaleSlider
 @onready var graphics_ui_scale_spinbox: SpinBox = %GraphicsUIScaleSpinbox
+@onready var graphics_show_fps_check_button: CheckButton = %VideoShowFPSCheckButton
 
 @onready var gameplay_autosave_check_button: CheckButton = %GameplayAutosaveCheckButton
 
@@ -152,6 +153,10 @@ func _make_settings_connections() -> void:
 			SettingsManager.set_value("graphics", "ui_scale",
 				graphics_ui_scale_slider.value)
 		)
+	graphics_show_fps_check_button.pressed.connect(func() -> void:
+		SettingsManager.set_value("graphics", "show_fps",
+		graphics_show_fps_check_button.button_pressed)
+		)
 	
 	# Gameplay
 	gameplay_autosave_check_button.pressed.connect(func() -> void:
@@ -210,7 +215,8 @@ func _load_values() -> void:
 	_load_binding(bindings.get("back", []), input_back_key_button, input_back_joypad_button)
 	
 	graphics_ui_scale_slider.value = SettingsManager.get_value("graphics", "ui_scale")
-
+	graphics_show_fps_check_button.button_pressed = SettingsManager.get_value("graphics", "show_fps")
+	
 	gameplay_autosave_check_button.button_pressed = SettingsManager.get_value("gameplay", "autosave")
 
 
