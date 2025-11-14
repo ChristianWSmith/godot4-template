@@ -5,11 +5,16 @@ const LAUNCH_SCENE_UID: String = "uid://dbe5a57nm44hm" # res://scenes/main_menu.
 const INT_MAX: int = int(INF) - 1
 const INT_MIN: int = int(INF)
 
+# Layers
+const UI_DEBUG_LAYER: int = RenderingServer.CANVAS_LAYER_MAX
+const SCENE_FADE_LAYER: int =  RenderingServer.CANVAS_LAYER_MAX - 1
+const UI_THROBBER_LAYER: int = RenderingServer.CANVAS_LAYER_MAX - 2
+const UI_LAYER: int = RenderingServer.CANVAS_LAYER_MAX - 3
+
 # Gameplay
 const AUTOSAVE_INTERVAL: float = 300.0
 
 # UI
-const UI_LAYER_INDEX: int = 100
 const UI_PRELOADS: Dictionary[String, PackedScene] = {
 	"main_menu": preload("res://scenes/ui/main_menu_ui.tscn"),
 	"settings_menu": preload("res://scenes/ui/settings_menu_ui.tscn"),
@@ -19,7 +24,6 @@ const UI_THROBBER_FADE_TIME: float = 0.5
 const UI_THROBBER_SIZE_PX: Vector2 = Vector2(32.0, 32.0)
 const UI_THROBBER_ANCHOR: Control.LayoutPreset = Control.PRESET_TOP_RIGHT
 const UI_THROBBER_OFFSET: Vector2 = Vector2(16.0, 16.0)
-const UI_THROBBER_LAYER: int = RenderingServer.CANVAS_LAYER_MAX - 1
 const UI_THROBBER_SPRITE_FRAMES: SpriteFrames = preload("res://assets/src/ui/throbber.tres")
 const UI_CLICK_STREAM: AudioStream = preload("res://assets/bin/ui/click.wav")
 const UI_HOVER_STREAM: AudioStream = preload("res://assets/bin/ui/hover.wav")
@@ -27,7 +31,6 @@ const UI_HOVER_STREAM: AudioStream = preload("res://assets/bin/ui/hover.wav")
 # Scene
 const SCENE_FADE_TIME: float = 0.5
 const SCENE_FADE_COLOR: Color = Color.BLACK
-const SCENE_FADE_LAYER: int =  RenderingServer.CANVAS_LAYER_MAX
 const SCENE_LOAD_SCREEN_MINIMUM_TIME: float = 1.0
 const SCENE_LOADING_SCREEN: PackedScene = preload("res://scenes/loading_screen.tscn")
 
@@ -102,6 +105,24 @@ const AUDIO_POOLABLE_PLAYER_3D: PackedScene = preload("res://core/scenes/poolabl
 
 # Video
 enum WindowMode { WINDOWED, BORDERLESS, FULLSCREEN }
+const VIDEO_SUPPORTED_RESOLUTIONS: Array[Vector2i] = [
+	Vector2i(1280, 720),
+	Vector2i(1280, 800),
+	Vector2i(1280, 1024),
+	Vector2i(1360, 768),
+	Vector2i(1366, 768),
+	Vector2i(1440, 900),
+	Vector2i(1600, 900),
+	Vector2i(1600, 1200),
+	Vector2i(1680, 1050),
+	Vector2i(1920, 1080),
+	Vector2i(1920, 1200),
+	Vector2i(2560, 1080),
+	Vector2i(2560, 1440),
+	Vector2i(2560, 1600),
+	Vector2i(3440, 1440),
+	Vector2i(3840, 2180),
+]
 
 # Pool Manager
 const POOL_CLEAR_IGNORE_LIST: Array[String] = [

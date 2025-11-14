@@ -31,24 +31,8 @@ extends Control
 
 @onready var gameplay_autosave_check_button: CheckButton = %GameplayAutosaveCheckButton
 
-var resolution_bimap: BijectiveMap = BijectiveMap.from_array([
-	Vector2i(1280, 720),
-	Vector2i(1280, 800),
-	Vector2i(1280, 1024),
-	Vector2i(1360, 768),
-	Vector2i(1366, 768),
-	Vector2i(1440, 900),
-	Vector2i(1600, 900),
-	Vector2i(1600, 1200),
-	Vector2i(1680, 1050),
-	Vector2i(1920, 1080),
-	Vector2i(1920, 1200),
-	Vector2i(2560, 1080),
-	Vector2i(2560, 1440),
-	Vector2i(2560, 1600),
-	Vector2i(3440, 1440),
-	Vector2i(3840, 2180),
-])
+var resolution_bimap: BijectiveMap = BijectiveMap.from_array(
+	SystemConstants.VIDEO_SUPPORTED_RESOLUTIONS)
 
 func _ready() -> void:
 	_make_connections()

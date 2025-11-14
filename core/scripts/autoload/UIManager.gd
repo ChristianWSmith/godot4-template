@@ -131,7 +131,7 @@ func _deactivate_ui(ui_node: Control) -> void:
 func _setup_ui() -> void:
 	
 	var ui_layer: CanvasLayer = CanvasLayer.new()
-	ui_layer.layer = SystemConstants.UI_LAYER_INDEX
+	ui_layer.layer = SystemConstants.UI_LAYER
 	
 	var ui_scaler: Control = Control.new()
 	ui_scaler.set_anchors_preset(Control.PRESET_FULL_RECT)
