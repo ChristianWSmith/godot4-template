@@ -57,7 +57,6 @@ func _poll_async_load(scene_path: String) -> void:
 		_loading_screen.set_progress(min(
 			progress[0],
 			_get_loading_timer_progress()))
-		await get_tree().create_timer(5).timeout
 		await get_tree().process_frame
 	
 	while not _loading_screen_timer.is_stopped():

@@ -9,6 +9,7 @@ script/source = "extends Node2D
 @export var flasher_spawn_rate: float = 500.0
 
 @onready var sprite_2d: Sprite2D = %Sprite2D
+@onready var color_rect: ColorRect = %ColorRect
 @onready var camera2d: Camera2D = %Camera2D
 @onready var flasher_scene: PackedScene = preload(\"res://scenes/game/flasher.tscn\")
 
@@ -19,7 +20,8 @@ var flasher_quantized_rate: QuantizedRate = QuantizedRate.new(flasher_spawn_rate
 func _ready() -> void:
 	EventBus.subscribe(InputManager._get_pressed_event(\"back\"), _exit)
 	sprite_2d.modulate = GameState.get_scene_data(\"sprite_modulate\", Color.WHITE)
-	InputManager.subscribe_pressed(\"some_action\", _randomize_sprite_modulate)
+	color_rect.modulate = GameState.get_scene_data(\"color_rect_modulate\", Color.BLACK)
+	InputManager.subscribe_pressed(\"some_action\", _randomize_colors)
 	InputManager.subscribe_pressed(\"some_action\", set.bind(\"spawn_flashers\", true))
 	InputManager.subscribe_released(\"some_action\", set.bind(\"spawn_flashers\", false))
 
@@ -36,10 +38,17 @@ func _process(delta: float) -> void:
 			flasher.queue_free())
 
 
-func _randomize_sprite_modulate() -> void:
+func _randomize_colors() -> void:
 	AudioManager.play_global_sfx(preload(\"res://assets/bin/sfx/sound.wav\"))
 	sprite_2d.modulate = Color(randf(), randf(), randf(), 1.0)
+	color_rect.modulate = Color(
+		1.0 - sprite_2d.modulate.r,
+		1.0 - sprite_2d.modulate.g,
+		1.0 - sprite_2d.modulate.b,
+		1.0,
+	)
 	GameState.set_scene_data(\"sprite_modulate\", sprite_2d.modulate)
+	GameState.set_scene_data(\"color_rect_modulate\", color_rect.modulate)
 
 
 func _exit() -> void:
@@ -73,3 +82,14 @@ texture = ExtResource("1_sul5r")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="StaticBody2D"]
 shape = SubResource("CircleShape2D_sul5r")
+
+[node name="CanvasLayer" type="CanvasLayer" parent="."]
+layer = -1
+
+[node name="ColorRect" type="ColorRect" parent="CanvasLayer"]
+unique_name_in_owner = true
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
