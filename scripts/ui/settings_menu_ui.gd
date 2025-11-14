@@ -66,7 +66,7 @@ func _on_visibility_changed() -> void:
 
 func _on_close_pressed() -> void:
 	SettingsManager.reinstate_checkpoint()
-	UIManager.close_specific("settings_menu")
+	UIManager.close_ui()
 
 
 func _on_default_pressed() -> void:
@@ -76,7 +76,7 @@ func _on_default_pressed() -> void:
 
 func _on_apply_pressed() -> void:
 	SettingsManager.save()
-	UIManager.close_specific("settings_menu")
+	UIManager.close_ui()
 
 
 func _make_connections() -> void:
