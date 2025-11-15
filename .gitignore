@@ -3,7 +3,9 @@
 build
 
 # GDMaim Source maps
-addons/gdmaim/source_maps/*
+addons/gdmaim/source_maps/
+addons/gdmaim/cache/
+addons/gdmaim/backup/
 
 # Godot 4+ specific ignores
 .godot/
