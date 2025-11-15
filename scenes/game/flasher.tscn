@@ -1,32 +1,8 @@
 [gd_scene load_steps=8 format=3 uid="uid://dqtn4qkojqu"]
 
 [ext_resource type="Texture2D" uid="uid://hiiecducsyte" path="res://assets/src/application/icon.svg" id="1_8gwgb"]
+[ext_resource type="Script" uid="uid://dr2xxwu3usrjb" path="res://scripts/game/flasher.gd" id="1_wsfjb"]
 [ext_resource type="Script" uid="uid://bpqa8jf420ttd" path="res://core/scripts/types/state_machine.gd" id="2_8gwgb"]
-
-[sub_resource type="GDScript" id="GDScript_igjhb"]
-resource_name = "Flasher"
-script/source = "extends CharacterBody2D
-class_name Flasher
-
-signal done
-
-@export var duration: float = 1.0
-
-func _ready() -> void:
-	%StateC.request_change.connect(func() -> void:
-		$Sprite2D.modulate = Color.CYAN)
-	%StateM.request_change.connect(func() -> void:
-		$Sprite2D.modulate = Color.MAGENTA)
-	%StateY.request_change.connect(func() -> void:
-		$Sprite2D.modulate = Color.YELLOW)
-	%Timer.timeout.connect(done.emit)
-	%Timer.start(duration)
-
-
-func _physics_process(delta: float) -> void:
-	velocity.y += delta * ProjectSettings.get(\"physics/2d/default_gravity\")
-	move_and_slide()
-"
 
 [sub_resource type="GDScript" id="GDScript_8gwgb"]
 resource_name = "StateC"
@@ -113,7 +89,7 @@ func process(delta: float) -> StateMachineState:
 radius = 1.4142135
 
 [node name="Flasher" type="CharacterBody2D"]
-script = SubResource("GDScript_igjhb")
+script = ExtResource("1_wsfjb")
 
 [node name="Sprite2D" type="Sprite2D" parent="."]
 unique_name_in_owner = true
