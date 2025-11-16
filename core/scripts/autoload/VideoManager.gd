@@ -22,19 +22,19 @@ func initialize() -> Error:
 	return OK
 
 
-func _on_window_mode_updated(mode: Enums.WindowMode) -> void:
+func _on_window_mode_updated(mode: SystemConstants.WindowMode) -> void:
 	match mode:
-		Enums.WindowMode.BORDERLESS:
+		SystemConstants.WindowMode.BORDERLESS:
 			DisplayServer.window_set_mode(
 				DisplayServer.WINDOW_MODE_FULLSCREEN)
 			DisplayServer.window_set_flag(
 				DisplayServer.WINDOW_FLAG_BORDERLESS, true)
-		Enums.WindowMode.FULLSCREEN:
+		SystemConstants.WindowMode.FULLSCREEN:
 			DisplayServer.window_set_mode(
 				DisplayServer.WINDOW_MODE_EXCLUSIVE_FULLSCREEN)
 			DisplayServer.window_set_flag(
 				DisplayServer.WINDOW_FLAG_BORDERLESS, true)
-		_: # Enums.WindowMode.WINDOWED:
+		_: # SystemConstants.WindowMode.WINDOWED:
 			var resolution: Vector2i = SettingsManager.get_value("video", "resolution")
 			DisplayServer.window_set_mode(DisplayServer.WINDOW_MODE_WINDOWED)
 			DisplayServer.window_set_flag(DisplayServer.WINDOW_FLAG_BORDERLESS, false)

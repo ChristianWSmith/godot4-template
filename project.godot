@@ -28,7 +28,6 @@ buses/default_bus_layout="uid://cg80pw67uw7y1"
 
 [autoload]
 
-Enums="*res://core/scripts/autoload/Enums.gd"
 SystemConstants="*res://core/scripts/autoload/SystemConstants.gd"
 SettingsManager="*res://core/scripts/autoload/SettingsManager.gd"
 SaveManager="*res://core/scripts/autoload/SaveManager.gd"
