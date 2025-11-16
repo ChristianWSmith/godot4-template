@@ -1,4 +1,3 @@
-extends Node
 class_name UIUtils
 
 static func tether_values(node_a: Control, node_b: Control):

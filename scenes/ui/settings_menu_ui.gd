@@ -126,11 +126,11 @@ func _make_settings_connections() -> void:
 	video_window_mode_option_button.item_selected.connect(func(idx: int) -> void:
 		match idx:
 			1: # Borderless
-				SettingsManager.set_value("video", "window_mode", SystemConstants.WindowMode.BORDERLESS)
+				SettingsManager.set_value("video", "window_mode", Enums.WindowMode.BORDERLESS)
 			2: # Fullscreen
-				SettingsManager.set_value("video", "window_mode", SystemConstants.WindowMode.FULLSCREEN)
+				SettingsManager.set_value("video", "window_mode", Enums.WindowMode.FULLSCREEN)
 			_: # Windowed
-				SettingsManager.set_value("video", "window_mode", SystemConstants.WindowMode.WINDOWED)
+				SettingsManager.set_value("video", "window_mode", Enums.WindowMode.WINDOWED)
 		)
 	video_max_fps_option_button.item_selected.connect(func(idx: int) -> void:
 		match idx:
@@ -190,10 +190,10 @@ func _load_values() -> void:
 	)
 	
 	match SettingsManager.get_value("video", "window_mode"):
-		SystemConstants.WindowMode.BORDERLESS:
+		Enums.WindowMode.BORDERLESS:
 			video_window_mode_option_button.select(1) # Borderless
 			video_window_mode_option_button.item_selected.emit(1)
-		SystemConstants.WindowMode.FULLSCREEN:
+		Enums.WindowMode.FULLSCREEN:
 			video_window_mode_option_button.select(2) # Fullscreen
 			video_window_mode_option_button.item_selected.emit(2)
 		_:

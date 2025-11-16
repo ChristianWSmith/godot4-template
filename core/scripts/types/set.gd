@@ -20,6 +20,12 @@ func _iter_get(iter: Variant) -> Variant:
 	return iter["keys"][iter["index"]]
 
 
+static func from_array(array: Array) -> Set:
+	var s: Set = Set.new()
+	s.add_many(array)
+	return s
+
+
 func add(item: Variant) -> bool:
 	return _items.set(item, true)
 
@@ -61,6 +67,14 @@ func intersect(other: Set) -> Set:
 		if other.has(item):
 			out.add(item)
 	return out
+
+
+func intersects(other: Set) -> bool:
+	var other_dict = other._items
+	for key in _items:
+		if other_dict.has(key):
+			return true
+	return false
 
 
 func diff(other: Set) -> Set:

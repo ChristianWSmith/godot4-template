@@ -1,7 +1,7 @@
 [gd_scene load_steps=8 format=3 uid="uid://dqtn4qkojqu"]
 
 [ext_resource type="Texture2D" uid="uid://hiiecducsyte" path="res://assets/src/application/icon.svg" id="1_8gwgb"]
-[ext_resource type="Script" uid="uid://dr2xxwu3usrjb" path="res://scripts/game/flasher.gd" id="1_wsfjb"]
+[ext_resource type="Script" uid="uid://dr2xxwu3usrjb" path="res://scenes/game/flasher.gd" id="1_wsfjb"]
 [ext_resource type="Script" uid="uid://bpqa8jf420ttd" path="res://core/scripts/types/state_machine.gd" id="2_8gwgb"]
 
 [sub_resource type="GDScript" id="GDScript_8gwgb"]
@@ -25,6 +25,10 @@ func exit() -> void:
 
 
 func process(delta: float) -> StateMachineState:
+	var result: StateMachineState = super(delta)
+	if result != self:
+		return result
+	
 	timer += delta
 	if timer >= duration:
 		return %StateM
@@ -52,6 +56,10 @@ func exit() -> void:
 
 
 func process(delta: float) -> StateMachineState:
+	var result: StateMachineState = super(delta)
+	if result != self:
+		return result
+	
 	timer += delta
 	if timer >= duration:
 		return %StateY
@@ -79,6 +87,10 @@ func exit() -> void:
 
 
 func process(delta: float) -> StateMachineState:
+	var result: StateMachineState = super(delta)
+	if result != self:
+		return result
+	
 	timer += delta
 	if timer >= duration:
 		return %StateC

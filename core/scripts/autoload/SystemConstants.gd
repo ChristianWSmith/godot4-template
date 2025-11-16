@@ -104,7 +104,6 @@ const AUDIO_WRAPPED_PLAYER_2D: PackedScene = preload("res://core/scenes/wrappers
 const AUDIO_WRAPPED_PLAYER_3D: PackedScene = preload("res://core/scenes/wrappers/AudioStreamPlayer3D.tscn")
 
 # Video
-enum WindowMode { WINDOWED, BORDERLESS, FULLSCREEN }
 const VIDEO_SUPPORTED_RESOLUTIONS: Array[Vector2i] = [
 	Vector2i(1280, 720),
 	Vector2i(1280, 800),
@@ -136,7 +135,7 @@ const DEFAULT_SETTINGS: Dictionary = {
 		"timestamp": -1.0,
 	},
 	"video": {
-		"window_mode": WindowMode.WINDOWED,
+		"window_mode": Enums.WindowMode.WINDOWED,
 		"vsync": true,
 		"resolution": Vector2i(1280, 720),
 		"max_fps": 0,

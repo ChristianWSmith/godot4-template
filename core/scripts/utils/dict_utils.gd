@@ -1,4 +1,3 @@
-extends Node
 class_name DictUtils
 
 static func flatten(dict: Dictionary, prefix: String = "", separator: String = "/") -> Dictionary:

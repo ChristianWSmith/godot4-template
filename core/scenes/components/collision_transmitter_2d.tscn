@@ -1,0 +1,7 @@
+[gd_scene load_steps=2 format=3 uid="uid://dfihllbc6q8oa"]
+
+[ext_resource type="Script" uid="uid://bkp0tpyu8dg8i" path="res://core/scenes/components/collision_transmitter_2d.gd" id="1_5f582"]
+
+[node name="CollisionTransmitter2D" type="Area2D"]
+monitoring = false
+script = ExtResource("1_5f582")
