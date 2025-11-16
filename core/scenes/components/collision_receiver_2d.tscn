@@ -1,8 +1,0 @@
-[gd_scene load_steps=2 format=3 uid="uid://d2crte3kfrljf"]
-
-[ext_resource type="Script" uid="uid://d1ek4fauede1r" path="res://core/scenes/components/collision_receiver_2d.gd" id="1_scqjl"]
-
-[node name="CollisionReceiver2D" type="Area2D"]
-monitorable = false
-script = ExtResource("1_scqjl")
-_types = null
