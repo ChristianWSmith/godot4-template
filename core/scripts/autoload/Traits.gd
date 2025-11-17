@@ -16,12 +16,10 @@ func initialize() -> Error:
 
 func implements(trait_script: GDScript, object: Object) -> bool:
 	var trait_script_id: String = _get_script_id(trait_script)
-	
 	if trait_script_id not in _trait_definitions:
 		return false
 		
 	var object_script_variant: Variant = object.get_script()
-	
 	if object_script_variant == null:
 		return false
 		
