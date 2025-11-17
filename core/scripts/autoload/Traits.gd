@@ -7,9 +7,12 @@ var _cached_definitions: Dictionary[String, Set] = {}
 var _cached_matches: Dictionary[String, Dictionary] = {}
 
 func initialize() -> Error:
-	for script in SystemConstants.TRAIT_SCRIPTS:
-		_register_trait(script)
+	for global_class in ProjectSettings.get_global_class_list():
+		var script: GDScript = ResourceLoader.load(global_class["path"])
+		if _is_trait(script):
+			_register_trait(script)
 	return OK
+
 
 func implements(trait_script: GDScript, object: Object) -> bool:
 	var trait_script_id: String = _get_script_id(trait_script)
@@ -45,6 +48,7 @@ func _register_trait(script: GDScript) -> void:
 	var script_id: String = _get_script_id(script)
 	if script_id not in _trait_definitions:
 		_trait_definitions[script_id] = _extract_definition(script)
+		_cached_definitions[script_id] = _trait_definitions[script_id]
 
 
 static func _extract_definition(script: GDScript) -> Set:
@@ -75,3 +79,10 @@ static func _match_definitions(trait_def: Set, obj_def: Set) -> bool:
 
 static func _get_script_id(script: GDScript) -> String:
 	return ResourceUID.path_to_uid(script.resource_path)
+
+
+static func _is_trait(script: GDScript) -> bool:
+	var parent: GDScript = script.get_base_script()
+	while parent and parent != Trait:
+		parent = parent.get_base_script()
+	return parent == Trait

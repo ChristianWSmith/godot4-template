@@ -30,7 +30,7 @@ buses/default_bus_layout="uid://cg80pw67uw7y1"
 
 SystemConstants="*res://core/scripts/autoload/SystemConstants.gd"
 Log="*res://core/scripts/autoload/Log.gd"
-Trait="*res://core/scripts/autoload/Trait.gd"
+Traits="*res://core/scripts/autoload/Traits.gd"
 SettingsManager="*res://core/scripts/autoload/SettingsManager.gd"
 SaveManager="*res://core/scripts/autoload/SaveManager.gd"
 GameState="*res://core/scripts/autoload/GameState.gd"
