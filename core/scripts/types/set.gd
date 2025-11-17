@@ -26,6 +26,10 @@ static func from_array(array: Array) -> Set:
 	return s
 
 
+func size() -> int:
+	return _items.size()
+
+
 func add(item: Variant) -> bool:
 	return _items.set(item, true)
 

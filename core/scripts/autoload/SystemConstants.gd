@@ -11,6 +11,9 @@ const SCENE_FADE_LAYER: int =  RenderingServer.CANVAS_LAYER_MAX - 1
 const UI_THROBBER_LAYER: int = RenderingServer.CANVAS_LAYER_MAX - 2
 const UI_LAYER: int = RenderingServer.CANVAS_LAYER_MAX - 3
 
+# Trait
+var TRAIT_SCRIPTS: Array[GDScript] = []
+
 # Gameplay
 const AUTOSAVE_INTERVAL: float = 300.0
 
@@ -159,3 +162,7 @@ const DEFAULT_SETTINGS: Dictionary = {
 		"show_fps": false,
 	},
 }
+
+
+func _ready() -> void:
+	TRAIT_SCRIPTS.make_read_only()

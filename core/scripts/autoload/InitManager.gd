@@ -29,6 +29,7 @@ func _systems() -> Array[BaseManager]:
 	return [
 		EventBus,
 		Log,
+		Trait,
 		SteamManager,
 		VideoManager,
 		SaveManager,
