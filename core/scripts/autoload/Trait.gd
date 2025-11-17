@@ -47,7 +47,7 @@ func _register_trait(script: GDScript) -> void:
 		_trait_definitions[script_id] = _extract_definition(script)
 
 
-func _extract_definition(script: GDScript) -> Set:
+static func _extract_definition(script: GDScript) -> Set:
 	var definition: Set = Set.new()
 	for method_proto in script.get_script_method_list():
 		definition.add(_build_signature(Member.METHOD, method_proto))
@@ -56,7 +56,7 @@ func _extract_definition(script: GDScript) -> Set:
 	return definition
 
 
-func _build_signature(member_type: Member, proto: Dictionary) -> String:
+static func _build_signature(member_type: Member, proto: Dictionary) -> String:
 	return "%s%s(%s)%s" % [
 		member_type,
 		proto["name"],
@@ -65,11 +65,11 @@ func _build_signature(member_type: Member, proto: Dictionary) -> String:
 	]
 
 
-func _build_signature_arg(arg: Dictionary) -> String:
+static func _build_signature_arg(arg: Dictionary) -> String:
 	return "%s%s" % [arg["type"], arg["class_name"]]
 
 
-func _match_definitions(trait_def: Set, obj_def: Set) -> bool:
+static func _match_definitions(trait_def: Set, obj_def: Set) -> bool:
 	return trait_def.intersect(obj_def).size() == trait_def.size()
 
 
