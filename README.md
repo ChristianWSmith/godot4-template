@@ -26,6 +26,58 @@ Key features include:
 
 This template is intended to accelerate development while providing a solid, maintainable foundation for your Godot 4 projects.
 
+## Init Process
+Here's an overview of what happens during the startup of the game.  Extend as needed.
+
+```
+└─ entrypoint.gd
+   ├─ InitManager
+   │  ├─ EventBus
+   │  │  └─ Clears subscribers, waiters, and once wrappers
+   │  ├─ Log
+   │  │  ├─ Handles CLI arguments
+   │  │  └─ Sets up log file if applicable
+   │  ├─ Traits
+   │  │  └─ Registers all classes that extend Trait as Traits
+   │  ├─ SteamManager
+   │  │  ├─ Connects to Steam
+   │  │  ├─ Starts reconciliation background timer
+   │  │  └─ Errors out if Steam is required
+   │  ├─ VideoManager
+   │  │  └─ Subscribes to changes in video settings
+   │  ├─ SaveManager
+   │  │  ├─ Loads local save slots
+   │  │  ├─ Loads Steam save slots
+   │  │  ├─ Migrates save versions if needed
+   │  │  └─ Syncs with steam
+   │  ├─ GameState
+   │  │  ├─ Clears loaded data
+   │  │  └─ Subscribes to scene changes for per-scene persistence
+   │  ├─ InputManager
+   │  │  └─ Subscribes to changes in input settings
+   │  ├─ AudioManager
+   │  │  └─ Subscribes to changes in audio settings
+   │  ├─ SceneManager
+   │  │  ├─ Sets up the loading screen
+   │  │  └─ Sets up the global scene change fade layer
+   │  ├─ UIManager
+   │  │  ├─ Sets up global throbber
+   │  │  └─ Loads all UI scenes
+   │  ├─ GameplayManager
+   │  │  └─ Subscribes to changes in gameplay settings
+   │  ├─ GraphicsManager
+   │  │  ├─ Sets up FPS label
+   │  │  └─ Subscribes to changes in graphics settings
+   │  └─ SettingsManager
+   │     ├─ Loads local settings
+   │     ├─ Loads Steam settings
+   │     ├─ Performs migrations as needed
+   │     ├─ Syncs with Steam
+   │     └─ Emits settings changes, triggers subscribers
+   └─ SceneManager
+      └─ Changes scene to Launch Scene
+```
+
 # Thank You
 - [GDMaim](https://github.com/cherriesandmochi/gdmaim)
 - [GodotSteam](https://godotsteam.com/)
