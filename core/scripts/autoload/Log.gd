@@ -1,3 +1,10 @@
+## Centralized logging system for tracing, debugging, info, warnings,
+## errors, and fatal messages. Supports configurable log levels,
+## optional file logging, and integration with the EventBus for
+## log event emission.
+##
+## Logs are color-coded in the editor and can optionally be written
+## to a file.
 extends BaseManager
 
 enum LogLevel { TRACE, DEBUG, INFO, WARN, ERROR, FATAL, NONE }
@@ -8,6 +15,9 @@ var _file_path: String = SystemConstants.LOG_FILE_PATH
 var _file: FileAccess = null
 var _initialized: bool = false
 
+## Initializes the logging system. Processes CLI arguments, clears
+## any existing log file, opens a new log file if enabled, and logs
+## an initialization message.
 func initialize() -> Error:
 	super()
 	_handle_cli_args()
@@ -18,6 +28,8 @@ func initialize() -> Error:
 	return OK
 
 
+## Sets the current log level. Only messages at or above this level
+## will be logged.
 func set_log_level(level: LogLevel) -> void:
 	if not _initialized:
 		return
@@ -25,6 +37,8 @@ func set_log_level(level: LogLevel) -> void:
 	_log_internal(LogLevel.INFO, name, "Log level set to %s" % [_get_level_name(level)])
 
 
+## Enables or disables logging to a file. Optionally specify a custom
+## [code]path[/code] for the log file.
 func set_log_to_file(enabled: bool, path: String = SystemConstants.LOG_FILE_PATH) -> void:
 	if not _initialized:
 		return
@@ -37,36 +51,43 @@ func set_log_to_file(enabled: bool, path: String = SystemConstants.LOG_FILE_PATH
 	_log_internal(LogLevel.INFO, name, "File logging %s (%s)" % ["enabled" if enabled else "disabled", _file_path])
 
 
+## Logs a TRACE-level message from the given [code]source[/code] Node.
 func trace(source: Node, message: Variant) -> void:
 	if not _initialized:
 		return
 	_log_internal(LogLevel.TRACE, source.name, str(message))
 
 
+## Logs a DEBUG-level message from the given [code]source[/code] Node.
 func debug(source: Node, message: Variant) -> void:
 	if not _initialized:
 		return
 	_log_internal(LogLevel.DEBUG, source.name, str(message))
 
 
+## Logs an INFO-level message from the given [code]source[/code] Node.
 func info(source: Node, message: Variant) -> void:
 	if not _initialized:
 		return
 	_log_internal(LogLevel.INFO, source.name, str(message))
 
 
+## Logs a WARN-level message from the given [code]source[/code] Node.
 func warn(source: Node, message: Variant) -> void:
 	if not _initialized:
 		return
 	_log_internal(LogLevel.WARN, source.name, str(message))
 
 
+## Logs an ERROR-level message from the given [code]source[/code] Node.
 func error(source: Node, message: String) -> void:
 	if not _initialized:
 		return
 	_log_internal(LogLevel.ERROR, source.name, message)
 
 
+## Logs a FATAL-level message from the given [code]source[/code] Node.
+## This will also trigger a crash via CrashReport.
 func fatal(source: Node, message: String) -> void:
 	_log_internal(LogLevel.FATAL, source.name, message)
 

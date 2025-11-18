@@ -1,7 +1,12 @@
+## Manager for graphics-related settings and debugging overlays.
+## Handles UI scaling updates and an optional FPS display.
 extends BaseManager
 
 @onready var _fps_label: Label = preload("res://core/scenes/ui/fps_label.tscn").instantiate()
 
+## Initializes the graphics manager, sets up the FPS label,
+## and subscribes to relevant graphics-related settings events.
+## Returns [code]OK[/code] on successful initialization.
 func initialize() -> Error:
 	super()
 	Log.info(self, "Initializing...")

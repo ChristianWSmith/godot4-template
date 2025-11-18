@@ -1,5 +1,10 @@
+## Manager for handling video and display settings.
+## Automatically applies window mode, VSync, max FPS, and resolution
+## changes based on settings updates.c
 extends BaseManager
 
+## Initializes the VideoManager and subscribes to relevant settings events.
+## Returns [code]OK[/code] on successful initialization.
 func initialize() -> Error:
 	super()
 	Log.info(self, "Initializing...")

@@ -1,9 +1,16 @@
+## A centralized event management system for subscribing, emitting, and
+## waiting for named events. Supports persistent and one-time listeners,
+## as well as asynchronous waiting for events using [code]wait_for()[/code].
+##
+## Ensures safe handling of invalid or freed objects when calling listeners.
 extends BaseManager
 
 var _subscribers: Dictionary[String, Array] = {}
 var _once_wrappers: Dictionary[Callable, Callable] = {}
 var _waiters: Dictionary[String, Array] = {}
 
+## Initializes the EventBus, clearing all subscribers, one-time wrappers,
+## and waiting coroutines. Called automatically during setup.
 func initialize() -> Error:
 	super()
 	_subscribers.clear()
@@ -12,6 +19,8 @@ func initialize() -> Error:
 	return OK
 
 
+## Subscribes a callable to a named [code]event_name[/code].
+## The [code]callable[/code] will be invoked whenever the event is emitted.
 func subscribe(event_name: String, callable: Callable) -> void:
 	if callable == null:
 		return
@@ -28,6 +37,8 @@ func subscribe(event_name: String, callable: Callable) -> void:
 	_subscribers[event_name].append(callable)
 
 
+## Unsubscribes a callable from a named [code]event_name[/code].
+## If the callable was added via [code]once()[/code], it is also removed from internal wrappers.
 func unsubscribe(event_name: String, callable: Callable) -> void:
 	if not _subscribers.has(event_name):
 		return
@@ -40,6 +51,8 @@ func unsubscribe(event_name: String, callable: Callable) -> void:
 	_cleanup_signal_if_empty(event_name)
 
 
+## Subscribes a callable to a named [code]event_name[/code] that will be called only once.
+## After the first emission, the listener is automatically removed.
 func once(event_name: String, callable: Callable) -> void:
 	if callable == null:
 		return
@@ -49,6 +62,8 @@ func once(event_name: String, callable: Callable) -> void:
 	subscribe(event_name, wrapper)
 
 
+## Emits an event with the given [code]event_name[/code] and optional [code]data[/code].
+## All subscribed callables and any waiting coroutines will be invoked with the data.
 func emit(event_name: String, data: Variant = null) -> void:
 	if event_name != SystemConstants.LOG_EVENT:
 		Log.trace(self, "emit %s" % event_name)
@@ -74,6 +89,8 @@ func emit(event_name: String, data: Variant = null) -> void:
 	_cleanup_signal_if_empty(event_name)
 
 
+## Waits asynchronously until the named [code]event_name[/code] is emitted.
+## Returns the data passed to [code]emit()[/code] once the event occurs.
 func wait_for(event_name: String) -> Variant:
 	var state = {"done": false, "result": null}
 	var resume_func: Callable = func(data):

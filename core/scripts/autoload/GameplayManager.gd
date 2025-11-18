@@ -1,8 +1,16 @@
+## Manages automatic game saves based on user settings and game state.
+##
+## Listens for changes to the autosave setting and triggers periodic
+## saves when enabled. Automatically handles starting and stopping
+## the autosave timer when a slot is loaded or settings change.
 extends BaseManager
 
 var _autosave_timer: Timer = Timer.new()
 var _autosave_setting: bool = false
 
+## Initializes the autosave manager.
+## Subscribes to changes in the [code]gameplay/autosave[/code] setting
+## and listens for when a save slot is loaded.
 func initialize() -> Error:
 	super()
 	Log.info(self, "Initializing...")

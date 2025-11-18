@@ -1,7 +1,13 @@
+## Manages local and Steam Cloud save slots.
+##
+## Handles creating, listing, saving, loading, and deleting named save slots.
+## Ensures versioning and timestamping for migration and synchronization purposes.
 extends BaseManager
 
 var _slots: Dictionary[String, Dictionary] = {}
 
+## Initializes the save manager.
+## Creates local directories, loads existing local slots, and synchronizes with Steam Cloud.
 func initialize() -> Error:
 	super()
 	Log.info(self, "Initializing...")
@@ -20,14 +26,20 @@ func initialize() -> Error:
 	return OK
 
 
+## Returns an array of all available save slot names.
 func list_slots() -> Array[String]:
 	return _slots.keys()
 
 
+## Creates a new save slot with the given [code]slot_name[/code].
+## Returns an error if saving fails.
 func new_slot(slot_name: String) -> Error:
 	return save_data(slot_name)
 
 
+## Saves the given [code]data[/code] to the specified [code]slot_name[/code].
+## If no data is provided, uses defaults or existing slot data.
+## Returns an error if saving fails.c
 func save_data(slot_name: String, data: Dictionary = {}) -> Error:
 	if not _slots.has(slot_name):
 		_slots[slot_name] = SystemConstants.DEFAULT_SAVE.duplicate(true)
@@ -40,6 +52,8 @@ func save_data(slot_name: String, data: Dictionary = {}) -> Error:
 	return _persist_slot(slot_name)
 
 
+## Retrieves the saved data dictionary for [code]slot_name[/code].
+## Logs an error and returns an empty dictionary if the slot does not exist.
 func get_data(slot_name: String) -> Dictionary:
 	if not _slots.has(slot_name) or not _slots[slot_name].has("data"):
 		Log.error(self, "Slot does not exist or is empty: %s" % slot_name)
@@ -47,6 +61,9 @@ func get_data(slot_name: String) -> Dictionary:
 	return _slots[slot_name]["data"]
 
 
+## Deletes the save slot with the specified [code]slot_name[/code].
+## Removes both local and Steam Cloud copies.
+## Returns an error if the local file could not be deleted.
 func delete_slot(slot_name: String) -> Error:
 	var result: Error = FAILED
 	

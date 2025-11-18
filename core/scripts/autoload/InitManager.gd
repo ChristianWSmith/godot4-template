@@ -1,3 +1,8 @@
+## Coordinates the initialization of all core systems after the main scene
+## has loaded. Ensures that each subsystem manager is initialized in order
+## and triggers a scene reload once initialization completes successfully.
+##
+## If any system fails to initialize, the process stops and the failure is logged.
 extends BaseManager
 
 func _ready() -> void:
@@ -13,6 +18,10 @@ func _ready() -> void:
 			print("[%s] Initialization failed." % name)
 
 
+## Initializes this manager and all registered subsystems.
+## Returns an [code]Error[/code] indicating success ([code]OK[/code]) or the
+## specific subsystem failure.
+## Overrides BaseManager.initialize() to perform multi-system setup.
 func initialize() -> Error:
 	super()
 	var result: Error
@@ -25,6 +34,8 @@ func initialize() -> Error:
 	return OK
 
 
+## Returns an array of all subsystem managers to be initialized.
+## Each element must extend [code]BaseManager[/code].
 func systems() -> Array[BaseManager]: 
 	return [
 		EventBus,

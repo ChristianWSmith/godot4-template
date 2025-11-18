@@ -1,3 +1,19 @@
+## SystemConstants
+##
+## Centralized repository for global constants used throughout the engine.
+## 
+## Includes configuration values for:
+## - Scene management and fade settings
+## - UI preloads, throbber behavior, and audio streams
+## - Gameplay parameters such as autosave intervals
+## - Debugging, logging, and Steam integration
+## - Save paths, versions, and default save structures
+## - Input actions and default bindings
+## - Audio and video settings, including wrapped audio players and supported resolutions
+## - Project settings defaults for graphics, audio, input, and gameplay
+##
+## This script is intended as a static reference and should not require
+## instantiation. All constants are public and directly accessible.
 extends Node
 
 # General

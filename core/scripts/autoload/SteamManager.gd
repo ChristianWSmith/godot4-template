@@ -1,3 +1,6 @@
+## Manager for handling Steamworks integration, including cloud storage,
+## file reconciliation, and Steam initialization. Handles automatic retry
+## of failed writes/deletes via an internal timer and mutex-protected queues.
 extends BaseManager
 
 var _reconciliation_timer: Timer = Timer.new()
@@ -5,6 +8,8 @@ var _reconciliation_mutex: Mutex = Mutex.new()
 var _files_to_write: Dictionary[String, PackedByteArray] = {}
 var _files_to_delete: Set = Set.new()
 
+## Initializes the Steam API and sets up the reconciliation timer.
+## Returns [code]OK[/code] if Steam is active or optional, [code]FAILED[/code] if Steam is required but unavailable.
 func initialize() -> Error:
 	super()
 	Log.info(self, "Initializing Steam...")
@@ -44,10 +49,12 @@ func _process(_delta: float) -> void:
 	Steam.run_callbacks()
 
 
+## Returns [code]true[/code] if Steam is running, the user is logged in, and cloud storage is enabled for both the account and the app.
 func is_cloud_available() -> bool:
 	return Steam.isSteamRunning() and Steam.loggedOn() and Steam.isCloudEnabledForAccount() and Steam.isCloudEnabledForApp()
 
-
+## Writes [code]data[/code] to a file named [code]filename[/code] in Steam Cloud.
+## Returns [code]OK[/code] if successful, [code]FAILED[/code] if the write fails (file will be queued for retry).
 func cloud_write(filename: String, data: PackedByteArray) -> Error:
 	if not is_cloud_available():
 		Log.warn(self, "Steam cloud not available, won't write file: %s" % filename)
@@ -62,6 +69,9 @@ func cloud_write(filename: String, data: PackedByteArray) -> Error:
 		return FAILED
 
 
+## Reads the contents of a Steam Cloud file named [code]filename[/code].
+## Returns a [code]PackedByteArray[/code] containing the file data.
+## Returns an empty [code]PackedByteArray[/code] if the cloud is unavailable or the file does not exist.
 func cloud_read(filename: String) -> PackedByteArray:
 	if not is_cloud_available() or not Steam.fileExists(filename):
 		Log.warn(self, "Steam cloud not available, cannot read file: %s" % filename)
@@ -69,6 +79,9 @@ func cloud_read(filename: String) -> PackedByteArray:
 	return Steam.fileRead(filename, Steam.getFileSize(filename)).get("buf", PackedByteArray())
 
 
+## Deletes a file named [code]filename[/code] from Steam Cloud.
+## Returns [code]OK[/code] if deletion succeeds or the file does not exist.
+## Returns [code]FAILED[/code] if deletion fails (file will be queued for retry).
 func cloud_delete(filename: String) -> Error:
 	if not is_cloud_available():
 		Log.warn(self, "Steam Cloud not available. Cannot delete %s" % filename)
@@ -83,6 +96,8 @@ func cloud_delete(filename: String) -> Error:
 		return FAILED
 
 
+## Returns an array of [code]String[/code] containing all file names currently stored in Steam Cloud.
+## Returns an empty array if Steam Cloud is unavailable.
 func cloud_list_files() -> Array[String]:
 	var files: Array[String] = []
 	if not is_cloud_available():

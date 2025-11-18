@@ -1,3 +1,6 @@
+## Handles scene transitions, including async loading, fade effects, and throbber display.
+##
+## Ensures only one scene change occurs at a time and emits events when scenes change.
 extends BaseManager
 
 var _loading_screen: LoadingScreen = SystemConstants.SCENE_LOADING_SCREEN.instantiate()
@@ -6,6 +9,8 @@ var _is_loading: bool = false
 var _fade_rect: ColorRect = ColorRect.new()
 var _loading_screen_timer: Timer = Timer.new()
 
+## Initializes the SceneManager, setting up the current scene, the fade overlay, and a timer for minimum loading screen display.
+## Emits a [code]scene_changed[/code] event for the current scene.
 func initialize() -> Error:
 	super()
 	Log.info(self, "Initializing...")
@@ -17,6 +22,8 @@ func initialize() -> Error:
 	return OK
 
 
+## Changes the current scene to [code]scene_path[/code], showing a loading screen and applying a fade effect.
+## If a scene change is already in progress, the request is ignored.
 func change_scene(scene_path: String) -> void:
 	if _is_loading:
 		Log.warn(self, "Scene change already in progress; ignoring request.")
@@ -28,6 +35,9 @@ func change_scene(scene_path: String) -> void:
 		_loading_screen = SystemConstants.SCENE_LOADING_SCREEN.instantiate())
 
 
+## Begins loading the scene at [code]scene_path[/code] asynchronously.
+## The scene will be swapped in once loading is complete.
+## Ignores requests if a load is already in progress.
 func change_scene_async(scene_path: String) -> void:
 	if _is_loading:
 		Log.warn(self, "Scene change already in progress; ignoring request.")
@@ -36,6 +46,8 @@ func change_scene_async(scene_path: String) -> void:
 	_do_change_scene_async(scene_path)
 
 
+## Reloads the currently active scene asynchronously.
+## Logs a warning if no scene is loaded.
 func reload_scene_async() -> void:
 	if not _current_scene:
 		Log.warn(self, "No scene to reload.")

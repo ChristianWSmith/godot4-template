@@ -1,4 +1,12 @@
+## Handles the game's startup sequence. This autoload is responsible for
+## triggering system initialization, enforcing the minimum load screen time,
+## and handing off control to the main launch scene once initialization
+## completes successfully.
+##
+## If initialization fails, the failure is logged and the scene transition
+## does not proceed.
 extends Node
+class_name EntryPoint
 
 @onready var timer: Timer = %Timer
 

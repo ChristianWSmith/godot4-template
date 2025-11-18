@@ -1,33 +1,39 @@
+## Manager for handling game or application settings, including loading,
+## saving, syncing with Steam Cloud, and tracking changes.
+##
+## Supports checkpoints, migration, and default fallbacks, and emits
+## events when individual settings are changed.
 extends BaseManager
 
 var _checkpoint: Dictionary = {}
 var _settings: Dictionary = {}
 
+## Initializes the settings manager by loading settings from both local
+## storage and Steam Cloud if available. Automatically migrates settings
+## to the current version if needed, and emits change events for all values.
+## Returns [code]OK[/code] if initialization succeeded, or [code]FAILED[/code]
+## otherwise.
 func initialize() -> Error:
 	super()
 	Log.info(self, "Initializing...")
 	if _load_settings() == OK:
 		Log.info(self, "Successfully initialized settings.")
-		emit_changed_all()
+		_emit_changed_all()
 		return OK
 	Log.error(self, "Failed to initialize settings.")
 	return FAILED
 
 
-func emit_changed_all() -> void:
-	for section in _settings.keys():
-		for key in _settings[section].keys():
-			emit_changed(section, key, _settings[section][key])
-
-
-func emit_changed(section: String, key: String, value: Variant) -> void:
-	EventBus.emit(get_event(section, key), value)
-
-
+## Generates the unique event name used when a particular setting changes.
+## [code]section[/code] and [code]key[/code] are used to build the event path.
 func get_event(section: String, key: String) -> String:
 	return SystemConstants.SETTINGS_CHANGED_EVENT + "/" + section + "/" + key
 
 
+## Retrieves the current value of a setting.
+## If the setting does not exist, attempts to fallback to the default value.
+## Emits warnings or fatal errors if keys are missing from current or default settings.
+## [code]section[/code] and [code]key[/code] specify the setting to read.
 func get_value(section: String, key: String) -> Variant:
 	if _settings.has(section) and _settings[section].has(key):
 		return _settings[section][key]
@@ -41,15 +47,23 @@ func get_value(section: String, key: String) -> Variant:
 	return null
 
 
+## Updates a single setting value.
+## Also emits a change event so listeners are notified.
+## [code]section[/code] and [code]key[/code] specify which setting to update,
+## and [code]value[/code] is the new value.
 func set_value(section: String, key: String, value: Variant) -> void:
 	if not _settings.has(section):
 		_settings[section] = {}
 	_settings[section][key] = value
 
 	Log.debug(self, "Set %s/%s = %s" % [section, key, str(value)])
-	emit_changed(section, key, value)
+	_emit_changed(section, key, value)
 
 
+## Updates multiple settings at once within a section.
+## [code]section[/code] specifies the section, and [code]keys[/code] and [code]values[/code]
+## must be arrays of equal size representing the settings to update.
+## Change events are emitted for each updated setting.
 func set_values(section: String, keys: Array[String], values: Array[Variant]) -> void:
 	if keys.size() != values.size():
 		Log.error(self, "Attempted to set multiple values, but keys.size() != values.size()")
@@ -59,11 +73,14 @@ func set_values(section: String, keys: Array[String], values: Array[Variant]) ->
 	
 	for i in range(keys.size()):
 		_settings[section][keys[i]] = values[i]
-		emit_changed(section, keys[i], values[i])
+		_emit_changed(section, keys[i], values[i])
 
 	Log.debug(self, "Set values for section %s - %s = %s" % [section, keys, values])
 
 
+## Saves all settings to both local storage and Steam Cloud (if available),
+## applying timestamps and versioning.
+## Returns [code]OK[/code] if the save succeeded, or an error otherwise.
 func save() -> Error:
 	var result: Error
 	_settings = _stamp_settings(_settings)
@@ -79,16 +96,22 @@ func save() -> Error:
 	return OK
 
 
+## Resets all settings to the default values defined in [code]SystemConstants.DEFAULT_SETTINGS[/code].
+## Emits change events to notify listeners of the reset.
 func reset_to_default() -> void:
 	Log.info(self, "Resetting settings to default.")
 	_overwrite_settings(SystemConstants.DEFAULT_SETTINGS)
 
 
+## Saves a checkpoint of the current settings.
+## This allows you to restore to this state later using [code]reinstate_checkpoint[/code].
 func checkpoint() -> void:
 	Log.info(self, "Checkpointing.")
 	_checkpoint = _settings.duplicate(true)
 
 
+## Restores the last checkpointed settings.
+## Emits change events for all settings that differ from the current values.
 func reinstate_checkpoint() -> void:
 	Log.info(self, "Reinstating checkpoint.")
 	_overwrite_settings(_checkpoint)
@@ -99,7 +122,7 @@ func _overwrite_settings(new_settings: Dictionary) -> void:
 	_settings = new_settings.duplicate(true)
 	for section in diff.keys():
 		for key in diff[section].keys():
-			emit_changed(section, key, _settings[section][key])
+			_emit_changed(section, key, _settings[section][key])
 
 
 func _load_settings() -> Error:
@@ -252,3 +275,13 @@ func _parse_config(config: ConfigFile) -> Dictionary:
 		for key in config.get_section_keys(section):
 			config_settings[section][key] = config.get_value(section, key, SystemConstants.DEFAULT_SETTINGS.get(section, {}).get(key, null))
 	return config_settings
+
+
+func _emit_changed_all() -> void:
+	for section in _settings.keys():
+		for key in _settings[section].keys():
+			_emit_changed(section, key, _settings[section][key])
+
+
+func _emit_changed(section: String, key: String, value: Variant) -> void:
+	EventBus.emit(get_event(section, key), value)

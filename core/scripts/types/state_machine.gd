@@ -1,9 +1,23 @@
+## Implements a hierarchical finite state machine for Node-based objects.
+## Manages states derived from [code]StateMachineState[/code] and handles
+## transitions, processing, and registration of child states.
+##
+## Features:
+## - Automatic registration of child states on ready and as children enter/exit
+## - Supports separate process types: [code]RENDER[/code] or [code]PHYSICS[/code]
+## - Handles default state and safe state transitions
+## - Ensures recursive transitions are processed correctly
 extends Node
 class_name StateMachine
 
 enum ProcessType { RENDER, PHYSICS }
 
+## The default state that the state machine will start in when initialized.
+## Must be a [code]StateMachineState[/code] child.
 @export var default_state: StateMachineState
+
+## Determines which Godot process callback to use for state updates.
+## Options: [code]ProcessType.RENDER[/code] or [code]ProcessType.PHYSICS[/code].
 @export var process_type: ProcessType = ProcessType.RENDER
 
 var _states: Set = Set.new()

@@ -5,10 +5,6 @@ extends Control
 @onready var quit_button: Button = %QuitButton
 
 func _ready() -> void:
-	_deferred_ready.call_deferred()
-
-
-func _deferred_ready() -> void:
 	play_button.pressed.connect(_play)
 	settings_button.pressed.connect(UIManager.open_ui.bind("settings_menu"))
 	quit_button.pressed.connect(get_tree().quit)

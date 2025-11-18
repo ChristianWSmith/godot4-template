@@ -1,5 +1,11 @@
+## Utility functions for working with nested Dictionaries. Supports
+## flattening nested structures, unflattening them, and computing
+## differences between two dictionaries.
 class_name DictUtils
 
+## Recursively flattens a nested dictionary into a single-level dictionary.
+## Keys are joined using the optional [code]separator[/code], with an optional
+## [code]prefix[/code] prepended.
 static func flatten(dict: Dictionary, prefix: String = "", separator: String = "/") -> Dictionary:
 	var flat: Dictionary = {}
 	for key in dict.keys():
@@ -12,6 +18,8 @@ static func flatten(dict: Dictionary, prefix: String = "", separator: String = "
 	return flat
 
 
+## Reconstructs a nested dictionary from a flattened dictionary where keys
+## are separated by [code]separator[/code].
 static func unflatten(flat: Dictionary, separator: String = "/") -> Dictionary:
 	var nested: Dictionary = {}
 	for path in flat.keys():
@@ -26,6 +34,9 @@ static func unflatten(flat: Dictionary, separator: String = "/") -> Dictionary:
 	return nested
 
 
+## Computes the difference between two dictionaries, returning a dictionary
+## representing keys that are missing or values that differ between [code]dict1[/code]
+## and [code]dict2[/code]. Nested dictionaries are diffed recursively.
 static func diff(dict1: Dictionary, dict2: Dictionary) -> Dictionary:
 	var result := {}
 	for key in dict1.keys():

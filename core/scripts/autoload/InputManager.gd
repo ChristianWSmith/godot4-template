@@ -1,3 +1,6 @@
+## Manager for handling input bindings and action events.
+## Supports subscribing to key, mouse, and gamepad inputs, and emits
+## "just_pressed" and "just_released" events for actions.
 extends BaseManager
 
 # Example:
@@ -13,6 +16,9 @@ extends BaseManager
 # }
 var _bindings: Dictionary = {}
 
+## Initializes the input manager, subscribes to input binding updates,
+## and applies any custom or project default bindings.
+## Returns [code]OK[/code] on successful initialization.
 func initialize() -> Error:
 	super()
 	Log.info(self, "Initializing InputManager...")
@@ -23,26 +29,46 @@ func initialize() -> Error:
 	return OK
 
 
+## Subscribes a callable to the pressed event of a given action.
+## [code]action[/code] is the name of the input action.
+## [code]callable[/code] is the function to invoke when the action is pressed.
 func subscribe_pressed(action: String, callable: Callable) -> void:
 	EventBus.subscribe(_get_pressed_event(action), callable)
 
 
+## Subscribes a callable to the released event of a given action.
+## [code]action[/code] is the name of the input action.
+## [code]callable[/code] is the function to invoke when the action is released.
 func subscribe_released(action: String, callable: Callable) -> void:
 	EventBus.subscribe(_get_released_event(action), callable)
 
 
+## Unsubscribes a callable from the pressed event of a given action.
+## [code]action[/code] is the name of the input action.
+## [code]callable[/code] is the function previously subscribed.
 func unsubscribe_pressed(action: String, callable: Callable) -> void:
 	EventBus.unsubscribe(_get_pressed_event(action), callable)
 
 
+## Unsubscribes a callable from the released event of a given action.
+## [code]action[/code] is the name of the input action.
+## [code]callable[/code] is the function previously subscribed.
 func unsubscribe_released(action: String, callable: Callable) -> void:
 	EventBus.unsubscribe(_get_released_event(action), callable)
 
 
+## Subscribes a callable to the pressed event of a given action once.
+## The callable will be invoked only the next time the action is pressed.
+## [code]action[/code] is the name of the input action.
+## [code]callable[/code] is the function to invoke.
 func once_pressed(action: String, callable: Callable) -> void:
 	EventBus.once(_get_pressed_event(action), callable)
 
 
+## Subscribes a callable to the released event of a given action once.
+## The callable will be invoked only the next time the action is released.
+## [code]action[/code] is the name of the input action.
+## [code]callable[/code] is the function to invoke.
 func once_released(action: String, callable: Callable) -> void:
 	EventBus.once(_get_released_event(action), callable)
 

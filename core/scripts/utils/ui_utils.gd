@@ -1,5 +1,16 @@
+## Utility class for common UI operations such as linking control values together
+## and attaching standard hover/click sounds to interface elements.
+## 
+## This helps keep UI behavior consistent across the project, ensuring controls
+## can be tethered and sound feedback is applied automatically.
 class_name UIUtils
 
+## Tethers two controls so that changing the value of one automatically updates
+## the other. Only works if both controls emit [code]value_changed[/code] and
+## provide [code]set_value_no_signal[/code]. If the tethering fails, a warning
+## is logged.
+##
+## [code]node_a[/code] and [code]node_b[/code] are the two controls to link together.
 static func tether_values(node_a: Control, node_b: Control):
 	if node_a.has_signal("value_changed") and \
 		node_a.has_method("set_value_no_signal") and \
@@ -12,6 +23,15 @@ static func tether_values(node_a: Control, node_b: Control):
 		Log.warn(node_a, "Failed to tether to '%s'" % node_b.name)
 
 
+## Recursively attaches hover and click sounds to a node and its children.
+## Hover sounds play when the mouse enters the control, and click/interaction
+## sounds play when the control is activated. Works automatically for common
+## UI elements like buttons, sliders, spin boxes, tab containers, and text edits.
+##
+## [code]node[/code] is the root node to attach sounds to.
+## Set [code]deep[/code] to true to also attach sounds to all child nodes.
+## [code]hover_stream[/code] is the sound played on hover, and [code]click_stream[/code]
+## is the sound played when the control is interacted with.
 static func connect_ui_sounds(
 		node: Node, 
 		deep: bool = true,
@@ -79,6 +99,12 @@ static func connect_ui_sounds(
 			})
 
 
+## Removes any UI sounds previously attached by [code]connect_ui_sounds[/code]
+## from a node and optionally its children. Disconnects signals and clears the
+## metadata used to track connections.
+##
+## [code]node[/code] is the root node to clear sounds from.
+## If [code]deep[/code] is true, sounds are also removed from all children.
 static func clear_ui_sounds(node: Node, deep: bool = true):
 	if deep:
 		for child in node.get_children():
