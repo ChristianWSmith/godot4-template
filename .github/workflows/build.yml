@@ -94,6 +94,7 @@ jobs:
     - name: Build
       shell: bash
       run: |
+        git lfs install
         ./build.sh ${{ env.BUILD_TYPE }}
 
     - name: Bundle
