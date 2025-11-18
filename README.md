@@ -1,7 +1,9 @@
 # Godot 4 Template
 
+A fast way to get the core of a project stood up.
+
 ## Getting Started
-- Copy this repo template.
+- Create a new repository using this repo template.
 - Run `start.sh` using bash. Windows users will need to `choco install wget zip`.
 - Remove whatever you don't need.
 - Develop your game!
