@@ -25,10 +25,10 @@ Key features include:
 This template is intended to accelerate development while providing a solid, maintainable foundation for your Godot 4 projects.
 
 # Thank You
-[GDMaim](https://github.com/cherriesandmochi/gdmaim)
-[GodotSteam](https://godotsteam.com/)
-[mrpoly](https://opengameart.org/users/mrpoly)
-[Dizzy Crow](https://opengameart.org/users/dizzy-crow)
+- [GDMaim](https://github.com/cherriesandmochi/gdmaim)
+- [GodotSteam](https://godotsteam.com/)
+- [mrpoly](https://opengameart.org/users/mrpoly)
+- [Dizzy Crow](https://opengameart.org/users/dizzy-crow)
 
 # License
 [MIT](./LICENSE)
