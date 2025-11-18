@@ -112,10 +112,10 @@ func _set_is_loading(value: float) -> void:
 
 func _swap_scene(new_scene: Node) -> void:
 	if _current_scene:
-		_current_scene.queue_free()
+		_current_scene.queue_free.call_deferred()
 	get_tree().root.add_child(new_scene)
 	_current_scene = new_scene
-	get_tree().current_scene = new_scene
+	get_tree().current_scene = _current_scene
 
 
 func _setup_fader() -> void:

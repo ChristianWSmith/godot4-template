@@ -24,7 +24,7 @@ func crash(source: String, reason: String) -> void:
 	for system in InitManager.systems():
 		get_tree().root.get_node("/root/" + system.name).queue_free()
 	get_tree().current_scene.queue_free()
-	get_tree().change_scene_to_file.call_deferred("res://core/scenes/crash.tscn")
+	get_tree().change_scene_to_file("res://core/scenes/crash.tscn")
 
 
 ## Returns the most recent crash reason recorded by [code]crash()[/code].
