@@ -1,7 +1,6 @@
-# godot4-2d-template
-Godot 4 2D Template
+# Godot 4 Template
 
-## Thank You
+# Thank You
 [GDMaim](https://github.com/cherriesandmochi/gdmaim)
 [GodotSteam](https://godotsteam.com/)
 [mrpoly](https://opengameart.org/users/mrpoly)

@@ -1,6 +1,52 @@
 #!/usr/bin/env bash
-set -euo pipefail
+## -----------------------------------------------------------------------------
+## Project Startup Script
+## -----------------------------------------------------------------------------
+## start.sh is a cross-platform bootstrap script for managing a project's local
+## Godot editor environment. It ensures consistent tooling across all machines
+## without requiring the user to install Godot globally.
+##
+## Responsibilities:
+## 1. **Determine Project Context**
+##    - Locates the script directory.
+##    - Reads the required Godot version from `.godot-version`.
+##    - Initializes a private `.editor` directory used for all editor data.
+##
+## 2. **Version Synchronization**
+##    - Detects when `.godot-version` has changed since the last startup.
+##    - Clears and rebuilds the `.editor` directory when versions differ to
+##      prevent stale editor caches, mismatched configs, or incompatible data.
+##
+## 3. **Platform Detection**
+##    - Determines the current OS (`Linux`, `macOS`, or `Windows`) and maps it
+##      to the correct Godot binary suffix required for downloading official
+##      builds.
+##
+## 4. **Engine Download & Extraction**
+##    - Checks whether the appropriate Godot editor binary already exists.
+##    - If missing:
+##        - Downloads the matching release from the official Godot builds repo.
+##        - Extracts it into `.editor/`.
+##        - Ensures the editor binary is executable.
+##    - Supports proper `.app` bundle handling on macOS.
+##
+## 5. **Export Template Management**
+##    - Verifies that export templates for the requested Godot version exist.
+##    - If not:
+##        - Downloads the appropriate `.tpz` archive.
+##        - Extracts it into the required template directory structure.
+##    - Ensures export presets will work out of the box for all platforms.
+##
+## 6. **Launching the Editor**
+##    - Starts the downloaded Godot editor using the project's `project.godot`.
+##    - Passes through any additional CLI arguments to Godot.
+##
+## This script provides a reproducible Godot environment, avoiding global system
+## dependencies and guaranteeing that all contributors, CI pipelines, and build
+## systems run the exact same Godot version and export templates.
+## -----------------------------------------------------------------------------
 
+set -euo pipefail
 
 # Setup
 GREEN='\033[0;32m'

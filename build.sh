@@ -1,4 +1,58 @@
 #!/usr/bin/env bash
+## -----------------------------------------------------------------------------
+## Project Build Script
+## -----------------------------------------------------------------------------
+## build.sh is a platform-aware wrapper for exporting the game using Godot’s
+## command-line export system. It ensures consistent build outputs across all
+## environments and always uses the locally-managed editor instance provided
+## by `start.sh`.
+##
+## Responsibilities:
+##
+## 1. **Determine Build Context**
+##    - Locates the project root via the script’s directory.
+##    - Ensures the top-level `build/` directory exists for storing artifacts.
+##
+## 2. **Build Type Handling**
+##    - Accepts a single optional argument specifying the build type:
+##         `debug`   (default)
+##         `release`
+##    - Normalizes the input to lowercase.
+##    - Maps the chosen type to the correct Godot CLI export flag:
+##         `--export-debug`   or
+##         `--export-release`
+##    - Rejects unsupported build types early with a clear error.
+##
+## 3. **Platform Detection**
+##    - Uses `uname -s` to determine the current OS.
+##    - Maps each OS to:
+##         - The correct Godot export preset name.
+##         - The correct output artifact filename:
+##               Linux   → game
+##               macOS   → game.app
+##               Windows → game.exe
+##    - Ensures unsupported platforms fail gracefully.
+##
+## 4. **Delegation to start.sh**
+##    - Launches the Godot editor *headlessly* using the project's managed
+##      local engine installation.
+##    - Passes through:
+##         - `--verbose` for detailed export logs
+##         - `--headless` to avoid GUI usage
+##         - The correct export flag (debug/release)
+##         - The export preset name (per-platform)
+##         - The output path inside `build/`
+##
+##    Example internally invoked command:
+##        start.sh --verbose --headless --export-release "Linux" "build/game"
+##
+## By routing all builds through start.sh, this script ensures that exporting the
+## game always uses:
+##   - the correct Godot version,
+##   - correct export templates,
+##   - and an isolated, reproducible local environment.
+## -----------------------------------------------------------------------------
+
 set -euo pipefail
 
 SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
