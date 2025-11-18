@@ -17,7 +17,7 @@ func initialize() -> Error:
 	super()
 	var result: Error
 	
-	for system in _systems():
+	for system in systems():
 		result = system.initialize()
 		if result != OK:
 			return result
@@ -25,7 +25,7 @@ func initialize() -> Error:
 	return OK
 
 
-func _systems() -> Array[BaseManager]: 
+func systems() -> Array[BaseManager]: 
 	return [
 		EventBus,
 		Log,
