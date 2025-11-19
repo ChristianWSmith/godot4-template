@@ -1,0 +1,245 @@
+## Manager for handling UI elements and menus.
+## Supports opening/closing stacked UI windows, UI scaling, 
+## and a global throbber indicator for loading or busy states.
+extends BaseManager
+
+var _menu_stack: Array[String] = []
+var _ui_nodes: Dictionary[String, Control] = {}
+var _ui_root: Control = Control.new()
+var _throbber: AnimatedSprite2D = AnimatedSprite2D.new()
+var _throbber_tween: Tween
+var _throbber_counter: int = 0
+var _throbber_showing: bool = false
+
+## Initializes the UI manager, sets up the UI hierarchy and throbber,
+## and registers all preloaded UI elements.
+## Returns [code]OK[/code] on successful initialization.
+func initialize() -> Error:
+	super()
+	Log.info(self, "Initializing...")
+	_setup_throbber()
+	_setup_ui()
+	return OK
+
+
+## Opens a UI element by name, deactivating the previous top UI if needed.
+## [code]ui_name[/code] is the name of the UI to open.
+## Emits a UI open event via [code]EventBus[/code].
+func open_ui(ui_name: String) -> void:
+	if not _ui_nodes.has(ui_name):
+		Log.error(self, "No UI registered with name '%s'" % ui_name)
+		return
+
+	Log.debug(self, "Opening UI '%s'" % ui_name)
+	
+	if _menu_stack.size() > 0:
+		_deactivate_ui(_ui_nodes[_menu_stack[-1]])
+	
+	var ui_node = _ui_nodes[ui_name]
+	ui_node.visible = true
+	_activate_ui(ui_node)
+	_menu_stack.append(ui_name)
+	EventBus.emit(get_ui_open_event(ui_name))
+
+
+## Closes the topmost UI element in the stack.
+## Reactivates the previous UI if present.
+## Emits a UI close event via [code]EventBus[/code].
+func close_ui() -> void:
+	if _menu_stack.size() == 0:
+		return
+	var closing_name = _menu_stack.pop_back()
+	Log.debug(self, "Closing UI '%s'" % closing_name)
+	var closing_node = _ui_nodes[closing_name]
+	_deactivate_ui(closing_node)
+	closing_node.visible = false
+
+	if _menu_stack.size() > 0:
+		_activate_ui(_ui_nodes[_menu_stack[-1]])
+	EventBus.emit(get_ui_close_event(closing_name))
+
+
+## Closes a specific UI element by name, regardless of stack position.
+## [code]ui_name[/code] is the name of the UI to close.
+## Emits a UI close event via [code]EventBus[/code].
+func close_specific(ui_name: String) -> void:
+	if ui_name in _menu_stack:
+		Log.debug(self, "Closing UI '%s'" % ui_name)
+		_menu_stack.erase(ui_name)
+		var node = _ui_nodes[ui_name]
+		_deactivate_ui(node)
+		node.visible = false
+		if _menu_stack.size() > 0:
+			_activate_ui(_ui_nodes[_menu_stack[-1]])
+		EventBus.emit(get_ui_close_event(ui_name))
+
+
+## Returns the [code]Control[/code] node for a registered UI by name,
+## or null if the UI is not registered.
+func get_ui(ui_name: String) -> Control:
+	return _ui_nodes.get(ui_name, null)
+
+
+## Returns the topmost active [code]Control[/code] node from the UI stack,
+## or null if no UI is currently open.
+func get_top_ui() -> Control:
+	if _menu_stack.size() == 0:
+		return null
+	return _ui_nodes[_menu_stack[-1]]
+
+
+## Returns the string name of the open event for a given UI.
+## [code]ui_name[/code] is the name of the UI.
+func get_ui_open_event(ui_name: String) -> String:
+	if ui_name not in _ui_nodes:
+		Log.warn(self, "No open event for UI '%s'" % ui_name)
+		return ""
+	return "ui_open/" + ui_name
+
+
+## Returns the string name of the close event for a given UI.
+## [code]ui_name[/code] is the name of the UI.
+func get_ui_close_event(ui_name: String) -> String:
+	if ui_name not in _ui_nodes:
+		Log.warn(self, "No close event for UI '%s'" % ui_name)
+		return ""
+	return "ui_close/" + ui_name
+
+
+## Sets the scale factor for all UI elements.
+## [code]value[/code] is a floating point scale multiplier.
+func set_ui_scale(value: float) -> void:
+	_ui_root.scale = Vector2(value, value)
+
+
+## Shows or hides the global throbber indicator.
+## Handles multiple concurrent requests via a reference counter.
+## [code]show[/code] is true to show the throbber, false to hide.
+func show_throbber(show: bool) -> void:
+	_throbber_counter = max(0, _throbber_counter + (1 if show else -1))
+	if _throbber_counter > 0 and not _throbber_showing:
+		_throbber_showing = true
+		_throbber.play()
+		if _throbber_tween:
+			_throbber_tween.kill()
+		_throbber_tween = create_tween().set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_OUT)
+		_throbber_tween.tween_interval(SystemConstants.UI_THROBBER_DELAY)
+		_throbber_tween.tween_property(
+			_throbber, 
+			"modulate:a", 
+			1.0, 
+			SystemConstants.UI_THROBBER_FADE_TIME)
+	elif _throbber_counter == 0 and _throbber_showing:
+		_throbber_showing = false
+		if _throbber_tween:
+			_throbber_tween.kill()
+		_throbber_tween = create_tween().set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_OUT)
+		_throbber_tween.tween_property(
+			_throbber, 
+			"modulate:a", 
+			0.0, 
+			SystemConstants.UI_THROBBER_FADE_TIME)
+		_throbber_tween.tween_callback(_throbber.stop)
+
+
+func _activate_ui(ui_node: Control) -> void:
+	ui_node.set_process(true)
+	ui_node.set_process_input(true)
+	ui_node.set_process_unhandled_input(true)
+	ui_node.grab_focus.call_deferred()
+	ui_node.visibility_layer = _menu_stack.size() + 1
+
+
+func _deactivate_ui(ui_node: Control) -> void:
+	ui_node.set_process(false)
+	ui_node.set_process_input(false)
+	ui_node.set_process_unhandled_input(false)
+
+
+func _setup_ui() -> void:
+	
+	var ui_layer: CanvasLayer = CanvasLayer.new()
+	ui_layer.layer = SystemConstants.UI_LAYER
+	
+	var ui_scaler: Control = Control.new()
+	ui_scaler.set_anchors_preset(Control.PRESET_FULL_RECT)
+	ui_scaler.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	ui_scaler.size_flags_vertical = Control.SIZE_EXPAND_FILL
+	
+	_ui_root.anchor_left = 0.5
+	_ui_root.anchor_top = 0.5
+	_ui_root.anchor_right = 0.5
+	_ui_root.anchor_bottom = 0.5
+	_ui_root.offset_left = -_ui_root.size.x / 2
+	_ui_root.offset_top = -_ui_root.size.y / 2
+	
+	ui_layer.add_child(ui_scaler)
+	ui_scaler.add_child(_ui_root)
+	
+	for ui_name in SystemConstants.UI_PRELOADS.keys():
+		var ui_instance: Control = SystemConstants.UI_PRELOADS[ui_name].instantiate()
+		_ui_root.add_child(ui_instance)
+		ui_instance.visible = false
+		ui_instance.focus_mode = Control.FOCUS_ALL
+		_deactivate_ui(ui_instance)
+		_ui_nodes[ui_name] = ui_instance
+	add_child(ui_layer)
+	UIUtils.connect_ui_sounds(_ui_root)
+
+
+func _setup_throbber() -> void:
+	_throbber.sprite_frames = SystemConstants.UI_THROBBER_SPRITE_FRAMES
+	var throbber_size: Vector2 = _throbber.sprite_frames.get_frame_texture(
+		_throbber.animation, _throbber.frame).get_size()
+	_throbber.scale = Vector2(
+		SystemConstants.UI_THROBBER_SIZE_PX.x / throbber_size.x, 
+		SystemConstants.UI_THROBBER_SIZE_PX.y / throbber_size.y)
+		
+	match SystemConstants.UI_THROBBER_ANCHOR:
+		Control.PRESET_BOTTOM_LEFT: 
+			_throbber.position = Vector2(
+				SystemConstants.UI_THROBBER_SIZE_PX.x / 2.0 + SystemConstants.UI_THROBBER_OFFSET.x,
+				- SystemConstants.UI_THROBBER_SIZE_PX.y / 2.0 - SystemConstants.UI_THROBBER_OFFSET.y)
+		Control.PRESET_BOTTOM_RIGHT: 
+			_throbber.position = Vector2(
+				- SystemConstants.UI_THROBBER_SIZE_PX.x / 2.0 - SystemConstants.UI_THROBBER_OFFSET.x,
+				- SystemConstants.UI_THROBBER_SIZE_PX.y / 2.0 - SystemConstants.UI_THROBBER_OFFSET.y)
+		Control.PRESET_TOP_LEFT: 
+			_throbber.position = Vector2(
+				SystemConstants.UI_THROBBER_SIZE_PX.x / 2.0 + SystemConstants.UI_THROBBER_OFFSET.x,
+				SystemConstants.UI_THROBBER_SIZE_PX.y / 2.0 + SystemConstants.UI_THROBBER_OFFSET.y)
+		Control.PRESET_TOP_RIGHT: 
+			_throbber.position = Vector2(
+				- SystemConstants.UI_THROBBER_SIZE_PX.x / 2.0 - SystemConstants.UI_THROBBER_OFFSET.x,
+				SystemConstants.UI_THROBBER_SIZE_PX.y / 2.0 + SystemConstants.UI_THROBBER_OFFSET.y)
+		Control.PRESET_CENTER_TOP: 
+			_throbber.position = Vector2(
+				0.0,
+				SystemConstants.UI_THROBBER_SIZE_PX.y / 2.0 + SystemConstants.UI_THROBBER_OFFSET.y)
+		Control.PRESET_CENTER_LEFT: 
+			_throbber.position = Vector2(
+				SystemConstants.UI_THROBBER_SIZE_PX.x / 2.0 + SystemConstants.UI_THROBBER_OFFSET.x,
+				0.0)
+		Control.PRESET_CENTER_RIGHT: 
+			_throbber.position = Vector2(
+				- SystemConstants.UI_THROBBER_SIZE_PX.x / 2.0 - SystemConstants.UI_THROBBER_OFFSET.x,
+				0.0)
+		Control.PRESET_CENTER_BOTTOM: 
+			_throbber.position = Vector2(
+				0.0,
+				- SystemConstants.UI_THROBBER_SIZE_PX.y / 2.0 - SystemConstants.UI_THROBBER_OFFSET.y)
+		Control.PRESET_CENTER: 
+			_throbber.position = Vector2(
+				SystemConstants.UI_THROBBER_SIZE_PX.x / 2.0 + SystemConstants.UI_THROBBER_OFFSET.x,
+				SystemConstants.UI_THROBBER_SIZE_PX.y / 2.0 + SystemConstants.UI_THROBBER_OFFSET.y)
+		_: _throbber.position = Vector2.ZERO
+	
+	_throbber.modulate.a = 0.0
+	var throbber_container: Control = Control.new()
+	throbber_container.set_anchors_preset(SystemConstants.UI_THROBBER_ANCHOR)
+	throbber_container.add_child(_throbber)
+	
+	var throbber_layer: CanvasLayer = CanvasLayer.new()
+	throbber_layer.layer = SystemConstants.UI_THROBBER_LAYER
+	throbber_layer.add_child(throbber_container)
+	add_child(throbber_layer)

@@ -1,0 +1,565 @@
+[gd_scene load_steps=4 format=3 uid="uid://dl828qmy0xo1f"]
+
+[ext_resource type="Script" uid="uid://d2js48bt464oc" path="res://scenes/ui/settings_menu_ui.gd" id="1_cpkmu"]
+[ext_resource type="Script" uid="uid://i2165tn5td64" path="res://core/scenes/ui/input_captor_button.gd" id="2_ytofq"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_2iwuv"]
+bg_color = Color(0.24780053, 0.24780053, 0.24780053, 1)
+corner_radius_top_left = 3
+corner_radius_top_right = 3
+corner_radius_bottom_right = 3
+corner_radius_bottom_left = 3
+
+[node name="SettingsMenuUI" type="PanelContainer"]
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -272.0
+offset_top = -208.0
+offset_right = 272.0
+offset_bottom = 208.0
+grow_horizontal = 2
+grow_vertical = 2
+focus_neighbor_left = NodePath("VBoxContainer/MarginContainer/VBoxContainer/TabContainer/Audio")
+focus_neighbor_top = NodePath("VBoxContainer/MarginContainer/VBoxContainer/TabContainer/Audio")
+focus_neighbor_right = NodePath("VBoxContainer/MarginContainer/VBoxContainer/TabContainer/Audio")
+focus_neighbor_bottom = NodePath("VBoxContainer/MarginContainer/VBoxContainer/TabContainer/Audio")
+theme_override_styles/panel = SubResource("StyleBoxFlat_2iwuv")
+script = ExtResource("1_cpkmu")
+
+[node name="VBoxContainer" type="VBoxContainer" parent="."]
+layout_mode = 2
+
+[node name="MarginContainer" type="MarginContainer" parent="VBoxContainer"]
+layout_mode = 2
+size_flags_vertical = 3
+theme_override_constants/margin_left = 16
+theme_override_constants/margin_top = 16
+theme_override_constants/margin_right = 16
+theme_override_constants/margin_bottom = 16
+
+[node name="VBoxContainer" type="VBoxContainer" parent="VBoxContainer/MarginContainer"]
+layout_mode = 2
+
+[node name="PanelContainer" type="PanelContainer" parent="VBoxContainer/MarginContainer/VBoxContainer"]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="VBoxContainer/MarginContainer/VBoxContainer/PanelContainer"]
+layout_mode = 2
+text = "Settings"
+horizontal_alignment = 1
+
+[node name="HSeparator" type="HSeparator" parent="VBoxContainer/MarginContainer/VBoxContainer"]
+layout_mode = 2
+
+[node name="TabContainer" type="TabContainer" parent="VBoxContainer/MarginContainer/VBoxContainer"]
+layout_mode = 2
+size_flags_vertical = 3
+current_tab = 3
+
+[node name="Audio" type="TabBar" parent="VBoxContainer/MarginContainer/VBoxContainer/TabContainer"]
+visible = false
+layout_mode = 2
+focus_neighbor_left = NodePath("../Gameplay")
+focus_neighbor_right = NodePath("../Video")
+focus_neighbor_bottom = NodePath("MarginContainer/ScrollContainer/GridContainer/AudioMasterSlider")
+metadata/_tab_index = 0
+
+[node name="MarginContainer" type="MarginContainer" parent="VBoxContainer/MarginContainer/VBoxContainer/TabContainer/Audio"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/margin_left = 16
+theme_override_constants/margin_top = 16
+theme_override_constants/margin_right = 16
+theme_override_constants/margin_bottom = 16
+
+[node name="ScrollContainer" type="ScrollContainer" parent="VBoxContainer/MarginContainer/VBoxContainer/TabContainer/Audio/MarginContainer"]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="GridContainer" type="GridContainer" parent="VBoxContainer/MarginContainer/VBoxContainer/TabContainer/Audio/MarginContainer/ScrollContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+columns = 3
+
+[node name="AudioMasterLabel" type="Label" parent="VBoxContainer/MarginContainer/VBoxContainer/TabContainer/Audio/MarginContainer/ScrollContainer/GridContainer"]
+layout_mode = 2
+size_flags_horizontal = 8
+text = "Master"
+
+[node name="AudioMasterSlider" type="HSlider" parent="VBoxContainer/MarginContainer/VBoxContainer/TabContainer/Audio/MarginContainer/ScrollContainer/GridContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 4
+focus_neighbor_left = NodePath(".")
+focus_neighbor_top = NodePath("../../../..")
+focus_neighbor_right = NodePath("../AudioMasterSpinbox")
+focus_neighbor_bottom = NodePath("../AudioMusicSlider")
+
+[node name="AudioMasterSpinbox" type="SpinBox" parent="VBoxContainer/MarginContainer/VBoxContainer/TabContainer/Audio/MarginContainer/ScrollContainer/GridContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+focus_neighbor_left = NodePath("../AudioMasterSlider")
+focus_neighbor_top = NodePath("../../../..")
+focus_neighbor_right = NodePath(".")
+focus_neighbor_bottom = NodePath("../AudioMusicSpinbox")
+
+[node name="AudioMusicLabel" type="Label" parent="VBoxContainer/MarginContainer/VBoxContainer/TabContainer/Audio/MarginContainer/ScrollContainer/GridContainer"]
+layout_mode = 2
+size_flags_horizontal = 8
+text = "Music"
+
+[node name="AudioMusicSlider" type="HSlider" parent="VBoxContainer/MarginContainer/VBoxContainer/TabContainer/Audio/MarginContainer/ScrollContainer/GridContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 4
+focus_neighbor_left = NodePath(".")
+focus_neighbor_top = NodePath("../AudioMasterSlider")
+focus_neighbor_right = NodePath("../AudioMusicSpinbox")
+focus_neighbor_bottom = NodePath("../AudioSFXSlider")
+
+[node name="AudioMusicSpinbox" type="SpinBox" parent="VBoxContainer/MarginContainer/VBoxContainer/TabContainer/Audio/MarginContainer/ScrollContainer/GridContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+focus_neighbor_left = NodePath("../AudioMusicSlider")
+focus_neighbor_top = NodePath("../AudioMasterSpinbox")
+focus_neighbor_right = NodePath(".")
+focus_neighbor_bottom = NodePath("../AudioSFXSpinbox")
+
+[node name="AudioSFXLabel" type="Label" parent="VBoxContainer/MarginContainer/VBoxContainer/TabContainer/Audio/MarginContainer/ScrollContainer/GridContainer"]
+layout_mode = 2
+size_flags_horizontal = 8
+text = "SFX"
+
+[node name="AudioSFXSlider" type="HSlider" parent="VBoxContainer/MarginContainer/VBoxContainer/TabContainer/Audio/MarginContainer/ScrollContainer/GridContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 4
+focus_neighbor_left = NodePath(".")
+focus_neighbor_top = NodePath("../AudioMusicSlider")
+focus_neighbor_right = NodePath("../AudioSFXSpinbox")
+focus_neighbor_bottom = NodePath("../AudioVoiceSlider")
+
+[node name="AudioSFXSpinbox" type="SpinBox" parent="VBoxContainer/MarginContainer/VBoxContainer/TabContainer/Audio/MarginContainer/ScrollContainer/GridContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+focus_neighbor_left = NodePath("../AudioSFXSlider")
+focus_neighbor_top = NodePath("../AudioMusicSpinbox")
+focus_neighbor_right = NodePath(".")
+focus_neighbor_bottom = NodePath("../AudioVoiceSpinbox")
+
+[node name="AudioVoiceLabel" type="Label" parent="VBoxContainer/MarginContainer/VBoxContainer/TabContainer/Audio/MarginContainer/ScrollContainer/GridContainer"]
+layout_mode = 2
+size_flags_horizontal = 8
+text = "Voice"
+
+[node name="AudioVoiceSlider" type="HSlider" parent="VBoxContainer/MarginContainer/VBoxContainer/TabContainer/Audio/MarginContainer/ScrollContainer/GridContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 4
+focus_neighbor_left = NodePath(".")
+focus_neighbor_top = NodePath("../AudioSFXSlider")
+focus_neighbor_right = NodePath("../AudioVoiceSpinbox")
+focus_neighbor_bottom = NodePath("../AudioUISlider")
+
+[node name="AudioVoiceSpinbox" type="SpinBox" parent="VBoxContainer/MarginContainer/VBoxContainer/TabContainer/Audio/MarginContainer/ScrollContainer/GridContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+focus_neighbor_left = NodePath("../AudioVoiceSlider")
+focus_neighbor_top = NodePath("../AudioSFXSpinbox")
+focus_neighbor_right = NodePath(".")
+focus_neighbor_bottom = NodePath("../AudioUISpinbox")
+
+[node name="AudioUILabel" type="Label" parent="VBoxContainer/MarginContainer/VBoxContainer/TabContainer/Audio/MarginContainer/ScrollContainer/GridContainer"]
+layout_mode = 2
+size_flags_horizontal = 8
+text = "UI"
+
+[node name="AudioUISlider" type="HSlider" parent="VBoxContainer/MarginContainer/VBoxContainer/TabContainer/Audio/MarginContainer/ScrollContainer/GridContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 4
+focus_neighbor_left = NodePath(".")
+focus_neighbor_top = NodePath("../AudioVoiceSlider")
+focus_neighbor_right = NodePath("../AudioUISpinbox")
+focus_neighbor_bottom = NodePath("../../../../../../HBoxContainer/ApplyButton")
+
+[node name="AudioUISpinbox" type="SpinBox" parent="VBoxContainer/MarginContainer/VBoxContainer/TabContainer/Audio/MarginContainer/ScrollContainer/GridContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+focus_neighbor_left = NodePath("../AudioUISlider")
+focus_neighbor_top = NodePath("../AudioVoiceSpinbox")
+focus_neighbor_right = NodePath(".")
+focus_neighbor_bottom = NodePath("../../../../../../HBoxContainer/ApplyButton")
+
+[node name="Video" type="TabBar" parent="VBoxContainer/MarginContainer/VBoxContainer/TabContainer"]
+visible = false
+layout_mode = 2
+focus_neighbor_left = NodePath("../Audio")
+focus_neighbor_right = NodePath("../Input")
+focus_neighbor_bottom = NodePath("MarginContainer/ScrollContainer/GridContainer/VideoWindowModeOptionButton")
+metadata/_tab_index = 1
+
+[node name="MarginContainer" type="MarginContainer" parent="VBoxContainer/MarginContainer/VBoxContainer/TabContainer/Video"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/margin_left = 16
+theme_override_constants/margin_top = 16
+theme_override_constants/margin_right = 16
+theme_override_constants/margin_bottom = 16
+
+[node name="ScrollContainer" type="ScrollContainer" parent="VBoxContainer/MarginContainer/VBoxContainer/TabContainer/Video/MarginContainer"]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="GridContainer" type="GridContainer" parent="VBoxContainer/MarginContainer/VBoxContainer/TabContainer/Video/MarginContainer/ScrollContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+columns = 2
+
+[node name="VideoWindowModeLabel" type="Label" parent="VBoxContainer/MarginContainer/VBoxContainer/TabContainer/Video/MarginContainer/ScrollContainer/GridContainer"]
+layout_mode = 2
+size_flags_horizontal = 8
+text = "Window Mode"
+
+[node name="VideoWindowModeOptionButton" type="OptionButton" parent="VBoxContainer/MarginContainer/VBoxContainer/TabContainer/Video/MarginContainer/ScrollContainer/GridContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+focus_neighbor_left = NodePath(".")
+focus_neighbor_top = NodePath("../../../..")
+focus_neighbor_right = NodePath(".")
+focus_neighbor_bottom = NodePath("../VideoResolutionOptionButton")
+selected = 0
+item_count = 3
+popup/item_0/text = "Windowed"
+popup/item_0/id = 0
+popup/item_1/text = "Borderless"
+popup/item_1/id = 1
+popup/item_2/text = "Fullscreen"
+popup/item_2/id = 2
+
+[node name="VideoResolutionLabel" type="Label" parent="VBoxContainer/MarginContainer/VBoxContainer/TabContainer/Video/MarginContainer/ScrollContainer/GridContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 8
+text = "Resolution"
+
+[node name="VideoResolutionOptionButton" type="OptionButton" parent="VBoxContainer/MarginContainer/VBoxContainer/TabContainer/Video/MarginContainer/ScrollContainer/GridContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+focus_neighbor_left = NodePath(".")
+focus_neighbor_top = NodePath("../VideoWindowModeOptionButton")
+focus_neighbor_right = NodePath(".")
+focus_neighbor_bottom = NodePath("../VideoVsyncCheckButton")
+
+[node name="VideoVsyncLabel" type="Label" parent="VBoxContainer/MarginContainer/VBoxContainer/TabContainer/Video/MarginContainer/ScrollContainer/GridContainer"]
+layout_mode = 2
+size_flags_horizontal = 8
+text = "Vsync"
+
+[node name="VideoVsyncCheckButton" type="CheckButton" parent="VBoxContainer/MarginContainer/VBoxContainer/TabContainer/Video/MarginContainer/ScrollContainer/GridContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 0
+focus_neighbor_left = NodePath(".")
+focus_neighbor_top = NodePath("../VideoResolutionOptionButton")
+focus_neighbor_right = NodePath(".")
+focus_neighbor_bottom = NodePath("../VideoMaxFPSOptionButton")
+
+[node name="VideoMaxFPSLabel" type="Label" parent="VBoxContainer/MarginContainer/VBoxContainer/TabContainer/Video/MarginContainer/ScrollContainer/GridContainer"]
+layout_mode = 2
+size_flags_horizontal = 8
+text = "Max FPS"
+
+[node name="VideoMaxFPSOptionButton" type="OptionButton" parent="VBoxContainer/MarginContainer/VBoxContainer/TabContainer/Video/MarginContainer/ScrollContainer/GridContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+focus_neighbor_left = NodePath(".")
+focus_neighbor_top = NodePath("../VideoVsyncCheckButton")
+focus_neighbor_right = NodePath(".")
+focus_neighbor_bottom = NodePath("../../../../../../HBoxContainer/ApplyButton")
+selected = 0
+item_count = 5
+popup/item_0/text = "30"
+popup/item_0/id = 0
+popup/item_1/text = "60"
+popup/item_1/id = 1
+popup/item_2/text = "120"
+popup/item_2/id = 2
+popup/item_3/text = "240"
+popup/item_3/id = 3
+popup/item_4/text = "Unlimitted"
+popup/item_4/id = 4
+
+[node name="Input" type="TabBar" parent="VBoxContainer/MarginContainer/VBoxContainer/TabContainer"]
+visible = false
+layout_mode = 2
+focus_neighbor_left = NodePath("../Video")
+focus_neighbor_right = NodePath("../Graphics")
+focus_neighbor_bottom = NodePath("MarginContainer/ScrollContainer/GridContainer/InputSomeActionKeyboardButton")
+metadata/_tab_index = 2
+
+[node name="MarginContainer" type="MarginContainer" parent="VBoxContainer/MarginContainer/VBoxContainer/TabContainer/Input"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/margin_left = 16
+theme_override_constants/margin_top = 16
+theme_override_constants/margin_right = 16
+theme_override_constants/margin_bottom = 16
+
+[node name="ScrollContainer" type="ScrollContainer" parent="VBoxContainer/MarginContainer/VBoxContainer/TabContainer/Input/MarginContainer"]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="GridContainer" type="GridContainer" parent="VBoxContainer/MarginContainer/VBoxContainer/TabContainer/Input/MarginContainer/ScrollContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+columns = 3
+
+[node name="InputTitleAction" type="Label" parent="VBoxContainer/MarginContainer/VBoxContainer/TabContainer/Input/MarginContainer/ScrollContainer/GridContainer"]
+layout_mode = 2
+text = "Action"
+horizontal_alignment = 2
+
+[node name="InputTItleKeyboard" type="Label" parent="VBoxContainer/MarginContainer/VBoxContainer/TabContainer/Input/MarginContainer/ScrollContainer/GridContainer"]
+layout_mode = 2
+text = "Keyboard"
+horizontal_alignment = 1
+
+[node name="InputTitleJoypad" type="Label" parent="VBoxContainer/MarginContainer/VBoxContainer/TabContainer/Input/MarginContainer/ScrollContainer/GridContainer"]
+layout_mode = 2
+text = "Joypad"
+horizontal_alignment = 1
+
+[node name="InputSomeActionLabel" type="Label" parent="VBoxContainer/MarginContainer/VBoxContainer/TabContainer/Input/MarginContainer/ScrollContainer/GridContainer"]
+layout_mode = 2
+text = "Some Action"
+horizontal_alignment = 2
+
+[node name="InputSomeActionKeyboardButton" type="Button" parent="VBoxContainer/MarginContainer/VBoxContainer/TabContainer/Input/MarginContainer/ScrollContainer/GridContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+focus_neighbor_left = NodePath(".")
+focus_neighbor_top = NodePath("../../../..")
+focus_neighbor_right = NodePath("../InputSomeActionJoypadButton")
+focus_neighbor_bottom = NodePath("../InputBackKeyboardButton")
+script = ExtResource("2_ytofq")
+mouse_button_allowed = false
+joypad_button_allowed = false
+joypad_motion_allowed = false
+
+[node name="InputSomeActionJoypadButton" type="Button" parent="VBoxContainer/MarginContainer/VBoxContainer/TabContainer/Input/MarginContainer/ScrollContainer/GridContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+focus_neighbor_left = NodePath("../InputSomeActionKeyboardButton")
+focus_neighbor_top = NodePath("../../../..")
+focus_neighbor_right = NodePath(".")
+focus_neighbor_bottom = NodePath("../InputBackJoypadButton")
+script = ExtResource("2_ytofq")
+key_allowed = false
+mouse_button_allowed = false
+joypad_motion_allowed = false
+
+[node name="InputBackLabel" type="Label" parent="VBoxContainer/MarginContainer/VBoxContainer/TabContainer/Input/MarginContainer/ScrollContainer/GridContainer"]
+layout_mode = 2
+text = "Back"
+horizontal_alignment = 2
+
+[node name="InputBackKeyboardButton" type="Button" parent="VBoxContainer/MarginContainer/VBoxContainer/TabContainer/Input/MarginContainer/ScrollContainer/GridContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+focus_neighbor_left = NodePath(".")
+focus_neighbor_top = NodePath("../InputSomeActionKeyboardButton")
+focus_neighbor_right = NodePath("../InputBackJoypadButton")
+focus_neighbor_bottom = NodePath("../../../../../../HBoxContainer/ApplyButton")
+script = ExtResource("2_ytofq")
+mouse_button_allowed = false
+joypad_button_allowed = false
+joypad_motion_allowed = false
+
+[node name="InputBackJoypadButton" type="Button" parent="VBoxContainer/MarginContainer/VBoxContainer/TabContainer/Input/MarginContainer/ScrollContainer/GridContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+focus_neighbor_left = NodePath("../InputBackKeyboardButton")
+focus_neighbor_top = NodePath("../InputSomeActionJoypadButton")
+focus_neighbor_right = NodePath(".")
+focus_neighbor_bottom = NodePath("../../../../../../HBoxContainer/ApplyButton")
+script = ExtResource("2_ytofq")
+key_allowed = false
+mouse_button_allowed = false
+joypad_motion_allowed = false
+
+[node name="Graphics" type="TabBar" parent="VBoxContainer/MarginContainer/VBoxContainer/TabContainer"]
+layout_mode = 2
+focus_neighbor_left = NodePath("../Input")
+focus_neighbor_right = NodePath("../Gameplay")
+focus_neighbor_bottom = NodePath("MarginContainer/ScrollContainer/GridContainer/HBoxContainer/GraphicsUIScaleSlider")
+metadata/_tab_index = 3
+
+[node name="MarginContainer" type="MarginContainer" parent="VBoxContainer/MarginContainer/VBoxContainer/TabContainer/Graphics"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/margin_left = 16
+theme_override_constants/margin_top = 16
+theme_override_constants/margin_right = 16
+theme_override_constants/margin_bottom = 16
+
+[node name="ScrollContainer" type="ScrollContainer" parent="VBoxContainer/MarginContainer/VBoxContainer/TabContainer/Graphics/MarginContainer"]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="GridContainer" type="GridContainer" parent="VBoxContainer/MarginContainer/VBoxContainer/TabContainer/Graphics/MarginContainer/ScrollContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+columns = 2
+
+[node name="VideoUIScaleLabel" type="Label" parent="VBoxContainer/MarginContainer/VBoxContainer/TabContainer/Graphics/MarginContainer/ScrollContainer/GridContainer"]
+layout_mode = 2
+size_flags_horizontal = 8
+text = "UI Scale"
+
+[node name="HBoxContainer" type="HBoxContainer" parent="VBoxContainer/MarginContainer/VBoxContainer/TabContainer/Graphics/MarginContainer/ScrollContainer/GridContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="GraphicsUIScaleSlider" type="HSlider" parent="VBoxContainer/MarginContainer/VBoxContainer/TabContainer/Graphics/MarginContainer/ScrollContainer/GridContainer/HBoxContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 4
+focus_neighbor_left = NodePath(".")
+focus_neighbor_top = NodePath("../../../../..")
+focus_neighbor_right = NodePath("../GraphicsUIScaleSpinbox")
+focus_neighbor_bottom = NodePath("../../VideoShowFPSCheckButton")
+min_value = 0.5
+max_value = 1.5
+step = 0.1
+value = 0.5
+
+[node name="GraphicsUIScaleSpinbox" type="SpinBox" parent="VBoxContainer/MarginContainer/VBoxContainer/TabContainer/Graphics/MarginContainer/ScrollContainer/GridContainer/HBoxContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+focus_neighbor_left = NodePath("../GraphicsUIScaleSlider")
+focus_neighbor_top = NodePath("../../../../..")
+focus_neighbor_right = NodePath(".")
+focus_neighbor_bottom = NodePath("../../../../../../../HBoxContainer/ApplyButton")
+min_value = 0.5
+max_value = 1.5
+step = 0.1
+value = 0.5
+
+[node name="VideoShowFPSLabel" type="Label" parent="VBoxContainer/MarginContainer/VBoxContainer/TabContainer/Graphics/MarginContainer/ScrollContainer/GridContainer"]
+layout_mode = 2
+size_flags_horizontal = 8
+text = "Show FPS"
+
+[node name="VideoShowFPSCheckButton" type="CheckButton" parent="VBoxContainer/MarginContainer/VBoxContainer/TabContainer/Graphics/MarginContainer/ScrollContainer/GridContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 0
+focus_neighbor_left = NodePath(".")
+focus_neighbor_top = NodePath("../HBoxContainer/GraphicsUIScaleSlider")
+focus_neighbor_right = NodePath(".")
+focus_neighbor_bottom = NodePath("../../../../../../HBoxContainer/ApplyButton")
+
+[node name="Gameplay" type="TabBar" parent="VBoxContainer/MarginContainer/VBoxContainer/TabContainer"]
+visible = false
+layout_mode = 2
+focus_neighbor_left = NodePath("../Graphics")
+focus_neighbor_right = NodePath("../Audio")
+focus_neighbor_bottom = NodePath("MarginContainer/ScrollContainer/GridContainer/GameplayAutosaveCheckButton")
+metadata/_tab_index = 4
+
+[node name="MarginContainer" type="MarginContainer" parent="VBoxContainer/MarginContainer/VBoxContainer/TabContainer/Gameplay"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/margin_left = 16
+theme_override_constants/margin_top = 16
+theme_override_constants/margin_right = 16
+theme_override_constants/margin_bottom = 16
+
+[node name="ScrollContainer" type="ScrollContainer" parent="VBoxContainer/MarginContainer/VBoxContainer/TabContainer/Gameplay/MarginContainer"]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="GridContainer" type="GridContainer" parent="VBoxContainer/MarginContainer/VBoxContainer/TabContainer/Gameplay/MarginContainer/ScrollContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+columns = 2
+
+[node name="GameplayAutosaveLabel" type="Label" parent="VBoxContainer/MarginContainer/VBoxContainer/TabContainer/Gameplay/MarginContainer/ScrollContainer/GridContainer"]
+layout_mode = 2
+size_flags_horizontal = 8
+text = "Autosave"
+
+[node name="GameplayAutosaveCheckButton" type="CheckButton" parent="VBoxContainer/MarginContainer/VBoxContainer/TabContainer/Gameplay/MarginContainer/ScrollContainer/GridContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 0
+focus_neighbor_left = NodePath(".")
+focus_neighbor_top = NodePath("../../../..")
+focus_neighbor_right = NodePath(".")
+focus_neighbor_bottom = NodePath("../../../../../../HBoxContainer/ApplyButton")
+
+[node name="HSeparator2" type="HSeparator" parent="VBoxContainer/MarginContainer/VBoxContainer"]
+layout_mode = 2
+
+[node name="HBoxContainer" type="HBoxContainer" parent="VBoxContainer/MarginContainer/VBoxContainer"]
+layout_mode = 2
+
+[node name="CloseButton" type="Button" parent="VBoxContainer/MarginContainer/VBoxContainer/HBoxContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+focus_neighbor_left = NodePath(".")
+focus_neighbor_right = NodePath("../ApplyButton")
+focus_neighbor_bottom = NodePath(".")
+text = "Cancel"
+
+[node name="DefaultButton" type="Button" parent="VBoxContainer/MarginContainer/VBoxContainer/HBoxContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Defaults"
+
+[node name="Control" type="Control" parent="VBoxContainer/MarginContainer/VBoxContainer/HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="ApplyButton" type="Button" parent="VBoxContainer/MarginContainer/VBoxContainer/HBoxContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+focus_neighbor_left = NodePath("../CloseButton")
+focus_neighbor_right = NodePath(".")
+focus_neighbor_bottom = NodePath(".")
+text = "Confirm"

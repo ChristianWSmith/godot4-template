@@ -1,0 +1,107 @@
+; Engine configuration file.
+; It's best edited using the editor UI and not directly,
+; since the parameters that go here are not all obvious.
+;
+; Format:
+;   [section] ; section goes between []
+;   param=value ; assign values to parameters
+
+config_version=5
+
+[application]
+
+config/name="Godot 4.5.1 Template"
+config/name_localized={
+"en_US": "English (US)"
+}
+config/version="0.1.0"
+run/main_scene="uid://bdwua0scesiy2"
+config/features=PackedStringArray("4.5", "Forward Plus")
+boot_splash/image="uid://devtlii0et7ux"
+config/icon="uid://hiiecducsyte"
+config/macos_native_icon="res://assets/bin/application/icon.icns"
+config/windows_native_icon="res://assets/bin/application/icon.ico"
+
+[audio]
+
+buses/default_bus_layout="uid://cg80pw67uw7y1"
+
+[autoload]
+
+SystemConstants="*res://core/scripts/autoload/SystemConstants.gd"
+Log="*res://core/scripts/autoload/Log.gd"
+Traits="*res://core/scripts/autoload/Traits.gd"
+SettingsManager="*res://core/scripts/autoload/SettingsManager.gd"
+SaveManager="*res://core/scripts/autoload/SaveManager.gd"
+GameState="*res://core/scripts/autoload/GameState.gd"
+SceneManager="*res://core/scripts/autoload/SceneManager.gd"
+AudioManager="*res://core/scripts/autoload/AudioManager.gd"
+InputManager="*res://core/scripts/autoload/InputManager.gd"
+EventBus="*res://core/scripts/autoload/EventBus.gd"
+SteamManager="*res://core/scripts/autoload/SteamManager.gd"
+CrashReport="*res://core/scripts/autoload/CrashReport.gd"
+VideoManager="*res://core/scripts/autoload/VideoManager.gd"
+UIManager="*res://core/scripts/autoload/UIManager.gd"
+GameplayManager="*res://core/scripts/autoload/GameplayManager.gd"
+GraphicsManager="*res://core/scripts/autoload/GraphicsManager.gd"
+InitManager="*res://core/scripts/autoload/InitManager.gd"
+
+[debug]
+
+shader_language/warnings/treat_warnings_as_errors=true
+
+[display]
+
+window/size/viewport_width=1280
+window/size/viewport_height=720
+window/size/resizable=false
+window/subwindows/embed_subwindows=false
+window/stretch/mode="canvas_items"
+window/per_pixel_transparency/allowed=true
+
+[editor]
+
+run/main_run_args="--log-level=DEBUG"
+export/convert_text_resources_to_binary=false
+
+[editor_plugins]
+
+enabled=PackedStringArray("res://addons/gdmaim/plugin.cfg")
+
+[gui]
+
+theme/custom="uid://ctqknopqbjr8m"
+theme/custom_font="uid://yka44xy4yu7y"
+
+[input]
+
+ui_accept={
+"deadzone": 0.5,
+"events": [Object(InputEventKey,"resource_local_to_scene":false,"resource_name":"","device":0,"window_id":0,"alt_pressed":false,"shift_pressed":false,"ctrl_pressed":false,"meta_pressed":false,"pressed":false,"keycode":4194309,"physical_keycode":0,"key_label":0,"unicode":0,"location":0,"echo":false,"script":null)
+, Object(InputEventKey,"resource_local_to_scene":false,"resource_name":"","device":0,"window_id":0,"alt_pressed":false,"shift_pressed":false,"ctrl_pressed":false,"meta_pressed":false,"pressed":false,"keycode":4194310,"physical_keycode":0,"key_label":0,"unicode":0,"location":0,"echo":false,"script":null)
+, Object(InputEventKey,"resource_local_to_scene":false,"resource_name":"","device":0,"window_id":0,"alt_pressed":false,"shift_pressed":false,"ctrl_pressed":false,"meta_pressed":false,"pressed":false,"keycode":32,"physical_keycode":0,"key_label":0,"unicode":32,"location":0,"echo":false,"script":null)
+, Object(InputEventJoypadButton,"resource_local_to_scene":false,"resource_name":"","device":-1,"button_index":0,"pressure":0.0,"pressed":true,"script":null)
+]
+}
+some_action={
+"deadzone": 0.2,
+"events": [Object(InputEventKey,"resource_local_to_scene":false,"resource_name":"","device":-1,"window_id":0,"alt_pressed":false,"shift_pressed":false,"ctrl_pressed":false,"meta_pressed":false,"pressed":false,"keycode":0,"physical_keycode":32,"key_label":0,"unicode":32,"location":0,"echo":false,"script":null)
+, Object(InputEventJoypadButton,"resource_local_to_scene":false,"resource_name":"","device":-1,"button_index":0,"pressure":0.0,"pressed":false,"script":null)
+]
+}
+back={
+"deadzone": 0.2,
+"events": [Object(InputEventKey,"resource_local_to_scene":false,"resource_name":"","device":-1,"window_id":0,"alt_pressed":false,"shift_pressed":false,"ctrl_pressed":false,"meta_pressed":false,"pressed":false,"keycode":0,"physical_keycode":4194305,"key_label":0,"unicode":0,"location":0,"echo":false,"script":null)
+, Object(InputEventJoypadButton,"resource_local_to_scene":false,"resource_name":"","device":-1,"button_index":1,"pressure":0.0,"pressed":true,"script":null)
+]
+}
+
+[rendering]
+
+textures/vram_compression/import_etc2_astc=true
+
+[steam]
+
+initialization/app_id=0
+initialization/initialize_on_startup=false
+initialization/embed_callbacks=false

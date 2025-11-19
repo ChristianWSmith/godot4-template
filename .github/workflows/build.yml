@@ -1,0 +1,119 @@
+## -----------------------------------------------------------------------------
+## GitHub Actions Workflow: Cross-Platform Game Build
+## -----------------------------------------------------------------------------
+## This workflow automatically builds the game on every push or pull request
+## targeting the `main` or `develop` branches. It ensures consistent builds
+## across Linux, Windows, and macOS by invoking the project’s `build.sh` script,
+## which itself guarantees that the correct Godot version and export templates
+## are used.
+##
+## Key Features:
+##
+## 1. **Triggers**
+##    - Runs on:
+##        • pushes to `main` or `develop`
+##        • pull requests targeting `main` or `develop`
+##    - Gives immediate feedback on whether changes still build cleanly.
+##
+## 2. **Global Environment**
+##    - `UPLOAD_DIR`: Directory used to stage artifacts before upload.
+##    - `BUILD_TYPE`: Passed into `build.sh` (defaults to `release`).
+##
+## 3. **Matrix Build Strategy**
+##    - Builds on three operating systems:
+##        • ubuntu-latest
+##        • windows-latest
+##        • macos-latest
+##    - Ensures all platforms remain export-compatible.
+##
+## 4. **Steps**
+##
+##    • **Checkout code**
+##      Ensures the workflow has access to the game source on every platform.
+##
+##    • **Install Dependencies (Windows only)**
+##      Windows runners do not include `wget` or `zip` by default.
+##      These tools are required because:
+##        - `start.sh` uses `wget` to pull Godot binaries/templates.
+##        - Packaging steps require `zip`.
+##
+##    • **Build**
+##      Calls the project’s `build.sh` script using Bash (GitHub provides Bash
+##      even on Windows runners). The script:
+##        - resolves the correct platform export preset,
+##        - downloads/installs the required Godot editor version,
+##        - exports the game headlessly.
+##
+##    • **Bundle**
+##      Zips the built output folder to produce a single artifact.
+##      The ZIP file is moved into the shared upload directory.
+##
+##    • **Upload Executable**
+##      Publishes the built artifacts for each OS using GitHub’s artifact system.
+##      Results in three downloadable builds per run:
+##        • ubuntu-latest.zip
+##        • windows-latest.zip
+##        • macos-latest.zip
+##
+## This workflow ensures stable, reproducible builds on all major desktop
+## platforms with zero manual setup.
+## -----------------------------------------------------------------------------
+
+name: Build
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main, develop ]
+
+env:
+  UPLOAD_DIR: upload
+  BUILD_TYPE: release
+
+jobs:
+  build:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        include:
+            - os: ubuntu-latest
+            - os: windows-latest
+            - os: macos-latest
+
+    steps:
+    - name: Checkout code (All)
+      uses: actions/checkout@v4
+      with:
+        lfs: true
+
+    - name: Install Dependencies (Windows)
+      if: runner.os == 'Windows'
+      shell: pwsh
+      run: |
+        choco install wget zip
+
+    - name: Start Editor Once
+      shell: bash
+      run: |
+        ./start.sh --editor --quit-after 1 --headless
+
+    - name: Build
+      shell: bash
+      run: |
+        git lfs install
+        ./build.sh ${{ env.BUILD_TYPE }}
+
+    - name: Bundle
+      shell: bash
+      run: |
+        zip -r build.zip build/
+        mkdir -p "${{ env.UPLOAD_DIR }}"
+        mv build.zip "${{ env.UPLOAD_DIR }}"
+        mv addons/gdmaim/source_maps/* "${{ env.UPLOAD_DIR }}"
+
+    - name: Upload Executable
+      uses: actions/upload-artifact@v4
+      with:
+        name: ${{ matrix.os }}
+        path: ${{ env.UPLOAD_DIR }}

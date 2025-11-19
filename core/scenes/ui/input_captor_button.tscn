@@ -1,0 +1,6 @@
+[gd_scene load_steps=2 format=3 uid="uid://bwjrwys7sea30"]
+
+[ext_resource type="Script" uid="uid://i2165tn5td64" path="res://core/scenes/ui/input_captor_button.gd" id="1_d7whf"]
+
+[node name="InputCaptorButton" type="Button"]
+script = ExtResource("1_d7whf")
