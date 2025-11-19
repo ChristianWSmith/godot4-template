@@ -58,6 +58,7 @@ set -euo pipefail
 SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
 BUILD_DIR="${SCRIPT_DIR}/build"
 mkdir -p "${BUILD_DIR}"
+EDITOR_DIR="${SCRIPT_DIR}/.editor"
 
 BUILD_TYPE="${1:-debug}"
 BUILD_TYPE="$(echo "${BUILD_TYPE}" | tr '[:upper:]' '[:lower:]')"
@@ -95,4 +96,12 @@ case "${platform}" in
         exit 1
 esac
 
+
+# Ensure editor sanity
+if [ ! -e "${EDITOR_DIR}" ]; then
+    "${SCRIPT_DIR}/start.sh" --editor --quit-after 1 --headless
+fi
+
+
+# Build
 "${SCRIPT_DIR}/start.sh" --verbose --headless $BUILD_TYPE_ARG "${TARGET}" "build/${ARTIFACT}"
