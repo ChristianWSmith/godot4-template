@@ -19,7 +19,7 @@ Key features include:
 - **Steam integration:** Cloud saves, file reconciliation, and Steam API support are built in.
 - **Code obfuscation:** GDMaim integration allows for secure, obfuscated builds without extra setup.
 - **Godot Versioning:** Change the contents of `.godot-version`, and `start.sh`/`build.sh` will automatically start using it.
-- **Git LFS:** Assets separated into `assets/src/` and `assets/bin/` so that your repo doesn't get clogged with binaries.
+- **Git LFS:** Assets separated into `assets/src/` and `assets/bin/` so that your repo doesn't get clogged with binaries. `addons/` also use LFS, even for text files. **DO NOT FORGET TO RUN** `git lfs push --all origin` **ALONG WITH YOUR PUSHES**
 - **Event-driven design:** The EventBus system simplifies cross-manager communication and reactive programming.
 - **Trait-based Polymorphism:** Basically a more robust version of duck-typing.
 - **Example:** Small example "game" showcasing the usage of these features.
