@@ -84,6 +84,14 @@ jobs:
     steps:
     - name: Checkout code (All)
       uses: actions/checkout@v4
+      with:
+        lfs: true
+
+    - name: Git LFS
+      shell: bash
+      run: |
+        git lfs install
+        git lfs pull
 
     - name: Install Dependencies (Windows)
       if: runner.os == 'Windows'
@@ -94,7 +102,6 @@ jobs:
     - name: Build
       shell: bash
       run: |
-        git lfs install
         ./build.sh ${{ env.BUILD_TYPE }}
 
     - name: Bundle
