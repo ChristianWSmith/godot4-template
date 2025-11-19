@@ -1,2 +1,2 @@
-/assets/bin** filter=lfs diff=lfs merge=lfs -text
+/assets/bin/** filter=lfs diff=lfs merge=lfs -text
 /addons/** filter=lfs diff=lfs merge=lfs -text
