@@ -93,6 +93,11 @@ jobs:
       run: |
         choco install wget zip
 
+    - name: Start Editor Once
+      shell: bash
+      run: |
+        ./start.sh --editor --quit-after 1 --headless
+
     - name: Build
       shell: bash
       run: |
